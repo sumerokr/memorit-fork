@@ -1,13 +1,21 @@
 export type CardSet = {
   id: string;
   title: string;
+  createdAt: string;
 };
 
-export type CardSetInput = Pick<CardSet, "id" | "title">;
-
-export const createCardSet = ({ id, title }: CardSetInput): CardSet => {
+export const createCardSet = ({ id, title, createdAt }: CardSet): CardSet => {
   return {
     id,
     title,
+    createdAt,
+  };
+};
+
+export const updateCardSet = ({ id, title, createdAt }: CardSet): CardSet => {
+  return {
+    id,
+    title,
+    createdAt,
   };
 };

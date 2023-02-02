@@ -1,9 +1,8 @@
-<script setup lang="ts">
-import TheWelcome from "../components/TheWelcome.vue";
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <main>
-    <TheWelcome />
-  </main>
+  <div>
+    <h1>Welcome</h1>
+    <p><RouterLink :to="{ name: 'sets' }">Sets</RouterLink></p>
+  </div>
 </template>
