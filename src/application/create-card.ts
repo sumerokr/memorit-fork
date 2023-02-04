@@ -16,8 +16,8 @@ export const createCardUC: CreateCardUC = async ({
       cardSetId,
       createdAt: new Date().toISOString(),
     });
-    await cardsAPI.save(card);
-    cardsStorage.save(card);
+    await cardsAPI.saveByCardSetId({ cardSetId, card });
+    cardsStorage.saveByCardSetId({ cardSetId, card });
     notificationService.notify("card saved");
   } catch (error) {
     const message = (() => {

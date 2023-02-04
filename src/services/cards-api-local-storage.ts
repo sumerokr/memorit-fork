@@ -1,5 +1,6 @@
 import type { CardsAPI } from "@/application/ports";
 import type { Card } from "@/domain/card";
+import type { CardSet } from "@/domain/card-set";
 
 const localStorageKey = "memorit/cards";
 
@@ -7,13 +8,30 @@ const delay = (ms: number = Math.random() * 1000) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
 export const cardsAPI: CardsAPI = {
-  save: async (card) => {
+  saveByCardSetId: async ({ cardSetId, card }) => {
     await delay();
     const data = localStorage.getItem(localStorageKey);
     // TODO: handle errors
-    const cards = JSON.parse(data ?? "[]") as Card[];
-    cards.push(card);
+    const cardsByCardSetId = JSON.parse(data ?? "{}") as Record<
+      CardSet["id"],
+      Card[]
+    >;
+    if (!cardsByCardSetId[cardSetId]) {
+      cardsByCardSetId[cardSetId] = [];
+    }
+    cardsByCardSetId[cardSetId].push(card);
     // TODO: handle errors
-    localStorage.setItem(localStorageKey, JSON.stringify(cards));
+    localStorage.setItem(localStorageKey, JSON.stringify(cardsByCardSetId));
+  },
+  getAllByCardSetId: async (cardSetId) => {
+    await delay();
+    const data = localStorage.getItem(localStorageKey);
+    // TODO: handle errors
+    const cardsByCardSetId = JSON.parse(data ?? "{}") as Record<
+      CardSet["id"],
+      Card[]
+    >;
+    // TODO: shameless fallback
+    return cardsByCardSetId[cardSetId] ?? [];
   },
 };

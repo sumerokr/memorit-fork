@@ -42,21 +42,20 @@ const onSubmit = () => {
     <template v-if="isGetCardSetsReady">
       <ul v-if="cardSets.length">
         <li v-for="cardSet of reversedCardSets" :key="cardSet.id">
-          <h2>{{ cardSet.title }}</h2>
-          <p>
-            <RouterLink :to="{ name: 'add', params: { id: cardSet.id } }"
-              >+</RouterLink
-            >
-            <!-- <RouterLink :to="{ name: 'play', params: { id: cardSet.id } }"
+          <RouterLink :to="{ name: 'set', params: { id: cardSet.id } }">
+            <h2>{{ cardSet.title }}</h2>
+            <p>
+              <!-- <RouterLink :to="{ name: 'play', params: { id: cardSet.id } }"
               >+</RouterLink
             > -->
-            <button
-              @click="deleteCardSet(cardSet.id)"
-              :disabled="deletingIds.includes(cardSet.id)"
-            >
-              ×
-            </button>
-          </p>
+              <button
+                @click="deleteCardSet(cardSet.id)"
+                :disabled="deletingIds.includes(cardSet.id)"
+              >
+                ×
+              </button>
+            </p>
+          </RouterLink>
         </li>
       </ul>
       <p v-else>Nothing</p>

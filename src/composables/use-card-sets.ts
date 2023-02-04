@@ -70,15 +70,15 @@ export const useUpdateCardSet = () => {
     immediate: false,
   });
 
-  const togglingIds = ref<CardSet["id"][]>([]);
+  const updateIds = ref<CardSet["id"][]>([]);
   return {
-    togglingIds,
+    updateIds,
     isReady,
     isLoading,
-    execute: async (id: CardSet["id"]) => {
-      togglingIds.value.push(id);
-      await execute(0, id);
-      togglingIds.value = without(togglingIds.value, id);
+    execute: async (cardSet: CardSet) => {
+      updateIds.value.push(cardSet.id);
+      await execute(0, cardSet);
+      updateIds.value = without(updateIds.value, cardSet.id);
     },
   };
 };

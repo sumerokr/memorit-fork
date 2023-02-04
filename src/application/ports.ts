@@ -14,6 +14,7 @@ export type CreateCardUC = ({
   back,
   cardSetId,
 }: Pick<Card, "front" | "back" | "cardSetId">) => Promise<void>;
+export type GetCardsByCardSetIdUC = (id: CardSet["id"]) => Promise<void>;
 //#endregion
 
 //#region driven adapters
@@ -38,11 +39,31 @@ export type CardSetStorage = {
 
 //#region cards
 export type CardsAPI = {
-  save: (card: Card) => Promise<void>;
+  saveByCardSetId: ({
+    cardSetId,
+    card,
+  }: {
+    cardSetId: CardSet["id"];
+    card: Card;
+  }) => Promise<void>;
+  getAllByCardSetId: (id: CardSet["id"]) => Promise<Card[]>;
 };
 
 export type CardsStorage = {
-  save: (cardSet: Card) => void;
+  saveByCardSetId: ({
+    cardSetId,
+    card,
+  }: {
+    cardSetId: CardSet["id"];
+    card: Card;
+  }) => void;
+  setByCardSetId: ({
+    cardSetId,
+    cards,
+  }: {
+    cardSetId: CardSet["id"];
+    cards: Card[];
+  }) => void;
 };
 //#endregion
 
