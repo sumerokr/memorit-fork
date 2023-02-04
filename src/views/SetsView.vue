@@ -42,10 +42,14 @@ const onSubmit = () => {
     <template v-if="isGetCardSetsReady">
       <ul v-if="cardSets.length">
         <li v-for="cardSet of reversedCardSets" :key="cardSet.id">
+          <h2>{{ cardSet.title }}</h2>
           <p>
-            <RouterLink :to="{ name: 'set', params: { id: cardSet.id } }">{{
-              cardSet.title
-            }}</RouterLink>
+            <RouterLink :to="{ name: 'add', params: { id: cardSet.id } }"
+              >+</RouterLink
+            >
+            <!-- <RouterLink :to="{ name: 'play', params: { id: cardSet.id } }"
+              >+</RouterLink
+            > -->
             <button
               @click="deleteCardSet(cardSet.id)"
               :disabled="deletingIds.includes(cardSet.id)"

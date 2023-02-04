@@ -5,22 +5,29 @@ export type Card = {
   front: string;
   back: string;
   cardSetId: CardSet["id"];
-  progress: 0 | 1 | 2 | 3 | 5 | 8 | 13 | 21;
+  progress: 1 | 2 | 3 | 5 | 8 | 13 | 21;
+  createdAt: string;
   showAfter: string;
 };
 
 export const createCard = ({
+  id,
   front,
   back,
   cardSetId,
-  showAfter,
-}: Pick<Card, "front" | "back" | "cardSetId" | "showAfter">): Card => {
+  createdAt,
+}: Pick<Card, "id" | "front" | "back" | "cardSetId" | "createdAt">): Card => {
+  const progress = 1;
+  const dateCreatedAt = new Date(createdAt);
+  const laterTS = dateCreatedAt.setDate(dateCreatedAt.getDate() + progress);
+  const showAfter = new Date(laterTS).toISOString();
   return {
-    id: "abc",
+    id,
     front,
     back,
     cardSetId,
-    progress: 0,
+    progress,
+    createdAt,
     showAfter,
   };
 };
