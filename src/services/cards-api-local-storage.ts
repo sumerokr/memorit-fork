@@ -34,4 +34,23 @@ export const cardsAPI: CardsAPI = {
     // TODO: shameless fallback
     return cardsByCardSetId[cardSetId] ?? [];
   },
+  update: async (card: Card) => {
+    await delay();
+    const data = localStorage.getItem(localStorageKey);
+    // TODO: handle errors
+    const cardsByCardSetId = JSON.parse(data ?? "{}") as Record<
+      CardSet["id"],
+      Card[]
+    >;
+    // REFACTOR!
+    const oldCard = Object.values(cardsByCardSetId)
+      .flat()
+      .find((_card) => _card.id === card.id);
+    if (!oldCard) {
+      return;
+    }
+    Object.assign(oldCard, card);
+    // TODO: shameless fallback
+    localStorage.setItem(localStorageKey, JSON.stringify(cardsByCardSetId));
+  },
 };

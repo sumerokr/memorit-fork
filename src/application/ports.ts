@@ -15,6 +15,7 @@ export type CreateCardUC = ({
   cardSetId,
 }: Pick<Card, "front" | "back" | "cardSetId">) => Promise<void>;
 export type GetCardsByCardSetIdUC = (id: CardSet["id"]) => Promise<void>;
+export type UpdateCardStatusUC = ({ id, progress }: Card) => Promise<void>;
 //#endregion
 
 //#region driven adapters
@@ -47,6 +48,7 @@ export type CardsAPI = {
     card: Card;
   }) => Promise<void>;
   getAllByCardSetId: (id: CardSet["id"]) => Promise<Card[]>;
+  update: (card: Card) => Promise<void>;
 };
 
 export type CardsStorage = {
@@ -64,6 +66,8 @@ export type CardsStorage = {
     cardSetId: CardSet["id"];
     cards: Card[];
   }) => void;
+  update: (card: Card) => void;
+  getById: (id: Card["id"]) => Card | undefined;
 };
 //#endregion
 

@@ -5,7 +5,7 @@ export type Card = {
   front: string;
   back: string;
   cardSetId: CardSet["id"];
-  progress: 1 | 2 | 3 | 5 | 8 | 13 | 21;
+  progress: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
   createdAt: string;
   showAfter: string;
 };
@@ -28,6 +28,26 @@ export const createCard = ({
     cardSetId,
     progress,
     createdAt,
+    showAfter,
+  };
+};
+
+export const updateCardStatus = ({
+  card,
+  progress,
+  now,
+}: {
+  card: Card;
+  progress: Card["progress"];
+  now: string;
+}): Card => {
+  const dateNow = new Date(now);
+  const daysAfter = Math.pow(progress, 2);
+  const laterTS = dateNow.setDate(dateNow.getDate() + daysAfter);
+  const showAfter = new Date(laterTS).toISOString();
+  return {
+    ...card,
+    progress,
     showAfter,
   };
 };

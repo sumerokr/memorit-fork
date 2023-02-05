@@ -6,7 +6,7 @@ import {
   useUpdateCardSet,
   useGetCardSetById,
 } from "@/composables/use-card-sets";
-import { useGetCards, useCreateCard } from "@/composables/use-cards";
+import { useGetCardsByCardSetId, useCreateCard } from "@/composables/use-cards";
 import { cardSets } from "@/services/card-set-storage";
 import { cardsByCardSetId } from "@/services/cards-storage";
 
@@ -96,7 +96,7 @@ const {
   isReady: isGetCardsReady,
   isLoading: isGetCardsLoading,
   execute: getCards,
-} = useGetCards();
+} = useGetCardsByCardSetId();
 getCards(cardSetId);
 
 const onCardSave = async () => {

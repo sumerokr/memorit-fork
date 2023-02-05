@@ -19,6 +19,11 @@ const router = createRouter({
       name: "set",
       component: () => import("../views/SetView.vue"),
     },
+    {
+      path: "/sets/:id/play",
+      name: "play",
+      component: () => import("../views/PlayView.vue"),
+    },
   ],
 });
 

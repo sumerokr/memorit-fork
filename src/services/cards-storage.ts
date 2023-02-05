@@ -16,4 +16,17 @@ export const cardsStorage: CardsStorage = {
   setByCardSetId: ({ cardSetId, cards }) => {
     cardsByCardSetId.value[cardSetId] = cards;
   },
+  update: (card) => {
+    const existingCard = Object.values(cardsByCardSetId.value)
+      .flat()
+      .find((_card) => _card.id === card.id);
+    if (existingCard) {
+      Object.assign(existingCard, card);
+    }
+  },
+  getById: (id: Card["id"]) => {
+    return Object.values(cardsByCardSetId.value)
+      .flat()
+      .find((card) => card.id === id);
+  },
 };
