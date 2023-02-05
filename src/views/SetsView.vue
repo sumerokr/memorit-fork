@@ -7,6 +7,7 @@ import {
   // useUpdateCardSet,
 } from "@/composables/use-card-sets";
 import { cardSets } from "@/services/card-set-storage";
+import type { CardSet } from "@/domain/card-set";
 
 const reversedCardSets = computed(() => cardSets.value.slice().reverse());
 
@@ -30,6 +31,10 @@ const onSubmit = () => {
   createCardSet(title.value);
   title.value = "";
 };
+
+const onDelete = (id: CardSet["id"]) => {
+  deleteCardSet(id);
+};
 </script>
 
 <template>
@@ -40,16 +45,16 @@ const onSubmit = () => {
     </form>
 
     <template v-if="isGetCardSetsReady">
-      <ul v-if="cardSets.length">
+      <ul v-if="cardSets.length" class="card-set-list">
         <li v-for="cardSet of reversedCardSets" :key="cardSet.id">
-          <RouterLink :to="{ name: 'set', params: { id: cardSet.id } }">
+          <RouterLink
+            :to="{ name: 'set', params: { id: cardSet.id } }"
+            class="card-set"
+          >
             <h2>{{ cardSet.title }}</h2>
             <p>
-              <!-- <RouterLink :to="{ name: 'play', params: { id: cardSet.id } }"
-              >+</RouterLink
-            > -->
               <button
-                @click="deleteCardSet(cardSet.id)"
+                @click="onDelete(cardSet.id)"
                 :disabled="deletingIds.includes(cardSet.id)"
               >
                 ×
@@ -65,4 +70,20 @@ const onSubmit = () => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.card-set-list {
+  display: grid;
+  gap: 1rem;
+  padding-left: 0;
+  list-style: none;
+}
+
+.card-set {
+  display: block;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 1rem;
+  padding: 1rem;
+  text-decoration: none;
+  color: inherit;
+}
+</style>

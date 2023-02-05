@@ -24,6 +24,12 @@ getCardSetById(cardSetId);
 const cardSet = computed(() => {
   return cardSets.value.find((cardSet) => cardSet.id === cardSetId);
 });
+const reversedCards = computed(() => {
+  if (cardSet.value) {
+    return cardsByCardSetId.value[cardSet.value.id].slice().reverse();
+  }
+  return [];
+});
 
 const title = ref("");
 if (cardSet.value) {
@@ -135,9 +141,12 @@ const onCardSave = async () => {
       </form>
       <hr />
       <template v-if="isGetCardsReady">
-        <ul v-if="cardsByCardSetId[cardSetId].length">
-          <li v-for="card in cardsByCardSetId[cardSetId]" :key="card.id">
-            <p>{{ card.front }}: {{ card.back }}</p>
+        <ul v-if="reversedCards.length" class="cards">
+          <li v-for="card in reversedCards" :key="card.id">
+            <p class="card">
+              <span>{{ card.front }}</span
+              ><span>{{ card.back }} </span>
+            </p>
           </li>
         </ul>
         <div v-else>Nothing</div>
@@ -152,4 +161,17 @@ const onCardSave = async () => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.cards {
+  padding-left: 0;
+  list-style: none;
+}
+
+.card {
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+</style>
