@@ -24,6 +24,11 @@ const router = createRouter({
       name: "play",
       component: () => import("../views/PlayView.vue"),
     },
+    {
+      path: "/seed",
+      name: "seed",
+      component: () => import("../views/SeedView.vue"),
+    },
   ],
 });
 

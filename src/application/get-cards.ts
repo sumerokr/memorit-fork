@@ -4,7 +4,7 @@ import { cardsAPI, cardsStorage, notificationService } from "@/services/index";
 export const getCardsByCardSetId: GetCardsByCardSetIdUC = async (id) => {
   try {
     const cards = await cardsAPI.getAllByCardSetId(id);
-    cardsStorage.setByCardSetId({ cardSetId: id, cards });
+    cardsStorage.set(cards);
     notificationService.notify("received");
   } catch (error) {
     const message = (() => {

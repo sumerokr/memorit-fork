@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import type { Card } from "@/domain/card";
+import { useRoute } from "vue-router";
 import { useChangeCardStatus } from "@/composables/use-cards";
 import { useGetCardsByCardSetId } from "@/composables/use-cards";
-import { cardsByCardSetId } from "@/services/cards-storage";
+import { cards } from "@/services/cards-storage";
 
 const route = useRoute();
 const cardSetId = route.params.id as string;
@@ -18,9 +17,10 @@ const {
 } = useGetCardsByCardSetId();
 getCards(cardSetId);
 
-const cards = computed(() => {
+const cardsByCardSetId = computed(() => {
   return (
-    cardsByCardSetId.value[cardSetId]
+    cards.value
+      .filter((card) => card.cardSetId === cardSetId)
       // .filter((card) => card.showAfter < new Date().toISOString())
       .filter((card) => card.showAfter < "2024-02-05T21:02:39.643Z")
       .sort((cardA, cardB) => {
@@ -34,7 +34,7 @@ const cards = computed(() => {
 });
 const step = ref(1);
 const card = computed(() => {
-  return cards.value[step.value - 1];
+  return cardsByCardSetId.value[step.value - 1];
 });
 
 const { isLoading: isChangeCardStatusLoading, execute: changeCardStatus } =
@@ -70,45 +70,56 @@ const onGood = async () => {
 <template>
   <div class="container">
     <template v-if="isGetCardsReady">
-      <div v-if="cards.length">
-        <p>{{ step }} / {{ cards.length }}</p>
+      <div v-if="cardsByCardSetId.length">
+        <p>{{ step }} / {{ cardsByCardSetId.length }}</p>
         <hr />
-        <div class="scene">
-          <div
-            class="card"
-            :class="{ 'is-flipped': isFlipped }"
-            @click="onFlip"
-          >
-            <div class="face front">{{ card.front }}</div>
-            <div class="face back">{{ card.back }}</div>
+        <template v-if="step <= cardsByCardSetId.length">
+          <div class="scene">
+            <div
+              class="card"
+              :class="{ 'is-flipped': isFlipped }"
+              @click="onFlip"
+            >
+              <div class="face front">{{ card.front }}</div>
+              <div class="face back">{{ card.back }}</div>
+            </div>
           </div>
+          <hr />
+          <p class="actions">
+            <button
+              :disabled="isChangeCardStatusLoading"
+              type="button"
+              @click="onBad"
+            >
+              Bad
+            </button>
+            <button
+              :disabled="isChangeCardStatusLoading"
+              type="button"
+              @click="onOk"
+            >
+              Ok
+            </button>
+            <button
+              :disabled="isChangeCardStatusLoading"
+              type="button"
+              @click="onGood"
+            >
+              Good
+            </button>
+          </p>
+        </template>
+        <div v-else>
+          <h2>Game over</h2>
+          <p>
+            Go back to
+            <RouterLink :to="{ name: 'set', params: { id: cardSetId } }"
+              >set</RouterLink
+            >
+          </p>
         </div>
-        <hr />
-        <p class="actions">
-          <button
-            :disabled="isChangeCardStatusLoading"
-            type="button"
-            @click="onBad"
-          >
-            Bad
-          </button>
-          <button
-            :disabled="isChangeCardStatusLoading"
-            type="button"
-            @click="onOk"
-          >
-            Ok
-          </button>
-          <button
-            :disabled="isChangeCardStatusLoading"
-            type="button"
-            @click="onGood"
-          >
-            Good
-          </button>
-        </p>
       </div>
-      <div v-else-if="cards.length === 0">Nothing</div>
+      <div v-else-if="cardsByCardSetId.length === 0">Nothing</div>
     </template>
     <div v-else-if="isGetCardsLoading">Loading...</div>
     <div v-else>Error...</div>

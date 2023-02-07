@@ -42,7 +42,7 @@ export const updateCardStatus = ({
   now: string;
 }): Card => {
   const dateNow = new Date(now);
-  const daysAfter = Math.pow(progress, 2);
+  const daysAfter = Math.pow(progress, 1);
   const laterTS = dateNow.setDate(dateNow.getDate() + daysAfter);
   const showAfter = new Date(laterTS).toISOString();
   return {

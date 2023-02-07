@@ -8,7 +8,7 @@ import {
 } from "@/composables/use-card-sets";
 import { useGetCardsByCardSetId, useCreateCard } from "@/composables/use-cards";
 import { cardSets } from "@/services/card-set-storage";
-import { cardsByCardSetId } from "@/services/cards-storage";
+import { cards } from "@/services/cards-storage";
 
 //#region cardSet
 const route = useRoute();
@@ -26,7 +26,10 @@ const cardSet = computed(() => {
 });
 const reversedCards = computed(() => {
   if (cardSet.value) {
-    return cardsByCardSetId.value[cardSet.value.id].slice().reverse();
+    const cardsByCardSetId = cards.value.filter(
+      (card) => card.cardSetId === cardSetId
+    );
+    return cardsByCardSetId.slice().reverse();
   }
   return [];
 });
@@ -100,6 +103,9 @@ const {
 getCards(cardSetId);
 
 const onCardSave = async () => {
+  if (!front.value.trim() || !back.value.trim()) {
+    return;
+  }
   await createCard({ front: front.value, back: back.value, cardSetId });
   front.value = "";
   back.value = "";
@@ -132,6 +138,10 @@ const onCardSave = async () => {
           reset
         </button>
         <button type="button" @click="onDelete">delete</button>
+        ||
+        <RouterLink :to="{ name: 'play', params: { id: cardSetId } }"
+          >Play</RouterLink
+        >
       </form>
       <hr />
       <form @submit.prevent="onCardSave">
@@ -143,10 +153,14 @@ const onCardSave = async () => {
       <template v-if="isGetCardsReady">
         <ul v-if="reversedCards.length" class="cards">
           <li v-for="card in reversedCards" :key="card.id">
-            <p class="card">
+            <div class="card">
               <span>{{ card.front }}</span
               ><span>{{ card.back }} </span>
-            </p>
+              <div
+                class="progress"
+                :style="{ width: `${card.progress * 10}%` }"
+              ></div>
+            </div>
           </li>
         </ul>
         <div v-else>Nothing</div>
@@ -163,6 +177,8 @@ const onCardSave = async () => {
 
 <style scoped>
 .cards {
+  display: grid;
+  gap: 1rem;
   padding-left: 0;
   list-style: none;
 }
@@ -172,6 +188,13 @@ const onCardSave = async () => {
   padding: 1rem;
   display: grid;
   grid-template-columns: 1fr 1fr;
+  grid-template-rows: 2;
   gap: 1rem;
+}
+
+.progress {
+  height: 0.25rem;
+  background-color: lightgreen;
+  grid-column: 1/3;
 }
 </style>

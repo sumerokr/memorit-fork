@@ -11,11 +11,11 @@ export const updateCardSet: UpdateCardSetUC = async (cardSet) => {
   if (!_cardSet) {
     return;
   }
-  const toggledTodo = _updateCardSet(cardSet);
+  const updatedCardSet = _updateCardSet(cardSet);
 
   try {
-    await cardSetAPI.update(toggledTodo);
-    cardSetStorage.update(toggledTodo);
+    await cardSetAPI.update(updatedCardSet);
+    cardSetStorage.update(updatedCardSet);
     notificationService.notify("updated");
   } catch (error) {
     const message = (() => {

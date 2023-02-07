@@ -13,6 +13,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@faker-js/faker": "^7.6.0",
     "@vueuse/core": "^9.12.0",
     "lodash": "^4.17.21",
     "nanoid": "^4.0.0",

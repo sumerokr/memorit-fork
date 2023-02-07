@@ -40,32 +40,14 @@ export type CardSetStorage = {
 
 //#region cards
 export type CardsAPI = {
-  saveByCardSetId: ({
-    cardSetId,
-    card,
-  }: {
-    cardSetId: CardSet["id"];
-    card: Card;
-  }) => Promise<void>;
+  save: (card: Card) => Promise<void>;
   getAllByCardSetId: (id: CardSet["id"]) => Promise<Card[]>;
   update: (card: Card) => Promise<void>;
 };
 
 export type CardsStorage = {
-  saveByCardSetId: ({
-    cardSetId,
-    card,
-  }: {
-    cardSetId: CardSet["id"];
-    card: Card;
-  }) => void;
-  setByCardSetId: ({
-    cardSetId,
-    cards,
-  }: {
-    cardSetId: CardSet["id"];
-    cards: Card[];
-  }) => void;
+  save: (card: Card) => void;
+  set: (cards: Card[]) => void;
   update: (card: Card) => void;
   getById: (id: Card["id"]) => Card | undefined;
 };
