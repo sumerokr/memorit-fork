@@ -61,7 +61,7 @@ export const useCreateCardSet = () => {
   return {
     isReady,
     isLoading,
-    execute: (title: CardSet["title"]) => execute(0, title),
+    execute: (...args: Parameters<typeof createCardSet>) => execute(0, ...args),
   };
 };
 

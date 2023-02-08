@@ -1,13 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import {
-  useCreateCardSet,
-  useDeleteCardSet,
-  useGetCardSets,
-  // useUpdateCardSet,
-} from "@/composables/use-card-sets";
+import { useCreateCardSet, useGetCardSets } from "@/composables/use-card-sets";
 import { cardSets } from "@/services/card-set-storage";
-import type { CardSet } from "@/domain/card-set";
 
 const reversedCardSets = computed(() => cardSets.value.slice().reverse());
 
@@ -21,48 +15,48 @@ getCardSets();
 const { isLoading: isCreateCardSetLoading, execute: createCardSet } =
   useCreateCardSet();
 
-const { execute: deleteCardSet, deletingIds } = useDeleteCardSet();
-
-// const { execute: updateCardSet, updatingIds } = useUpdateCardSet();
-
 const title = ref("");
 
-const onSubmit = () => {
-  createCardSet(title.value);
+const onSubmit = async () => {
+  if (!title.value.trim()) {
+    return;
+  }
+  await createCardSet(title.value);
   title.value = "";
-};
-
-const onDelete = (id: CardSet["id"]) => {
-  deleteCardSet(id);
 };
 </script>
 
 <template>
   <div>
-    <form @submit.prevent="onSubmit">
-      <input v-model="title" type="text" />
-      <button type="submit" :disabled="isCreateCardSetLoading">add</button>
+    <form class="form" @submit.prevent="onSubmit">
+      <p style="margin-bottom: 0.5rem">
+        <label for="title">Card set name</label>
+      </p>
+      <p style="margin-top: 0.5rem">
+        <input v-model="title" id="title" class="input" type="text" />
+        <button class="button" type="submit" :disabled="isCreateCardSetLoading">
+          Add
+        </button>
+      </p>
     </form>
 
     <template v-if="isGetCardSetsReady">
-      <ul v-if="cardSets.length" class="card-set-list">
+      <TransitionGroup
+        v-if="cardSets.length"
+        class="card-set-list"
+        name="list"
+        tag="ul"
+      >
         <li v-for="cardSet of reversedCardSets" :key="cardSet.id">
           <RouterLink
             :to="{ name: 'set', params: { id: cardSet.id } }"
             class="card-set"
           >
             <h2>{{ cardSet.title }}</h2>
-            <p>
-              <button
-                @click="onDelete(cardSet.id)"
-                :disabled="deletingIds.includes(cardSet.id)"
-              >
-                ×
-              </button>
-            </p>
           </RouterLink>
         </li>
-      </ul>
+      </TransitionGroup>
+
       <p v-else>Nothing</p>
     </template>
     <p v-else-if="isGetCardSetsLoading">Loading...</p>
@@ -71,19 +65,45 @@ const onDelete = (id: CardSet["id"]) => {
 </template>
 
 <style scoped>
+.form {
+  border-bottom: 1px solid gray;
+  padding: 1rem;
+  background-color: #fff;
+}
+
+.input,
+.button {
+  margin: 0;
+  border: 1px solid gray;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
 .card-set-list {
   display: grid;
   gap: 1rem;
   padding-left: 0;
   list-style: none;
+  overflow: hidden;
 }
 
 .card-set {
   display: block;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   padding: 1rem;
   text-decoration: none;
   color: inherit;
+}
+
+.list-move,
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.25s ease-out;
+}
+.list-enter-from,
+.list-leave-to {
+  transform: translateY(-100%);
 }
 </style>

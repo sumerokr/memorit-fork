@@ -30,4 +30,10 @@ export const cardsAPI: CardsAPI = {
     cards.splice(index, 1, structuredClone(card));
     localStorage.setItem(localStorageKey, JSON.stringify(cards));
   },
+  delete: async (id) => {
+    await delay();
+    const index = cards.findIndex((_card) => _card.id === id);
+    cards.splice(index, 1);
+    localStorage.setItem(localStorageKey, JSON.stringify(cards));
+  },
 };

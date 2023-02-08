@@ -43,6 +43,7 @@ export type CardsAPI = {
   save: (card: Card) => Promise<void>;
   getAllByCardSetId: (id: CardSet["id"]) => Promise<Card[]>;
   update: (card: Card) => Promise<void>;
+  delete: (id: Card["id"]) => Promise<void>;
 };
 
 export type CardsStorage = {
@@ -50,6 +51,7 @@ export type CardsStorage = {
   set: (cards: Card[]) => void;
   update: (card: Card) => void;
   getById: (id: Card["id"]) => Card | undefined;
+  delete: (id: Card["id"]) => void;
 };
 //#endregion
 

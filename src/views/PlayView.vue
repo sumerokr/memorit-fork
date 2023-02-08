@@ -69,23 +69,26 @@ const onGood = async () => {
 
 <template>
   <div class="container">
+    <RouterLink :to="{ name: 'set', params: { id: cardSetId } }"
+      >← Back to card set</RouterLink
+    >
+    <hr />
     <template v-if="isGetCardsReady">
-      <div v-if="cardsByCardSetId.length">
+      <template v-if="cardsByCardSetId.length">
         <p>{{ step }} / {{ cardsByCardSetId.length }}</p>
         <hr />
         <template v-if="step <= cardsByCardSetId.length">
           <div class="scene">
-            <div
-              class="card"
-              :class="{ 'is-flipped': isFlipped }"
-              @click="onFlip"
-            >
+            <div class="card" :class="{ 'is-flipped': isFlipped }">
               <div class="face front">{{ card.front }}</div>
               <div class="face back">{{ card.back }}</div>
             </div>
           </div>
           <hr />
-          <p class="actions">
+          <p v-if="!isFlipped" class="reveal">
+            <button type="button" @click="onFlip">Reveal answer</button>
+          </p>
+          <p v-else class="actions">
             <button
               :disabled="isChangeCardStatusLoading"
               type="button"
@@ -118,7 +121,7 @@ const onGood = async () => {
             >
           </p>
         </div>
-      </div>
+      </template>
       <div v-else-if="cardsByCardSetId.length === 0">Nothing</div>
     </template>
     <div v-else-if="isGetCardsLoading">Loading...</div>
@@ -128,9 +131,7 @@ const onGood = async () => {
 
 <style scoped>
 .container {
-  display: flex;
-  height: 85vh;
-  flex-direction: column;
+  padding: 1rem;
 }
 
 .scene {
@@ -173,8 +174,12 @@ const onGood = async () => {
   transform: rotateY(-180deg);
 }
 
+.reveal {
+  display: flex;
+  justify-content: center;
+}
+
 .actions {
-  margin-top: auto;
   display: flex;
   justify-content: space-between;
   gap: 1rem;

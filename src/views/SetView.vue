@@ -116,42 +116,87 @@ const onCardSave = async () => {
 
 <template>
   <div>
+    <div style="padding: 1rem">
+      <RouterLink :to="{ name: 'sets' }">← Back to card sets</RouterLink>
+    </div>
+    <hr />
     <div v-if="isGetCardSetByIdReady && cardSet">
-      <form @submit.prevent="onSubmit">
-        <input
-          v-model="title"
-          type="text"
-          ref="titleElement"
-          :readonly="!isTitleEditing"
-        />
-        <button v-if="!isTitleEditing" type="button" @click="onStartEdit">
-          edit
-        </button>
-        <button
-          v-if="isTitleEditing"
-          type="submit"
-          :disabled="isUpdateCardSetLoading"
-        >
-          save
-        </button>
-        <button v-if="isTitleEditing" type="button" @click="onReset">
-          reset
-        </button>
-        <button type="button" @click="onDelete">delete</button>
-        ||
-        <RouterLink :to="{ name: 'play', params: { id: cardSetId } }"
-          >Play</RouterLink
-        >
+      <div class="form-container">
+        <form class="form" @submit.prevent="onSubmit">
+          <input
+            v-model="title"
+            class="input"
+            type="text"
+            ref="titleElement"
+            :readonly="!isTitleEditing"
+          />
+          <button
+            v-if="!isTitleEditing"
+            class="button"
+            type="button"
+            @click="onStartEdit"
+          >
+            Edit
+          </button>
+          <button
+            v-if="isTitleEditing"
+            class="button"
+            type="submit"
+            :disabled="isUpdateCardSetLoading"
+          >
+            Save
+          </button>
+          <button
+            v-if="isTitleEditing"
+            class="button"
+            type="button"
+            @click="onReset"
+          >
+            Cancel
+          </button>
+        </form>
+        <p style="margin-bottom: 0">
+          <RouterLink
+            :to="{ name: 'play', params: { id: cardSetId } }"
+            class="button"
+            >Play</RouterLink
+          >
+          ||
+          <button class="button" type="button" @click="onDelete">Delete</button>
+        </p>
+      </div>
+      <hr />
+
+      <form class="cards-form" @submit.prevent="onCardSave">
+        <div>
+          <label for="front">Front</label>
+          <input
+            v-model="front"
+            id="front"
+            class="input"
+            type="text"
+            ref="frontElement"
+          />
+        </div>
+        <div>
+          <label for="back">Back</label
+          ><input v-model="back" id="back" class="input" type="text" />
+        </div>
+        <div>
+          <button type="submit" class="button" :disabled="isCreateCardLoading">
+            add
+          </button>
+        </div>
       </form>
       <hr />
-      <form @submit.prevent="onCardSave">
-        <input v-model="front" type="text" ref="frontElement" />
-        <input v-model="back" type="text" />
-        <button type="submit" :disabled="isCreateCardLoading">add</button>
-      </form>
-      <hr />
+
       <template v-if="isGetCardsReady">
-        <ul v-if="reversedCards.length" class="cards">
+        <TransitionGroup
+          v-if="reversedCards.length"
+          class="cards"
+          name="list"
+          tag="ul"
+        >
           <li v-for="card in reversedCards" :key="card.id">
             <div class="card">
               <span>{{ card.front }}</span
@@ -162,7 +207,7 @@ const onCardSave = async () => {
               ></div>
             </div>
           </li>
-        </ul>
+        </TransitionGroup>
         <div v-else>Nothing</div>
       </template>
       <p v-else-if="isGetCardsLoading">Loading...</p>
@@ -176,15 +221,20 @@ const onCardSave = async () => {
 </template>
 
 <style scoped>
+.form-container {
+  padding: 1rem;
+}
+
 .cards {
   display: grid;
   gap: 1rem;
   padding-left: 0;
   list-style: none;
+  overflow: hidden;
 }
 
 .card {
-  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   padding: 1rem;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -196,5 +246,45 @@ const onCardSave = async () => {
   height: 0.25rem;
   background-color: lightgreen;
   grid-column: 1/3;
+}
+
+.input,
+.button {
+  margin: 0;
+  border: 1px solid gray;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  text-decoration: none;
+  color: inherit;
+  display: inline-block;
+}
+
+.input[readonly] {
+  border-color: transparent;
+  font-weight: 700;
+}
+
+.cards-form {
+  display: grid;
+  align-items: end;
+  grid-template-columns: 2fr 2fr 1fr;
+  padding: 1rem;
+}
+
+.cards-form .input,
+.cards-form .button {
+  width: 100%;
+}
+
+.list-move,
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.25s ease-out;
+}
+.list-enter-from,
+.list-leave-to {
+  transform: translateY(-100%);
 }
 </style>
