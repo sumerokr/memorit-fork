@@ -29,4 +29,7 @@ export const cardsStorage: CardsStorage = {
   getById: (id: Card["id"]) => {
     return cards.value.find((_card) => _card.id === id);
   },
+  delete: (id) => {
+    cards.value = cards.value.filter((_card) => _card.id !== id);
+  },
 };

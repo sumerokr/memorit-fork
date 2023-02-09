@@ -6,7 +6,7 @@ const localStorageKey = "memorit/cards";
 const data = localStorage.getItem(localStorageKey);
 const cards = JSON.parse(data ?? "[]") as Card[];
 
-const delay = (ms: number = Math.max(Math.random() * 600, 100)) =>
+export const delay = (ms: number = Math.max(Math.random() * 600, 100)) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
 // TODO: handle JSON errors
