@@ -1,6 +1,6 @@
-export type Repository<T> = {
+export type Repository<T extends { id: string }> = {
   add: (t: T) => Promise<void>;
-  get: (id: string) => Promise<T | undefined>;
+  get: (id: T["id"]) => Promise<T | undefined>;
   delete: (id: string) => Promise<void>;
   getAll: () => Promise<T[]>;
 };
