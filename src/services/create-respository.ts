@@ -1,8 +1,9 @@
 export type Repository<T extends { id: string }> = {
-  add: (t: T) => Promise<void>;
+  add: (item: T) => Promise<void>;
   get: (id: T["id"]) => Promise<T | undefined>;
   delete: (id: string) => Promise<void>;
   getAll: () => Promise<T[]>;
+  set: (items: T[]) => Promise<void>;
 };
 
 export const createRepository = <T extends { id: string }>(
@@ -22,6 +23,12 @@ export const createRepository = <T extends { id: string }>(
     },
     getAll: async () => {
       return Array.from(map.values());
+    },
+    set: async (items) => {
+      map.clear();
+      items.forEach((item) => {
+        map.set(item.id, item);
+      });
     },
   };
 };

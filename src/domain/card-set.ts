@@ -4,6 +4,12 @@ export type CardSet = {
   createdAt: string;
 };
 
+export type CardSetView = {
+  id: string;
+  title: string;
+  cardsCount: number;
+};
+
 export const createCardSet = ({ id, title, createdAt }: CardSet): CardSet => {
   return {
     id,

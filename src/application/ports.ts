@@ -1,5 +1,5 @@
 import type { Card } from "@/domain/card";
-import type { CardSet } from "../domain/card-set";
+import type { CardSet, CardSetView } from "../domain/card-set";
 
 //#region driving adapters
 export type CreateCardSetUC = (title: CardSet["title"]) => Promise<void>;
@@ -16,6 +16,8 @@ export type CreateCardUC = ({
 }: Pick<Card, "front" | "back" | "cardSetId">) => Promise<void>;
 export type GetCardsByCardSetIdUC = (id: CardSet["id"]) => Promise<void>;
 export type UpdateCardStatusUC = ({ id, progress }: Card) => Promise<void>;
+
+export type GetCardSetsViewUC = () => Promise<void>;
 //#endregion
 
 //#region driven adapters
@@ -32,6 +34,14 @@ export type CardSetAPI = {
 export type CardSetStorage = {
   save: (cardSet: CardSet) => void;
   set: (cardSets: CardSet[]) => void;
+  update: (cardSet: CardSet) => void;
+  delete: (id: CardSet["id"]) => void;
+  getById: (id: CardSet["id"]) => CardSet | undefined;
+};
+
+export type CardSetsViewStorage = {
+  save: (cardSet: CardSetView) => void;
+  set: (cardSets: CardSetView[]) => void;
   update: (cardSet: CardSet) => void;
   delete: (id: CardSet["id"]) => void;
   getById: (id: CardSet["id"]) => CardSet | undefined;
@@ -55,7 +65,9 @@ export type CardsStorage = {
 };
 //#endregion
 
+//#region notification
 export interface NotificationService {
   notify: (message: string) => void;
+  error: (error: unknown) => void;
 }
 //#endregion
