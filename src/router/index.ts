@@ -24,6 +24,11 @@ const router = createRouter({
           name: "cards",
           component: () => import("../views/CardsView.vue"),
         },
+        {
+          path: "/set2/:id/new",
+          name: "new-card",
+          component: () => import("../views/NewCardView.vue"),
+        },
       ],
     },
     {

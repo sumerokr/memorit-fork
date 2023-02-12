@@ -5,21 +5,21 @@ import { useRoute } from "vue-router";
 const route = useRoute();
 const resolvedLink = computed(() => {
   return (() => {
-    if (route.name === "set2") {
+    if (route.name === "cards") {
       return {
-        text: "View",
+        text: "Hide",
         link: {
-          name: "cards",
+          name: "set2",
           params: {
             id: route.params.id,
           },
         },
       };
-    } else if (route.name === "cards") {
+    } else {
       return {
-        text: "Hide",
+        text: "View",
         link: {
-          name: "set2",
+          name: "cards",
           params: {
             id: route.params.id,
           },
@@ -74,24 +74,30 @@ const resolvedLink = computed(() => {
       <div class="flex flex-wrap gap-4 p-4">
         <RouterLink
           :to="resolvedLink!.link"
-          class="flex-auto gap-2 px-4 py-2 bg-blue-200 rounded-2xl flex justify-center"
+          class="flex-auto gap-2 px-4 py-2 items-center bg-blue-200 rounded-2xl flex justify-center"
         >
           {{ resolvedLink!.text }}
-          <span class="material-symbols-outlined"> view_agenda </span>
+          <span class="material-symbols-outlined text-xl leading-none">
+            view_agenda
+          </span>
         </RouterLink>
-
+        <RouterLink
+          :to="{ name: 'new-card', params: { id: route.params.id } }"
+          class="flex-auto gap-2 px-4 py-2 items-center bg-blue-200 rounded-2xl flex justify-center"
+        >
+          Add
+          <span class="material-symbols-outlined text-xl leading-none">
+            add
+          </span>
+        </RouterLink>
         <button
-          class="flex-auto gap-2 px-4 py-2 bg-blue-200 rounded-2xl flex justify-center"
+          class="flex-auto gap-2 px-4 py-2 items-center text-white font-bold bg-blue-400 rounded-2xl flex justify-center"
           type="button"
         >
-          Add <span class="material-symbols-outlined">add</span>
-        </button>
-        <button
-          class="flex-auto gap-2 px-4 py-2 text-white font-bold bg-blue-400 rounded-2xl flex justify-center"
-          type="button"
-        >
-          <span>Study</span>
-          <span class="material-symbols-outlined">play_arrow</span>
+          Study
+          <span class="material-symbols-outlined text-xl leading-none"
+            >play_arrow</span
+          >
         </button>
       </div>
       <RouterView />
