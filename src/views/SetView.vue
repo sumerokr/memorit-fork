@@ -157,7 +157,7 @@ const onCardSave = async () => {
         </form>
         <p style="margin-bottom: 0">
           <RouterLink
-            :to="{ name: 'play', params: { id: cardSetId } }"
+            :to="{ name: 'play', params: { cardSetId: cardSetId } }"
             class="button"
             >Play</RouterLink
           >

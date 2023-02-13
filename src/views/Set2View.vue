@@ -1,32 +1,40 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { ref } from "vue";
 import { useRoute } from "vue-router";
+import { cardSetsRepository } from "@/services/card-sets-db-local-storage";
+import { cardsRepository } from "@/services/cards-db-local-storage";
+import type { CardSet } from "@/domain/card-set";
+
+type Props = {
+  cardSetId: string;
+};
+
+const props = defineProps<Props>();
 
 const route = useRoute();
-const resolvedLink = computed(() => {
-  return (() => {
-    if (route.name === "cards") {
-      return {
-        text: "Hide",
-        link: {
-          name: "set2",
-          params: {
-            id: route.params.id,
-          },
-        },
-      };
-    } else {
-      return {
-        text: "View",
-        link: {
-          name: "cards",
-          params: {
-            id: route.params.id,
-          },
-        },
-      };
-    }
-  })();
+
+const cardSet = ref<CardSet | null>(null);
+const extra = ref<Record<string, any>>({});
+cardSetsRepository.get(props.cardSetId).then((_cardSet) => {
+  cardSet.value = _cardSet || null;
+});
+cardsRepository.getAll().then((cards) => {
+  const cardsByCardSetId = cards.filter(
+    (card) => card.cardSetId === props.cardSetId
+  );
+  extra.value.cardsCount = cardsByCardSetId.length;
+  extra.value.studied = cardsByCardSetId.filter(
+    (card) => card.progress !== 1
+  ).length;
+  const max = cardsByCardSetId.length * 10;
+  extra.value.progress =
+    (cardsByCardSetId
+      .map((card) => card.progress)
+      .reduce<number>((acc, progress) => {
+        return acc + progress;
+      }, 0) /
+      max) *
+    100;
 });
 </script>
 
@@ -40,15 +48,15 @@ const resolvedLink = computed(() => {
         >
       </p>
 
-      <div>
-        <h1 class="text-4xl mb-12">English adjectives</h1>
+      <div v-if="cardSet">
+        <h1 class="text-4xl mb-12">{{ cardSet.title }}</h1>
         <div class="flex gap-x-4">
           <dl class="basis-1/3">
             <dt class="text-xs opacity-50">Cards studied</dt>
-            <dd class="mb-2">12/20</dd>
+            <dd class="mb-2">{{ extra.studied }}/{{ extra.cardsCount }}</dd>
 
             <dt class="text-xs opacity-50">Progress</dt>
-            <dd>23%</dd>
+            <dd>{{ Math.round(extra.progress) }}%</dd>
           </dl>
           <div class="basis-2/3 flex flex-col">
             <p class="mb-1.5 text-xs opacity-50">Progress</p>
@@ -70,19 +78,22 @@ const resolvedLink = computed(() => {
       </div>
     </div>
 
-    <div class="flex-grow border-t rounded-2xl bg-white">
+    <div if="cardSet" class="flex-grow border-t rounded-2xl bg-white">
       <div class="flex flex-wrap gap-4 p-4">
         <RouterLink
-          :to="resolvedLink!.link"
+          :to="{ name: 'cards', params: { cardSetId: route.params.cardSetId } }"
           class="flex-auto gap-2 px-4 py-2 items-center bg-blue-200 rounded-2xl flex justify-center"
         >
-          {{ resolvedLink!.text }}
+          View
           <span class="material-symbols-outlined text-xl leading-none">
             view_agenda
           </span>
         </RouterLink>
         <RouterLink
-          :to="{ name: 'new-card', params: { id: route.params.id } }"
+          :to="{
+            name: 'new-card',
+            params: { cardSetId: route.params.cardSetId },
+          }"
           class="flex-auto gap-2 px-4 py-2 items-center bg-blue-200 rounded-2xl flex justify-center"
         >
           Add
@@ -103,13 +114,6 @@ const resolvedLink = computed(() => {
       <RouterView />
     </div>
   </div>
-
-  <!-- <ul>
-    <li v-for="n in 10" :key="n" class="border-b p-4 flex gap-4">
-      <span class="flex-1">Front word</span>
-      <span class="flex-1">Back word</span>
-    </li>
-  </ul> -->
 </template>
 
 <style scoped></style>

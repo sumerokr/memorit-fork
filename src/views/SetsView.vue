@@ -49,7 +49,7 @@ const onSubmit = async () => {
       >
         <li v-for="cardSet of reversedCardSets" :key="cardSet.id">
           <RouterLink
-            :to="{ name: 'set', params: { id: cardSet.id } }"
+            :to="{ name: 'set', params: { cardSetId: cardSet.id } }"
             class="card-set"
           >
             <h2>{{ cardSet.title }}</h2>

@@ -12,34 +12,31 @@ const router = createRouter({
     {
       path: "/sets",
       name: "sets",
-      component: () => import("../views/SetsView.vue"),
+      component: () => import("../views/Sets2View.vue"),
     },
     {
-      path: "/set2/:id",
-      name: "set2",
-      component: () => import("../views/Set2View.vue"),
-      children: [
-        {
-          path: "/set2/:id/cards",
-          name: "cards",
-          component: () => import("../views/CardsView.vue"),
-        },
-        {
-          path: "/set2/:id/new",
-          name: "new-card",
-          component: () => import("../views/NewCardView.vue"),
-        },
-      ],
-    },
-    {
-      path: "/sets/:id",
+      path: "/sets/:cardSetId",
       name: "set",
-      component: () => import("../views/SetView.vue"),
+      component: () => import("../views/Set2View.vue"),
+      props: true,
     },
     {
-      path: "/sets/:id/play",
+      path: "/sets/:cardSetId/cards",
+      name: "cards",
+      component: () => import("../views/CardsView.vue"),
+      props: true,
+    },
+    {
+      path: "/sets/:cardSetId/new",
+      name: "new-card",
+      component: () => import("../views/NewCardView.vue"),
+      props: true,
+    },
+    {
+      path: "/sets/:cardSetId/play",
       name: "play",
       component: () => import("../views/PlayView.vue"),
+      props: true,
     },
     {
       path: "/seed",
