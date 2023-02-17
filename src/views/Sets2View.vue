@@ -10,12 +10,12 @@ cardSetsRepository.getAll().then((_cardSets) => {
 </script>
 
 <template>
-  <div class="p-4">
+  <div class="flex-grow bg-neutral-100 p-4">
     <ul v-if="cardSets.length" class="grid gap-2">
       <li v-for="cardSet of cardSets" :key="cardSet.id">
         <RouterLink
           :to="{ name: 'set', params: { cardSetId: cardSet.id } }"
-          class="block border rounded-2xl p-4"
+          class="block border rounded-2xl p-4 bg-white"
         >
           <h2>{{ cardSet.title }}</h2>
         </RouterLink>

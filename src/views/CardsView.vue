@@ -24,15 +24,15 @@ cardsRepository.getAll().then((_cards) => {
 
 const views = ["a", "b"];
 const currentView = ref(views[0]);
-const switchView = () => {
-  const views = ["a", "b"];
-  const index = views.indexOf(currentView.value);
-  currentView.value = index === views.length - 1 ? views[0] : views[index + 1];
-};
+// const switchView = () => {
+//   const views = ["a", "b"];
+//   const index = views.indexOf(currentView.value);
+//   currentView.value = index === views.length - 1 ? views[0] : views[index + 1];
+// };
 </script>
 
 <template>
-  <div>
+  <div class="bg-neutral-100">
     <div class="p-4">
       <p class="mb-4">
         <RouterLink
@@ -43,27 +43,18 @@ const switchView = () => {
         >
       </p>
       <h1 v-if="cardSet" class="text-2xl mb-4">{{ cardSet.title }}</h1>
-      <p class="text-sm opacity-50" @click="switchView">
-        Cards: {{ cards.length }}
-      </p>
+      <p class="text-sm opacity-50">Cards: {{ cards.length }}</p>
     </div>
 
-    <ul v-if="cards.length && currentView === 'a'" class="py-4">
-      <li v-for="card in cards" :key="card.id" class="border-t p-4 flex gap-4">
-        <span class="flex-1">{{ card.front }}</span>
-        <span class="flex-1">{{ card.back }}</span>
-      </li>
-    </ul>
-
-    <ul v-else-if="cards.length && currentView === 'b'" class="grid p-4 gap-2">
+    <ul v-if="cards.length && currentView === 'a'" class="grid p-4 gap-2">
       <li
         v-for="card in cards"
         :key="card.id"
-        class="grid border rounded-xl p-4"
+        class="grid border rounded-xl p-4 bg-white"
       >
         <span class="flex-1">{{ card.front }}</span>
         <hr class="my-2" />
-        <span class="flex-1">{{ card.back }}</span>
+        <span class="flex-1 opacity-50">{{ card.back }}</span>
       </li>
     </ul>
 

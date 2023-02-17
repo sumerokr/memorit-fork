@@ -2,8 +2,8 @@ import { ref } from "vue";
 import { useAsyncState } from "@vueuse/core";
 import without from "lodash/without";
 import type { CardSet } from "@/domain/card-set";
-import { createCardSet } from "@/application/create-card-set";
-import { getCardSets } from "@/application/get-card-sets";
+import { createCardSetUC } from "@/application/create-card-set";
+import { getCardSetsUC } from "@/application/get-card-sets";
 import { getCardSetById } from "@/application/get-card-set";
 import { updateCardSet } from "@/application/update-card-set";
 import { deleteCardSet } from "@/application/delete-card-set";
@@ -26,7 +26,7 @@ export const useDeleteCardSet = () => {
 };
 
 export const useGetCardSets = () => {
-  const { isReady, isLoading, execute } = useAsyncState(getCardSets, null, {
+  const { isReady, isLoading, execute } = useAsyncState(getCardSetsUC, null, {
     immediate: false,
   });
   return {
@@ -55,13 +55,14 @@ export const useGetCardSetById = () => {
 };
 
 export const useCreateCardSet = () => {
-  const { isReady, isLoading, execute } = useAsyncState(createCardSet, null, {
+  const { isReady, isLoading, execute } = useAsyncState(createCardSetUC, null, {
     immediate: false,
   });
   return {
     isReady,
     isLoading,
-    execute: (...args: Parameters<typeof createCardSet>) => execute(0, ...args),
+    execute: (...args: Parameters<typeof createCardSetUC>) =>
+      execute(0, ...args),
   };
 };
 

@@ -5,7 +5,7 @@ import {
   notificationService,
 } from "@/services/index";
 
-export const getCardSets: GetCardSetsUC = async () => {
+export const getCardSetsUC: GetCardSetsUC = async () => {
   try {
     const cardSets = await cardSetAPI.getAll();
     cardSetStorage.set(cardSets);

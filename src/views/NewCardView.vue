@@ -26,7 +26,7 @@ const onSubmit = () => {
 </script>
 
 <template>
-  <div>
+  <div class="flex-grow bg-neutral-100">
     <div class="p-4">
       <p class="mb-4">
         <RouterLink
@@ -41,7 +41,7 @@ const onSubmit = () => {
     </div>
 
     <div v-if="cardSet" class="p-4">
-      <form class="border rounded-2xl p-4" @submit.prevent="onSubmit">
+      <form class="border rounded-2xl p-4 bg-white" @submit.prevent="onSubmit">
         <p class="mb-4">
           <label class="text-sm opacity-50" for="front">Card front</label><br />
           <input
@@ -75,5 +75,3 @@ const onSubmit = () => {
     </div>
   </div>
 </template>
-
-<style scoped></style>

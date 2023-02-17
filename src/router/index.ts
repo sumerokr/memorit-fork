@@ -12,7 +12,7 @@ const router = createRouter({
     {
       path: "/sets",
       name: "sets",
-      component: () => import("../views/Sets2View.vue"),
+      component: () => import("../views/Sets3View.vue"),
     },
     {
       path: "/sets/:cardSetId",

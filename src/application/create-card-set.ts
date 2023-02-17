@@ -1,4 +1,4 @@
-import { createCardSet as _createCardSet } from "@/domain/card-set";
+import { createCardSet } from "@/domain/card-set";
 import {
   cardSetAPI,
   cardSetStorage,
@@ -7,9 +7,9 @@ import {
 import type { CreateCardSetUC } from "./ports";
 import { nanoid } from "nanoid";
 
-export const createCardSet: CreateCardSetUC = async (title) => {
+export const createCardSetUC: CreateCardSetUC = async (title) => {
   try {
-    const cardSet = _createCardSet({
+    const cardSet = createCardSet({
       id: nanoid(),
       title,
       createdAt: new Date().toISOString(),
