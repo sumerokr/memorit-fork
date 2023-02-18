@@ -49,6 +49,7 @@ const onSubmit = () => {
             id="front"
             class="leading-5 border-2 rounded-2xl p-2 w-full"
             type="text"
+            autocomplete="off"
           />
         </p>
         <p class="mb-4">
@@ -58,6 +59,7 @@ const onSubmit = () => {
             id="back"
             class="leading-5 border-2 rounded-2xl p-2 w-full"
             type="text"
+            autocomplete="off"
           />
         </p>
         <p class="text-right">

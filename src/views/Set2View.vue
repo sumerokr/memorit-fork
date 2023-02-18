@@ -15,6 +15,7 @@ const route = useRoute();
 
 const cardSet = ref<CardSet | null>(null);
 const extra = ref<Record<string, any>>({});
+
 cardSetsRepository.get(props.cardSetId).then((_cardSet) => {
   cardSet.value = _cardSet || null;
 });
@@ -58,20 +59,14 @@ cardsRepository.getAll().then((cards) => {
             <dt class="text-xs opacity-50">Progress</dt>
             <dd>{{ Math.round(extra.progress) }}%</dd>
           </dl>
-          <div class="basis-2/3 flex flex-col">
+          <div class="basis-2/3">
             <p class="mb-1.5 text-xs opacity-50">Progress</p>
-            <div class="flex items-end gap-x-1 flex-1">
-              <div class="flex-1 bg-red-400 h-full"></div>
-              <div class="flex-1 bg-orange-400 h-5/6"></div>
-              <div class="flex-1 bg-orange-400 h-4/6"></div>
-              <div class="flex-1 bg-amber-400 h-1/6"></div>
-              <div class="flex-1 bg-amber-400 h-2/6"></div>
-              <div class="flex-1 bg-yellow-400 h-4/6"></div>
-              <div class="flex-1 bg-yellow-400 h-3/6"></div>
-              <div class="flex-1 bg-lime-400 h-1/6"></div>
-              <div class="flex-1 bg-lime-400 h-2/6"></div>
-              <div class="flex-1 bg-green-400 h-1/6"></div>
-              <div class="flex-1 bg-green-400 h-1/6"></div>
+            <div class="flex h-2">
+              <div class="flex-1 bg-neutral-400"></div>
+              <div class="flex-1 bg-orange-400"></div>
+              <div class="flex-1 bg-yellow-400"></div>
+              <div class="flex-1 bg-lime-400"></div>
+              <div class="flex-1 bg-green-400"></div>
             </div>
           </div>
         </div>

@@ -1,19 +1,16 @@
-import { ref, computed } from "vue";
+import { ref, computed, readonly } from "vue";
 import type { CardsStorage } from "@/application/ports";
 import type { Card } from "@/domain/card";
-import type { CardSet } from "@/domain/card-set";
+import groupBy from "lodash/groupBy";
 
 // TODO: make Card[] readonly
-export const cards = ref<Card[]>([]);
+const cards = ref<Card[]>([]);
 export const cardsByCardSetId = computed(() => {
-  return cards.value.reduce<Record<CardSet["id"], Card[]>>((acc, card) => {
-    if (!Array.isArray(acc[card.cardSetId])) {
-      acc[card.cardSetId] = [];
-    }
-    acc[card.cardSetId].push(card);
-    return acc;
-  }, {});
+  return groupBy(cards.value, "cardSetId");
 });
+
+const readonlyCards = readonly(cards);
+export { readonlyCards as cards };
 
 export const cardsStorage: CardsStorage = {
   save: (card) => {

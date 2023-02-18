@@ -1,4 +1,4 @@
-export { cardSetStorage } from "./card-set-storage";
+export { cardSetStorage } from "./card-sets-storage";
 export { cardSetAPI } from "./card-set-api-local-storage";
 
 export { cardsStorage } from "./cards-storage";

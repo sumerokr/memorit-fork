@@ -1,6 +1,7 @@
 import type { CardSetAPI } from "@/application/ports";
 import type { CardSet } from "@/domain/card-set";
 import type { Card } from "@/domain/card";
+import countBy from "lodash/countBy";
 
 type CardSetPlain = Pick<CardSet, "id" | "title" | "createdAt">;
 
@@ -14,10 +15,10 @@ const cardsRaw = localStorage.getItem(localStorageCardsKey);
 const cards = JSON.parse(cardsRaw ?? "[]") as Card[];
 
 const CardSetPlainToCardSet = (cardSetPlain: CardSetPlain): CardSet => {
+  const cardsCountByCardSetId = countBy(cards, "cardSetId");
   return {
     ...cardSetPlain,
-    cardsCount: cards.filter((card) => card.cardSetId === cardSetPlain.id)
-      .length,
+    cardsCount: cardsCountByCardSetId[cardSetPlain.id] ?? 0,
   };
 };
 const CardSetToCardSetPlain = (cardSet: CardSet): CardSetPlain => {
@@ -48,11 +49,16 @@ export const cardSetAPI: CardSetAPI = {
 
   getById: async (id) => {
     await delay();
-    // const cardSet = cardSets.find((_cardSet) => _cardSet.id === id);
-    // if (cardSet) {
-    //   return structuredClone(cardSet);
-    // }
-    // throw Error("cardSet not found");
+    await delay();
+    await delay();
+    const cardSetPlain = cardSetsPlain.find(
+      (_cardSetPlain) => _cardSetPlain.id === id
+    );
+    if (cardSetPlain) {
+      const cardSet = CardSetPlainToCardSet(cardSetPlain);
+      return structuredClone(cardSet);
+    }
+    throw Error("cardSet not found");
   },
 
   delete: async (id) => {

@@ -4,7 +4,7 @@ import without from "lodash/without";
 import type { CardSet } from "@/domain/card-set";
 import { createCardSetUC } from "@/application/create-card-set";
 import { getCardSetsUC } from "@/application/get-card-sets";
-import { getCardSetById } from "@/application/get-card-set";
+import { getCardSetByIdUC } from "@/application/get-card-set";
 import { updateCardSet } from "@/application/update-card-set";
 import { deleteCardSet } from "@/application/delete-card-set";
 
@@ -37,9 +37,13 @@ export const useGetCardSets = () => {
 };
 
 export const useGetCardSetById = () => {
-  const { isReady, isLoading, execute } = useAsyncState(getCardSetById, null, {
-    immediate: false,
-  });
+  const { isReady, isLoading, execute } = useAsyncState(
+    getCardSetByIdUC,
+    null,
+    {
+      immediate: false,
+    }
+  );
 
   const gettingIds = ref<CardSet["id"][]>([]);
   return {

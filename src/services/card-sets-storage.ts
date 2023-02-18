@@ -1,12 +1,16 @@
-import { readonly, ref } from "vue";
+import { computed, readonly, ref } from "vue";
 import type { CardSetStorage } from "@/application/ports";
 import type { CardSet } from "@/domain/card-set";
+import keyBy from "lodash/keyBy";
 
 // TODO: move the store itself to a separate file
 const cardSets = ref<CardSet[]>([]);
-const roCardSets = readonly(cardSets);
+const readonlyCardSets = readonly(cardSets);
+export const cardSetsById = computed(() => {
+  return keyBy(cardSets.value, "id");
+});
 
-export { roCardSets as cardSets };
+export { readonlyCardSets as cardSets };
 
 export const cardSetStorage: CardSetStorage = {
   save: (cardSet) => {

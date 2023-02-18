@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { cardSets } from "@/services/card-set-storage";
+import { cardSets } from "@/services/card-sets-storage";
 import { useGetCardSets } from "@/composables/use-card-sets";
 
 const { execute, isLoading, isReady } = useGetCardSets();

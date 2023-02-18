@@ -7,7 +7,7 @@ import {
   useGetCardSetById,
 } from "@/composables/use-card-sets";
 import { useGetCardsByCardSetId, useCreateCard } from "@/composables/use-cards";
-import { cardSets } from "@/services/card-set-storage";
+import { cardSets } from "@/services/card-sets-storage";
 import { cards } from "@/services/cards-storage";
 
 //#region cardSet

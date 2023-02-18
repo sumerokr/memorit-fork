@@ -6,7 +6,7 @@ import {
   notificationService,
 } from "@/services/index";
 
-export const getCardSetById: GetCardSetByIdUC = async (id: CardSet["id"]) => {
+export const getCardSetByIdUC: GetCardSetByIdUC = async (id: CardSet["id"]) => {
   try {
     const cardSet = await cardSetAPI.getById(id);
     cardSetStorage.save(cardSet);

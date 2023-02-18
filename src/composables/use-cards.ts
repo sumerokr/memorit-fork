@@ -26,8 +26,8 @@ export const useGetCardsByCardSetId = () => {
   return {
     isReady,
     isLoading,
-    execute: (cardSetId: Parameters<typeof getCardsByCardSetId>[0]) => {
-      return execute(0, cardSetId);
+    execute: (...args: Parameters<typeof getCardsByCardSetId>) => {
+      return execute(0, ...args);
     },
   };
 };

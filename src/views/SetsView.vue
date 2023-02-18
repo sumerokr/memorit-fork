@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useCreateCardSet, useGetCardSets } from "@/composables/use-card-sets";
-import { cardSets } from "@/services/card-set-storage";
+import { cardSets } from "@/services/card-sets-storage";
 
 const reversedCardSets = computed(() => cardSets.value.slice().reverse());
 
