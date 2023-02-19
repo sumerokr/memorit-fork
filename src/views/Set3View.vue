@@ -24,6 +24,18 @@ const viewHideLink = computed(() => {
       };
 });
 
+const addCloseLink = computed(() => {
+  return route.name === "new-card"
+    ? {
+        to: { name: "set", params: { cardSetId: props.cardSetId } },
+        text: "Cancel",
+      }
+    : {
+        to: { name: "new-card", params: { cardSetId: props.cardSetId } },
+        text: "Add",
+      };
+});
+
 const { isLoading, isReady, execute } = useGetCardSetById();
 execute(props.cardSetId);
 
@@ -53,6 +65,7 @@ const cardSet = computed(() => {
             <RouterLink
               :to="viewHideLink.to"
               class="flex-auto gap-2 px-4 py-2 items-center bg-blue-200 rounded-2xl flex justify-center"
+              replace
             >
               {{ viewHideLink.text }}
               <span class="material-symbols-outlined text-xl leading-none">
@@ -60,13 +73,11 @@ const cardSet = computed(() => {
               </span>
             </RouterLink>
             <RouterLink
-              :to="{
-                name: 'new-card',
-                params: { cardSetId: props.cardSetId },
-              }"
+              :to="addCloseLink.to"
               class="flex-auto gap-2 px-4 py-2 items-center bg-blue-200 rounded-2xl flex justify-center"
+              replace
             >
-              Add
+              {{ addCloseLink.text }}
               <span class="material-symbols-outlined text-xl leading-none">
                 add
               </span>

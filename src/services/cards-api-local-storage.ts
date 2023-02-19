@@ -22,7 +22,7 @@ export const cardsAPI: CardsAPI = {
     await delay();
     return structuredClone(
       cards.filter((card) => card.cardSetId === cardSetId)
-    );
+    ).reverse();
   },
   update: async (card: Card) => {
     await delay();

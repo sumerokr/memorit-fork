@@ -26,13 +26,13 @@ const router = createRouter({
           component: () => import("../views/CardsView.vue"),
           props: true,
         },
+        {
+          path: "/sets/:cardSetId/new",
+          name: "new-card",
+          component: () => import("../views/NewCardView.vue"),
+          props: true,
+        },
       ],
-    },
-    {
-      path: "/sets/:cardSetId/new",
-      name: "new-card",
-      component: () => import("../views/NewCardView.vue"),
-      props: true,
     },
     {
       path: "/sets/:cardSetId/play",

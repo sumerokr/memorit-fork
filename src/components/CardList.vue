@@ -2,7 +2,7 @@
 import type { Card } from "@/domain/card";
 
 type Props = {
-  cards: Readonly<Card[]>;
+  cards: Card[];
 };
 
 defineProps<Props>();

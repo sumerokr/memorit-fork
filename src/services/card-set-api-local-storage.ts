@@ -44,7 +44,7 @@ export const cardSetAPI: CardSetAPI = {
   getAll: async () => {
     await delay();
     const cardSets = cardSetsPlain.map(CardSetPlainToCardSet);
-    return structuredClone(cardSets);
+    return structuredClone(cardSets).reverse();
   },
 
   getById: async (id) => {

@@ -10,8 +10,7 @@ export const useCreateCard = () => {
   return {
     isReady,
     isLoading,
-    execute: ({ front, back, cardSetId }: Parameters<typeof createCardUC>[0]) =>
-      execute(0, { front, back, cardSetId }),
+    execute: (...args: Parameters<typeof createCardUC>) => execute(0, ...args),
   };
 };
 
