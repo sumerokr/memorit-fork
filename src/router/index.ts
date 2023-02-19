@@ -15,24 +15,27 @@ const router = createRouter({
       component: () => import("../views/Sets3View.vue"),
     },
     {
+      path: "/sets/new",
+      name: "new-card-set",
+      component: () => import("../views/NewSetView.vue"),
+    },
+    {
       path: "/sets/:cardSetId",
       name: "set",
       component: () => import("../views/Set3View.vue"),
       props: true,
-      children: [
-        {
-          path: "/sets/:cardSetId/cards",
-          name: "cards",
-          component: () => import("../views/CardsView.vue"),
-          props: true,
-        },
-        {
-          path: "/sets/:cardSetId/new",
-          name: "new-card",
-          component: () => import("../views/NewCardView.vue"),
-          props: true,
-        },
-      ],
+    },
+    {
+      path: "/sets/:cardSetId/cards",
+      name: "cards",
+      component: () => import("../views/CardsView.vue"),
+      props: true,
+    },
+    {
+      path: "/sets/:cardSetId/cards/new",
+      name: "new-card",
+      component: () => import("../views/NewCardView.vue"),
+      props: true,
     },
     {
       path: "/sets/:cardSetId/play",

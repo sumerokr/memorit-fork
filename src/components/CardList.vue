@@ -17,7 +17,7 @@ defineProps<Props>();
     >
       <span class="flex-1">{{ card.front }}</span>
       <hr class="my-2" />
-      <span class="flex-1 opacity-50">{{ card.back }}</span>
+      <span class="flex-1 opacity-60">{{ card.back }}</span>
     </li>
   </ul>
 </template>

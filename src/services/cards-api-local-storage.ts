@@ -1,13 +1,11 @@
 import type { CardsAPI } from "@/application/ports";
 import type { Card } from "@/domain/card";
+import { delay } from "@/utils";
 
 const localStorageKey = "memorit/cards";
 
 const data = localStorage.getItem(localStorageKey);
 const cards = JSON.parse(data ?? "[]") as Card[];
-
-export const delay = (ms: number = Math.max(Math.random() * 600, 100)) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
 
 // TODO: handle JSON errors
 // build index by cardSet id

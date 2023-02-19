@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { cardSets } from "@/services/card-sets-storage";
+import CardSetList from "@/components/CardSetList.vue";
 import { useGetCardSets } from "@/composables/use-card-sets";
 
 const { execute, isLoading, isReady } = useGetCardSets();
@@ -8,20 +9,18 @@ execute();
 
 <template>
   <div class="flex-grow bg-neutral-100 p-4">
-    <div v-if="isReady">
-      <ul v-if="cardSets.length" class="grid gap-2">
-        <li v-for="cardSet of cardSets" :key="cardSet.id">
-          <RouterLink
-            :to="{ name: 'set', params: { cardSetId: cardSet.id } }"
-            class="block border rounded-2xl p-4 bg-white"
-          >
-            <h2>{{ cardSet.title }}</h2>
-            <p class="text-xs opacity-50">Cards: {{ cardSet.cardsCount }}</p>
-          </RouterLink>
-        </li>
-      </ul>
-      <p v-else>Nothing...</p>
-    </div>
+    <h1 class="text-2xl mb-4">Card sets</h1>
+    <template v-if="isReady">
+      <CardSetList v-if="cardSets.length" :card-sets="cardSets" />
+      <p v-else>Nothing</p>
+    </template>
     <p v-else-if="isLoading">Loading...</p>
+    <RouterLink
+      class="fixed right-4 bottom-4 p-4 flex rounded-2xl bg-indigo-200 shadow-md"
+      :to="{ name: 'new-card-set' }"
+      ><span class="material-symbols-outlined text-2xl leading-none">
+        add
+      </span></RouterLink
+    >
   </div>
 </template>

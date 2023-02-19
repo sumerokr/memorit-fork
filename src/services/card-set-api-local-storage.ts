@@ -1,6 +1,7 @@
 import type { CardSetAPI } from "@/application/ports";
 import type { CardSet } from "@/domain/card-set";
 import type { Card } from "@/domain/card";
+import { delay } from "@/utils";
 import countBy from "lodash/countBy";
 
 type CardSetPlain = Pick<CardSet, "id" | "title" | "createdAt">;
@@ -26,9 +27,6 @@ const CardSetToCardSetPlain = (cardSet: CardSet): CardSetPlain => {
   return { id, title, createdAt };
 };
 
-const delay = (ms: number = Math.max(Math.random() * 600, 100)) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
-
 // TODO: handle JSON errors
 export const cardSetAPI: CardSetAPI = {
   save: async (cardSet) => {
@@ -48,8 +46,6 @@ export const cardSetAPI: CardSetAPI = {
   },
 
   getById: async (id) => {
-    await delay();
-    await delay();
     await delay();
     const cardSetPlain = cardSetsPlain.find(
       (_cardSetPlain) => _cardSetPlain.id === id

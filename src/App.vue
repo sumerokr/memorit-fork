@@ -1,13 +1,5 @@
 <template>
-  <div class="layout">
+  <div class="flex flex-col flex-grow">
     <RouterView />
   </div>
 </template>
-
-<style scoped>
-.layout {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-}
-</style>

@@ -6,6 +6,7 @@ import groupBy from "lodash/groupBy";
 // TODO: make Card[] readonly
 const cards = ref<Card[]>([]);
 export const cardsByCardSetId = computed(() => {
+  console.log("c:cardsByCardSetId");
   return groupBy(cards.value, "cardSetId");
 });
 
@@ -17,6 +18,7 @@ export const cardsStorage: CardsStorage = {
     cards.value.push(card);
   },
   set: (_cards) => {
+    console.log("set", cards);
     cards.value = _cards;
   },
   update: (card) => {
