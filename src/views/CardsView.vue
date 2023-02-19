@@ -38,7 +38,7 @@ const cards = computed(() => {
           :to="{ name: 'new-card', params: { cardSetId: props.cardSetId } }"
           class="gap-2 px-4 py-2 items-center bg-indigo-200 rounded-2xl inline-flex justify-center"
         >
-          Add card
+          Create
           <span class="material-symbols-outlined text-xl leading-none">
             add
           </span>
