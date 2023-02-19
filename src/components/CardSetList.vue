@@ -13,7 +13,7 @@ defineProps<Props>();
     <li v-for="cardSet of cardSets" :key="cardSet.id">
       <RouterLink
         :to="{ name: 'set', params: { cardSetId: cardSet.id } }"
-        class="block border rounded-2xl p-4 bg-white"
+        class="block border rounded-xl p-4 bg-white"
       >
         <h2>{{ cardSet.title }}</h2>
         <p class="text-xs opacity-60">Cards: {{ cardSet.cardsCount }}</p>

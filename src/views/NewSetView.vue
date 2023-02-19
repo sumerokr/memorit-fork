@@ -36,7 +36,7 @@ const onSubmit = async () => {
     <h1 class="text-3xl mb-4">Add new card set</h1>
 
     <form
-      class="border rounded-2xl mb-4 p-4 bg-white"
+      class="border rounded-xl mb-4 p-4 bg-white"
       @submit.prevent="onSubmit"
     >
       <p class="mb-4">

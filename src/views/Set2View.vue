@@ -73,7 +73,7 @@ cardsRepository.getAll().then((cards) => {
       </div>
     </div>
 
-    <div if="cardSet" class="flex-grow border-t rounded-2xl bg-white">
+    <div if="cardSet" class="flex-grow border-t rounded-xl bg-white">
       <div class="flex flex-wrap gap-4 p-4">
         <RouterLink
           :to="{ name: 'cards', params: { cardSetId: route.params.cardSetId } }"

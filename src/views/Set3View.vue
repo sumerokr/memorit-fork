@@ -27,7 +27,7 @@ const cardSet = computed(() => {
     </p>
 
     <template v-if="isReady">
-      <div v-if="cardSet" class="border rounded-2xl p-4 bg-white">
+      <div v-if="cardSet" class="border rounded-xl p-4 bg-white">
         <h1 class="text-3xl mb-4">{{ cardSet.title }}</h1>
         <p class="mb-8 opacity-60">Cards: {{ cardSet.cardsCount }}</p>
 
