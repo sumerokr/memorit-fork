@@ -34,31 +34,31 @@ const cardSet = computed(() => {
         <div class="flex flex-wrap gap-4">
           <RouterLink
             :to="{ name: 'cards', params: { cardSetId: props.cardSetId } }"
-            class="gap-2 px-4 py-2 items-center bg-indigo-50 rounded-2xl flex justify-center"
+            class="flex-grow gap-2 px-4 py-2 items-center bg-indigo-50 rounded-2xl flex justify-center"
           >
-            View cards
+            View
             <span class="material-symbols-outlined text-xl leading-none">
               view_agenda
             </span>
           </RouterLink>
           <RouterLink
             :to="{ name: 'new-card', params: { cardSetId: props.cardSetId } }"
-            class="gap-2 px-4 py-2 items-center bg-indigo-200 rounded-2xl flex justify-center"
+            class="flex-grow gap-2 px-4 py-2 items-center bg-indigo-50 rounded-2xl flex justify-center"
           >
-            Add card
+            Add
             <span class="material-symbols-outlined text-xl leading-none">
               add
             </span>
           </RouterLink>
-          <!-- <button
-            class="gap-2 px-4 py-2 items-center bg-indigo-200 rounded-2xl flex justify-center"
-            type="button"
+          <RouterLink
+            :to="{ name: 'study', params: { cardSetId: props.cardSetId } }"
+            class="flex-grow gap-2 px-4 py-2 items-center bg-indigo-200 rounded-2xl flex justify-center"
           >
             Study
             <span class="material-symbols-outlined text-xl leading-none"
               >play_arrow</span
             >
-          </button> -->
+          </RouterLink>
         </div>
       </div>
       <div v-else>Error?</div>
