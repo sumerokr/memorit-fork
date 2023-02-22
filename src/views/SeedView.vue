@@ -5,6 +5,7 @@ import { createCardSet } from "@/domain/card-set";
 import { faker } from "@faker-js/faker";
 import { nanoid } from "nanoid";
 import flatten from "lodash/flatten";
+import { deleteDB } from "idb";
 
 const cardSetsKey = "memorit/card-sets";
 const cardsKey = "memorit/cards";
@@ -71,11 +72,20 @@ const onSeed = () => {
 const onClear = () => {
   localStorage.clear();
 };
+
+const onDelete = () => {
+  deleteDB("memorit", {
+    blocked: () => {
+      alert("cannot delet while connection is open!");
+    },
+  });
+};
 </script>
 
 <template>
   <div style="padding: 1rem">
     <button type="button" @click="onSeed">Seed</button> ||
-    <button type="button" @click="onClear">Clear</button>
+    <button type="button" @click="onClear">Clear</button> ||
+    <button type="button" @click="onDelete">Delete</button>
   </div>
 </template>
