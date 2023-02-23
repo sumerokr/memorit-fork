@@ -32,21 +32,18 @@ export const createCard = ({
   };
 };
 
-export const updateCardStatus = ({
-  card,
+export const updateProgress = ({
   progress,
   now,
 }: {
-  card: Card;
   progress: Card["progress"];
   now: string;
-}): Card => {
+}): Pick<Card, "progress" | "showAfter"> => {
   const dateNow = new Date(now);
   const daysAfter = Math.pow(progress, 1);
   const laterTS = dateNow.setDate(dateNow.getDate() + daysAfter);
   const showAfter = new Date(laterTS).toISOString();
   return {
-    ...card,
     progress,
     showAfter,
   };

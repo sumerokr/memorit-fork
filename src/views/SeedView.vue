@@ -77,6 +77,8 @@ const onSeed = async () => {
   const cardsPromises = cards.map((card) => cardsTransaction.store.add(card));
   await Promise.all([...cardsPromises, cardsTransaction.done]);
   console.timeEnd("create cards");
+
+  alert("Dummy data added");
 };
 
 const onDelete = async () => {
@@ -85,6 +87,7 @@ const onDelete = async () => {
       alert("Please refresh the page now");
     },
   });
+  alert("Dummy data deleted");
 };
 </script>
 

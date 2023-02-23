@@ -56,12 +56,13 @@ export const cardSetAPI: CardSetAPI = {
     const [cardSetPlain, cardsCount] = await Promise.all([
       transaction.objectStore("card-sets").get(id),
       transaction.objectStore("cards").index("cardSetId").count(id),
+      transaction.done,
     ]);
 
     if (cardSetPlain) {
       return cardSetPlainToCardSet(cardSetPlain, cardsCount);
     }
-    throw Error("cardSet not found");
+    throw Error("IDB. Card sets. getById. No card set found.");
   },
 
   delete: async (id) => {

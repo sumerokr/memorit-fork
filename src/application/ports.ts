@@ -15,7 +15,11 @@ export type CreateCardUC = ({
   cardSetId,
 }: Pick<Card, "front" | "back" | "cardSetId">) => Promise<void>;
 export type GetCardsByCardSetIdUC = (id: CardSet["id"]) => Promise<void>;
-export type UpdateCardStatusUC = ({ id, progress }: Card) => Promise<void>;
+export type GetStudyCardsUC = (id: CardSet["id"]) => Promise<void>;
+export type UpdateCardStatusUC = ({
+  id,
+  progress,
+}: Pick<Card, "id" | "progress">) => Promise<void>;
 
 export type GetCardSetsViewUC = () => Promise<void>;
 //#endregion
@@ -52,14 +56,15 @@ export type CardSetsViewStorage = {
 export type CardsAPI = {
   save: (card: Card) => Promise<void>;
   getAllByCardSetId: (id: CardSet["id"]) => Promise<Card[]>;
-  update: (card: Card) => Promise<void>;
+  getStudyCards: (id: CardSet["id"]) => Promise<Card[]>;
+  update: (id: Card["id"], data: Partial<Omit<Card, "id">>) => Promise<void>;
   delete: (id: Card["id"]) => Promise<void>;
 };
 
 export type CardsStorage = {
   save: (card: Card) => void;
   set: (cards: Card[]) => void;
-  update: (card: Card) => void;
+  update: (id: Card["id"], data: Partial<Omit<Card, "id">>) => void;
   getById: (id: Card["id"]) => Card | undefined;
   delete: (id: Card["id"]) => void;
 };

@@ -19,9 +19,12 @@ export const cardsStorage: CardsStorage = {
   set: (_cards) => {
     cards.value = _cards;
   },
-  update: (card) => {
-    const index = cards.value.findIndex((_card) => _card.id === card.id);
-    cards.value.splice(index, 1, card);
+  update: (id, data) => {
+    const index = cards.value.findIndex((card) => card.id === id);
+    cards.value[index] = {
+      ...cards.value[index],
+      ...structuredClone(data),
+    };
   },
   getById: (id: Card["id"]) => {
     return cards.value.find((_card) => _card.id === id);

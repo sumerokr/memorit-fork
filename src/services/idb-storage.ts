@@ -18,6 +18,7 @@ interface MyDB extends DBSchema {
       createdAt: Card["createdAt"];
       cardSetId: Card["cardSetId"];
       cardSetId_createdAt: [Card["cardSetId"], Card["createdAt"]];
+      cardSetId_showAfter: [Card["cardSetId"], Card["showAfter"]];
     };
   };
 }
@@ -42,10 +43,11 @@ export const getDBInstance = async () => {
       cardsStore.createIndex("createdAt", "createdAt");
       cardsStore.createIndex("cardSetId", "cardSetId");
       cardsStore.createIndex("cardSetId_createdAt", ["cardSetId", "createdAt"]);
+      cardsStore.createIndex("cardSetId_showAfter", ["cardSetId", "showAfter"]);
     },
   });
   // @ts-ignore
-  window.db = db;
+  // window.db = db;
 
   return db;
 };

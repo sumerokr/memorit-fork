@@ -66,5 +66,3 @@ const cardSet = computed(() => {
     <div v-else-if="isLoading">Loading...</div>
   </div>
 </template>
-
-<style scoped></style>

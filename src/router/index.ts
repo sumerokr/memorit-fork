@@ -12,12 +12,12 @@ const router = createRouter({
     {
       path: "/sets",
       name: "sets",
-      component: () => import("../views/Sets3View.vue"),
+      component: () => import("../views/SetsView.vue"),
     },
     {
       path: "/sets/:cardSetId",
       name: "set",
-      component: () => import("../views/Set3View.vue"),
+      component: () => import("../views/SetView.vue"),
       props: true,
     },
     {
@@ -40,7 +40,7 @@ const router = createRouter({
     {
       path: "/sets/:cardSetId/study",
       name: "study",
-      component: () => import("../views/PlayView2.vue"),
+      component: () => import("../views/PlayView.vue"),
       props: true,
     },
     {
