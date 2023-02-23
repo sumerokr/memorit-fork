@@ -7,7 +7,9 @@ import {
 
 export const getCardSetsUC: GetCardSetsUC = async () => {
   try {
+    console.time("cardSetAPI.getAll");
     const cardSets = await cardSetAPI.getAll();
+    console.timeEnd("cardSetAPI.getAll");
     cardSetStorage.set(cardSets);
     notificationService.notify("received");
   } catch (error) {

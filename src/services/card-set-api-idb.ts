@@ -34,8 +34,8 @@ export const cardSetAPI: CardSetAPI = {
 
     const result = [];
     const limit = 10;
-
     let step = 0;
+
     while (cursor && step < limit) {
       const cardsCount = await transaction
         .objectStore("cards")

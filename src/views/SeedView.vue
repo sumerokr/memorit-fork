@@ -6,11 +6,9 @@ import { faker } from "@faker-js/faker";
 import { nanoid } from "nanoid";
 import flatten from "lodash/flatten";
 import { deleteDB } from "idb";
+import { getDBInstance } from "@/services/idb-storage";
 
-const cardSetsKey = "memorit/card-sets";
-const cardsKey = "memorit/cards";
-
-const onSeed = () => {
+const onSeed = async () => {
   const cardSets = new Array(
     faker.datatype.number({
       min: 5,
@@ -65,27 +63,53 @@ const onSeed = () => {
     })
   );
 
-  localStorage.setItem(cardSetsKey, JSON.stringify(cardSets));
-  localStorage.setItem(cardsKey, JSON.stringify(cards));
+  const db = await getDBInstance();
+  console.time("create card-sets");
+  const cardSetsTransaction = db.transaction("card-sets", "readwrite");
+  const cardSetsPromises = cardSets.map((cardSet) =>
+    cardSetsTransaction.store.add(cardSet)
+  );
+  await Promise.all([...cardSetsPromises, cardSetsTransaction.done]);
+  console.timeEnd("create card-sets");
+
+  console.time("create cards");
+  const cardsTransaction = db.transaction("cards", "readwrite");
+  const cardsPromises = cards.map((card) => cardsTransaction.store.add(card));
+  await Promise.all([...cardsPromises, cardsTransaction.done]);
+  console.timeEnd("create cards");
 };
 
-const onClear = () => {
-  localStorage.clear();
-};
-
-const onDelete = () => {
-  deleteDB("memorit", {
+const onDelete = async () => {
+  await deleteDB("memorit", {
     blocked: () => {
-      alert("cannot delet while connection is open!");
+      alert("Please refresh the page now");
     },
   });
 };
 </script>
 
 <template>
-  <div style="padding: 1rem">
-    <button type="button" @click="onSeed">Seed</button> ||
-    <button type="button" @click="onClear">Clear</button> ||
-    <button type="button" @click="onDelete">Delete</button>
+  <div class="flex-grow bg-neutral-100 p-4">
+    <p class="mb-4">
+      <RouterLink :to="{ name: 'sets' }" class="text-indigo-500"
+        ><span class="inline-block rotate-180">➜</span> Back to card
+        sets</RouterLink
+      >
+    </p>
+    <button
+      class="inline-flex gap-2 px-4 py-2 items-center bg-indigo-100 rounded-2xl justify-center"
+      type="button"
+      @click="onSeed"
+    >
+      Add data
+    </button>
+    or
+    <button
+      class="inline-flex gap-2 px-4 py-2 items-center bg-red-100 rounded-2xl justify-center"
+      type="button"
+      @click="onDelete"
+    >
+      Delete data
+    </button>
   </div>
 </template>

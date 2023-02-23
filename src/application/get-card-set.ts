@@ -8,7 +8,9 @@ import {
 
 export const getCardSetByIdUC: GetCardSetByIdUC = async (id: CardSet["id"]) => {
   try {
+    console.time("cardSetAPI.getById");
     const cardSet = await cardSetAPI.getById(id);
+    console.timeEnd("cardSetAPI.getById");
     cardSetStorage.save(cardSet);
     notificationService.notify("received");
   } catch (error) {

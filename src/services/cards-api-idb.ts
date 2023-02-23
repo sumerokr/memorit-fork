@@ -10,10 +10,26 @@ export const cardsAPI: CardsAPI = {
 
   getAllByCardSetId: async (id) => {
     const db = await getDBInstance();
-    const cards = await db.getAllFromIndex("cards", "cardSetId", id);
-    return cards.sort((a, b) => {
-      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-    });
+    const transaction = db.transaction("cards");
+    let cursor = await transaction
+      .objectStore("cards")
+      .index("cardSetId_createdAt")
+      .openCursor(
+        IDBKeyRange.upperBound([id, new Date().toISOString()]),
+        "prev"
+      );
+
+    const result = [];
+    const limit = 10;
+    let step = 0;
+
+    while (cursor && step < limit) {
+      result.push(cursor.value);
+      step += 1;
+      cursor = await cursor.continue();
+    }
+
+    return result;
   },
 
   delete: async (id) => {
