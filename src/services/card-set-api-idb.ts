@@ -33,7 +33,7 @@ export const cardSetAPI: CardSetAPI = {
       .openCursor(null, "prev");
 
     const result = [];
-    const limit = 10;
+    const limit = 100;
     let step = 0;
 
     while (cursor && step < limit) {
