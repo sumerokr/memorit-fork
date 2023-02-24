@@ -35,23 +35,23 @@ watch(currentCard, (newCard, oldCard) => {
 
 const markHard = async () => {
   isShown.value = false;
+  current.value++;
   const { id, progress } = currentCard.value;
   const newProgress = (progress >= 2 ? progress - 1 : 1) as Card["progress"];
   await updateCardStatus({ id, progress: newProgress });
-  current.value++;
 };
 const markOk = async () => {
   isShown.value = false;
+  current.value++;
   const { id, progress } = currentCard.value;
   await updateCardStatus({ id, progress });
-  current.value++;
 };
 const markEasy = async () => {
   isShown.value = false;
+  current.value++;
   const { id, progress } = currentCard.value;
   const newProgress = (progress <= 9 ? progress + 1 : 10) as Card["progress"];
   await updateCardStatus({ id, progress: newProgress });
-  current.value++;
 };
 </script>
 
@@ -149,7 +149,7 @@ const markEasy = async () => {
           </div>
         </div>
 
-        <div class="mt-4 opacity-50">
+        <div class="mt-4 text-xs font-normal opacity-60">
           <p class="mb-2">Debugging statistic</p>
           <p>Current card</p>
           <p>Progress: {{ currentCard.progress }}</p>
