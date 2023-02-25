@@ -14,8 +14,6 @@ export { readonlyCards as cards };
 
 export const cardsStorage: CardsStorage = {
   save: (card) => {
-    console.log("saves");
-
     cards.value.push(card);
   },
   set: (_cards) => {
@@ -23,10 +21,10 @@ export const cardsStorage: CardsStorage = {
   },
   update: (id, data) => {
     const index = cards.value.findIndex((card) => card.id === id);
-    cards.value[index] = {
+    cards.value[index] = structuredClone({
       ...cards.value[index],
-      ...structuredClone(data),
-    };
+      ...data,
+    });
   },
   getById: (id: Card["id"]) => {
     return cards.value.find((_card) => _card.id === id);

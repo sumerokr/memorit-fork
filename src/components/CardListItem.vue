@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import type { Card } from "@/domain/card";
 import { ref } from "vue";
+import type { Card } from "@/domain/card";
 import { onClickOutside } from "@vueuse/core";
+import { useDeleteCard } from "@/composables/use-cards";
 
 type Props = {
   card: Card;
 };
 
 defineProps<Props>();
+
+const { execute, deletingIds } = useDeleteCard();
 
 const isMenuOpen = ref(false);
 const menuRef = ref(null);
@@ -21,18 +24,28 @@ onClickOutside(menuRef, () => {
   <li class="border rounded-xl p-4 bg-white">
     <div class="flex items-start justify-between">
       <span class="">{{ card.front }}</span>
-      <div class="relative ml-4 leading-none" ref="menuRef">
+      <div class="relative ml-4" ref="menuRef">
         <button
-          class="-m-2 p-2 rounded-2xl leading-none"
+          class="flex -m-2 p-2 rounded-2xl"
           type="button"
           @click="isMenuOpen = !isMenuOpen"
         >
-          <span class="material-symbols-outlined align-top">more_vert</span>
+          <span class="material-symbols-outlined">more_vert</span>
         </button>
-        <div v-if="isMenuOpen" class="absolute top-8 mt-1 -right-2 w-max">
+        <div v-if="isMenuOpen" class="absolute -top-2 mr-2 right-full flex">
+          <button
+            class="flex gap-2 px-4 py-2 mr-2 items-center bg-red-100 rounded-2xl justify-center"
+            :disabled="deletingIds.includes(card.id)"
+            @click="execute(card.id)"
+          >
+            Delete
+            <span class="material-symbols-outlined text-xl leading-none">
+              delete
+            </span>
+          </button>
           <RouterLink
             :to="{ name: 'card-edit', params: { id: card.id } }"
-            class="flex-grow gap-2 px-4 py-2 items-center bg-indigo-50 rounded-2xl flex justify-center"
+            class="flex gap-2 px-4 py-2 items-center bg-indigo-100 rounded-2xl justify-center"
           >
             Edit
             <span class="material-symbols-outlined text-xl leading-none">

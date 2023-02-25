@@ -25,11 +25,11 @@ export const cardSetStorage: CardSetStorage = {
   getById: (id) => {
     return cardSets.value.find((cardSet) => cardSet.id === id);
   },
-  update: (cardSet) => {
-    // TODO: the only one that mutates in place
-    const index = cardSets.value.findIndex(
-      (_cardSet) => _cardSet.id === cardSet.id
-    );
-    cardSets.value.splice(index, 1, cardSet);
+  update: (id, data) => {
+    const index = cardSets.value.findIndex((cardSet) => cardSet.id === id);
+    cardSets.value[index] = structuredClone({
+      ...cardSets.value[index],
+      ...data,
+    });
   },
 };

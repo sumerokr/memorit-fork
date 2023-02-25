@@ -10,7 +10,9 @@ export const updateCardStatusUC: UpdateCardStatusUC = async ({
   const data = updateProgress({ progress, now });
 
   try {
+    console.time("cardsAPI.update");
     await cardsAPI.update(id, data);
+    console.timeEnd("cardsAPI.update");
     cardsStorage.update(id, data);
     notificationService.notify("updated");
   } catch (error) {

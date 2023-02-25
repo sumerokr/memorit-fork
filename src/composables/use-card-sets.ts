@@ -80,10 +80,10 @@ export const useUpdateCardSet = () => {
     updateIds,
     isReady,
     isLoading,
-    execute: async (cardSet: CardSet) => {
-      updateIds.value.push(cardSet.id);
-      await execute(0, cardSet);
-      updateIds.value = without(updateIds.value, cardSet.id);
+    execute: async (...args: Parameters<typeof updateCardSet>) => {
+      updateIds.value.push(args[0]);
+      await execute(0, ...args);
+      updateIds.value = without(updateIds.value, args[0]);
     },
   };
 };

@@ -14,7 +14,9 @@ export const createCardSetUC: CreateCardSetUC = async (title) => {
       title,
       createdAt: new Date().toISOString(),
     });
+    console.time("cardSetAPI.save");
     await cardSetAPI.save(cardSet);
+    console.timeEnd("cardSetAPI.save");
     cardSetStorage.save(cardSet);
     notificationService.notify("saved");
   } catch (error) {

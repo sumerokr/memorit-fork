@@ -6,16 +6,12 @@ import {
   notificationService,
 } from "@/services/index";
 
-export const updateCardSet: UpdateCardSetUC = async (cardSet) => {
-  const _cardSet = cardSetStorage.getById(cardSet.id);
-  if (!_cardSet) {
-    return;
-  }
-  const updatedCardSet = _updateCardSet(cardSet);
-
+export const updateCardSet: UpdateCardSetUC = async (id, data) => {
   try {
-    await cardSetAPI.update(updatedCardSet);
-    cardSetStorage.update(updatedCardSet);
+    console.time("cardSetAPI.update");
+    await cardSetAPI.update(id, data);
+    console.time("cardSetAPI.update");
+    cardSetStorage.update(id, data);
     notificationService.notify("updated");
   } catch (error) {
     const message = (() => {

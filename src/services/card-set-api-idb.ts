@@ -23,7 +23,7 @@ const cardSetToCardSetPlain = (cardSet: CardSet): CardSetPlain => {
 export const cardSetAPI: CardSetAPI = {
   save: async (cardSet) => {
     const db = await getDBInstance();
-    db.add("card-sets", cardSetToCardSetPlain(cardSet));
+    await db.add("card-sets", cardSetToCardSetPlain(cardSet));
   },
 
   getAll: async () => {
@@ -84,11 +84,34 @@ export const cardSetAPI: CardSetAPI = {
 
   delete: async (id) => {
     const db = await getDBInstance();
-    await db.delete("card-sets", id);
+    const transaction = db.transaction(["card-sets", "cards"], "readwrite");
+    const promises = [];
+
+    promises.push(transaction.objectStore("card-sets").delete(id));
+
+    let cursor = await transaction
+      .objectStore("cards")
+      .index("cardSetId")
+      .openCursor(IDBKeyRange.bound(id, id));
+
+    while (cursor) {
+      promises.push(transaction.objectStore("cards").delete(cursor.value.id));
+      cursor = await cursor.continue();
+    }
+
+    await Promise.all(promises.concat(transaction.done));
   },
 
-  update: async (cardSet) => {
+  update: async (id, data) => {
     const db = await getDBInstance();
-    await db.put("card-sets", cardSetToCardSetPlain(cardSet));
+    const transaction = db.transaction("card-sets", "readwrite");
+    const cardSet = await transaction.store.get(id);
+    if (cardSet) {
+      Object.assign(cardSet, data);
+      await transaction.store.put(cardSet);
+    } else {
+      // TODO: handle error better
+      throw new Error("IDB. Card sets. Update. No card set found.");
+    }
   },
 };

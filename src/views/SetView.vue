@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import { useGetCardSetById } from "@/composables/use-card-sets";
+import { ref, computed } from "vue";
+import {
+  useGetCardSetById,
+  useDeleteCardSet,
+} from "@/composables/use-card-sets";
 import { cardSetsById } from "@/services/card-sets-storage";
+import { onClickOutside } from "@vueuse/core";
+import { useRouter } from "vue-router";
 
 type Props = {
   cardSetId: string;
@@ -9,11 +14,25 @@ type Props = {
 
 const props = defineProps<Props>();
 
+const router = useRouter();
+
 const { isLoading, isReady, execute } = useGetCardSetById();
 execute(props.cardSetId);
+const { deletingIds, execute: deleteCardSet } = useDeleteCardSet();
+const onDelete = async (id: Parameters<typeof deleteCardSet>[0]) => {
+  await deleteCardSet(id);
+  router.replace({ name: "sets" });
+};
 
 const cardSet = computed(() => {
   return cardSetsById.value[props.cardSetId];
+});
+
+const isMenuOpen = ref(false);
+const menuRef = ref(null);
+
+onClickOutside(menuRef, () => {
+  isMenuOpen.value = false;
 });
 </script>
 
@@ -28,7 +47,39 @@ const cardSet = computed(() => {
 
     <template v-if="isReady">
       <div v-if="cardSet" class="border rounded-xl p-4 bg-white">
-        <h1 class="text-3xl mb-4">{{ cardSet.title }}</h1>
+        <div class="flex items-baseline justify-between mb-4">
+          <h1 class="text-3xl">{{ cardSet.title }}</h1>
+          <div class="relative ml-4" ref="menuRef">
+            <button
+              class="flex -m-1 p-2 rounded-2xl"
+              type="button"
+              @click="isMenuOpen = !isMenuOpen"
+            >
+              <span class="material-symbols-outlined">more_vert</span>
+            </button>
+            <div v-if="isMenuOpen" class="absolute -top-1 mr-2 right-full flex">
+              <button
+                class="flex gap-2 px-4 py-2 mr-2 items-center bg-red-100 rounded-2xl justify-center"
+                :disabled="deletingIds.includes(cardSetId)"
+                @click="onDelete(cardSetId)"
+              >
+                Delete
+                <span class="material-symbols-outlined text-xl leading-none">
+                  delete
+                </span>
+              </button>
+              <RouterLink
+                :to="{ name: 'card-set-edit', params: { cardSetId } }"
+                class="flex gap-2 px-4 py-2 items-center bg-indigo-100 rounded-2xl justify-center"
+              >
+                Edit
+                <span class="material-symbols-outlined text-xl leading-none">
+                  edit
+                </span>
+              </RouterLink>
+            </div>
+          </div>
+        </div>
         <p class="mb-8 flex items-baseline justify-between opacity-60">
           <span>Cards: {{ cardSet.cardsCount }}</span>
           <span

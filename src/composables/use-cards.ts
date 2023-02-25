@@ -8,6 +8,7 @@ import { getStudyCardsUC } from "@/application/get-study-cards";
 import { updateCardStatusUC } from "@/application/update-card-status";
 import { getCardByIdUC } from "@/application/get-card";
 import { updateCardUC } from "@/application/update-card";
+import { deleteCardUC } from "@/application/delete-card";
 
 export const useCreateCard = () => {
   const { isReady, isLoading, execute } = useAsyncState(createCardUC, null, {
@@ -113,6 +114,24 @@ export const useGetCard = () => {
         gettingIds.value = without(gettingIds.value, args[0]);
       });
       return promise;
+    },
+  };
+};
+
+export const useDeleteCard = () => {
+  const { isReady, isLoading, execute } = useAsyncState(deleteCardUC, null, {
+    immediate: false,
+  });
+  const deletingIds = ref<Card["id"][]>([]);
+
+  return {
+    deletingIds,
+    isReady,
+    isLoading,
+    execute: async (id: Card["id"]) => {
+      deletingIds.value.push(id);
+      await execute(0, id);
+      deletingIds.value = without(deletingIds.value, id);
     },
   };
 };
