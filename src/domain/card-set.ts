@@ -3,12 +3,7 @@ export type CardSet = {
   title: string;
   createdAt: string;
   cardsCount: number;
-};
-
-export type CardSetView = {
-  id: string;
-  title: string;
-  cardsCount: number;
+  cardsToStudyCount: number;
 };
 
 export const createCardSet = ({
@@ -21,6 +16,7 @@ export const createCardSet = ({
     title,
     createdAt,
     cardsCount: 0,
+    cardsToStudyCount: 0,
   };
 };
 
@@ -30,5 +26,6 @@ export const updateCardSet = ({ id, title, createdAt }: CardSet): CardSet => {
     title,
     createdAt,
     cardsCount: 0,
+    cardsToStudyCount: 0,
   };
 };

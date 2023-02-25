@@ -16,7 +16,19 @@ defineProps<Props>();
         class="block border rounded-xl p-4 bg-white"
       >
         <h2>{{ cardSet.title }}</h2>
-        <p class="text-xs opacity-60">Cards: {{ cardSet.cardsCount }}</p>
+        <p class="flex items-baseline justify-between text-xs opacity-60">
+          <span>Cards: {{ cardSet.cardsCount }}</span>
+          <span
+            >To study:
+            <span
+              class="inline-block px-1 py-0.5 rounded-md"
+              :class="
+                cardSet.cardsToStudyCount > 0 ? 'bg-amber-300' : 'bg-amber-100'
+              "
+              >{{ cardSet.cardsToStudyCount }}</span
+            ></span
+          >
+        </p>
       </RouterLink>
     </li>
   </ul>

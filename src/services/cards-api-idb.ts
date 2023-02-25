@@ -8,6 +8,16 @@ export const cardsAPI: CardsAPI = {
     db.add("cards", card);
   },
 
+  getById: async (id) => {
+    const db = await getDBInstance();
+    const card = await db.get("cards", id);
+    if (card) {
+      return card;
+    }
+    // TODO: handle error better
+    throw new Error("IDB. Cards. getById. No card found.");
+  },
+
   getAllByCardSetId: async (id) => {
     const db = await getDBInstance();
     const transaction = db.transaction("cards");

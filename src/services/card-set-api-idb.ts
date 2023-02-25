@@ -5,11 +5,13 @@ import type { CardSetPlain } from "./idb-storage";
 
 const cardSetPlainToCardSet = (
   cardSetPlain: CardSetPlain,
-  cardsCount: CardSet["cardsCount"]
+  cardsCount: CardSet["cardsCount"],
+  cardsToStudyCount: CardSet["cardsToStudyCount"]
 ): CardSet => {
   return {
     ...cardSetPlain,
     cardsCount,
+    cardsToStudyCount,
   };
 };
 const cardSetToCardSetPlain = (cardSet: CardSet): CardSetPlain => {
@@ -41,8 +43,19 @@ export const cardSetAPI: CardSetAPI = {
         .objectStore("cards")
         .index("cardSetId")
         .count(cursor.value.id);
+      const cardsToStudyCount = await transaction
+        .objectStore("cards")
+        .index("cardSetId_showAfter")
+        .count(
+          IDBKeyRange.bound(
+            [cursor.value.id, ""],
+            [cursor.value.id, new Date().toISOString()]
+          )
+        );
 
-      result.push(cardSetPlainToCardSet(cursor.value, cardsCount));
+      result.push(
+        cardSetPlainToCardSet(cursor.value, cardsCount, cardsToStudyCount)
+      );
       step += 1;
       cursor = await cursor.continue();
     }
@@ -53,14 +66,18 @@ export const cardSetAPI: CardSetAPI = {
   getById: async (id) => {
     const db = await getDBInstance();
     const transaction = db.transaction(["card-sets", "cards"]);
-    const [cardSetPlain, cardsCount] = await Promise.all([
+    const [cardSetPlain, cardsCount, cardsToStudyCount] = await Promise.all([
       transaction.objectStore("card-sets").get(id),
       transaction.objectStore("cards").index("cardSetId").count(id),
+      transaction
+        .objectStore("cards")
+        .index("cardSetId_showAfter")
+        .count(IDBKeyRange.bound([id, ""], [id, new Date().toISOString()])),
       transaction.done,
     ]);
 
     if (cardSetPlain) {
-      return cardSetPlainToCardSet(cardSetPlain, cardsCount);
+      return cardSetPlainToCardSet(cardSetPlain, cardsCount, cardsToStudyCount);
     }
     throw Error("IDB. Card sets. getById. No card set found.");
   },

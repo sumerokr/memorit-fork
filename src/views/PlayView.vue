@@ -34,22 +34,22 @@ watch(currentCard, (newCard, oldCard) => {
 });
 
 const markHard = async () => {
+  const { id, progress } = currentCard.value;
   isShown.value = false;
   current.value++;
-  const { id, progress } = currentCard.value;
   const newProgress = (progress >= 2 ? progress - 1 : 1) as Card["progress"];
   await updateCardStatus({ id, progress: newProgress });
 };
 const markOk = async () => {
+  const { id, progress } = currentCard.value;
   isShown.value = false;
   current.value++;
-  const { id, progress } = currentCard.value;
   await updateCardStatus({ id, progress });
 };
 const markEasy = async () => {
+  const { id, progress } = currentCard.value;
   isShown.value = false;
   current.value++;
-  const { id, progress } = currentCard.value;
   const newProgress = (progress <= 9 ? progress + 1 : 10) as Card["progress"];
   await updateCardStatus({ id, progress: newProgress });
 };
@@ -165,7 +165,7 @@ const markEasy = async () => {
         </div>
       </template>
 
-      <div v-else>Congrats!</div>
+      <div v-else>Congrats! You have studied {{ total }} cards.</div>
     </template>
 
     <div v-else>No cards to study (for now). Check again later.</div>

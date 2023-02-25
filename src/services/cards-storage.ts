@@ -14,6 +14,8 @@ export { readonlyCards as cards };
 
 export const cardsStorage: CardsStorage = {
   save: (card) => {
+    console.log("saves");
+
     cards.value.push(card);
   },
   set: (_cards) => {

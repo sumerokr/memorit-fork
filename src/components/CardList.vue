@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Card } from "@/domain/card";
+import CardListItem from "./CardListItem.vue";
 
 type Props = {
   cards: Card[];
@@ -10,14 +11,6 @@ defineProps<Props>();
 
 <template>
   <ul class="flex flex-col gap-2">
-    <li
-      v-for="card in cards"
-      :key="card.id"
-      class="grid border rounded-xl p-4 bg-white"
-    >
-      <span class="flex-1">{{ card.front }}</span>
-      <hr class="my-2" />
-      <span class="flex-1 opacity-60">{{ card.back }}</span>
-    </li>
+    <CardListItem v-for="card in cards" :card="card" :key="card.id" />
   </ul>
 </template>

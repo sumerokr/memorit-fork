@@ -32,6 +32,12 @@ const router = createRouter({
       props: true,
     },
     {
+      path: "/sets/:cardSetId/cards/:id/edit",
+      name: "card-edit",
+      component: () => import("../views/CardEditView.vue"),
+      props: true,
+    },
+    {
       path: "/sets/:cardSetId/cards/new",
       name: "new-card",
       component: () => import("../views/NewCardView.vue"),

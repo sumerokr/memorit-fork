@@ -1,27 +1,36 @@
 import type { Card } from "@/domain/card";
-import type { CardSet, CardSetView } from "../domain/card-set";
+import type { CardSet } from "../domain/card-set";
 
 //#region driving adapters
+//#region card sets
 export type CreateCardSetUC = (title: CardSet["title"]) => Promise<void>;
 export type GetCardSetsUC = () => Promise<void>;
 export type GetCardSetByIdUC = (id: CardSet["id"]) => Promise<void>;
 export type UpdateCardSetUC = (cardSet: CardSet) => Promise<void>;
 export type DeleteCardSetUC = (id: CardSet["id"]) => Promise<void>;
 export type ToggleCardSetUC = (id: CardSet["id"]) => Promise<void>;
+//#endregion
 
+//#region cards
 export type CreateCardUC = ({
   front,
   back,
   cardSetId,
 }: Pick<Card, "front" | "back" | "cardSetId">) => Promise<void>;
 export type GetCardsByCardSetIdUC = (id: CardSet["id"]) => Promise<void>;
+export type GetCardByIdUC = (id: Card["id"]) => Promise<void>;
 export type GetStudyCardsUC = (id: CardSet["id"]) => Promise<void>;
 export type UpdateCardStatusUC = ({
   id,
   progress,
 }: Pick<Card, "id" | "progress">) => Promise<void>;
+export type UpdateCardUC = (
+  id: Card["id"],
+  data: Partial<Omit<Card, "id">>
+) => Promise<void>;
 
 export type GetCardSetsViewUC = () => Promise<void>;
+//#endregion
 //#endregion
 
 //#region driven adapters
@@ -44,8 +53,8 @@ export type CardSetStorage = {
 };
 
 export type CardSetsViewStorage = {
-  save: (cardSet: CardSetView) => void;
-  set: (cardSets: CardSetView[]) => void;
+  save: (cardSet: CardSet) => void;
+  set: (cardSets: CardSet[]) => void;
   update: (cardSet: CardSet) => void;
   delete: (id: CardSet["id"]) => void;
   getById: (id: CardSet["id"]) => CardSet | undefined;
@@ -56,6 +65,7 @@ export type CardSetsViewStorage = {
 export type CardsAPI = {
   save: (card: Card) => Promise<void>;
   getAllByCardSetId: (id: CardSet["id"]) => Promise<Card[]>;
+  getById: (id: Card["id"]) => Promise<Card>;
   getStudyCards: (id: CardSet["id"]) => Promise<Card[]>;
   update: (id: Card["id"], data: Partial<Omit<Card, "id">>) => Promise<void>;
   delete: (id: Card["id"]) => Promise<void>;

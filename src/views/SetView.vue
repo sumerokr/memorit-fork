@@ -29,7 +29,19 @@ const cardSet = computed(() => {
     <template v-if="isReady">
       <div v-if="cardSet" class="border rounded-xl p-4 bg-white">
         <h1 class="text-3xl mb-4">{{ cardSet.title }}</h1>
-        <p class="mb-8 opacity-60">Cards: {{ cardSet.cardsCount }}</p>
+        <p class="mb-8 flex items-baseline justify-between opacity-60">
+          <span>Cards: {{ cardSet.cardsCount }}</span>
+          <span
+            >To study:
+            <span
+              class="inline-block px-1 py-0.5 rounded-md"
+              :class="
+                cardSet.cardsToStudyCount > 0 ? 'bg-amber-300' : 'bg-amber-100'
+              "
+              >{{ cardSet.cardsToStudyCount }}</span
+            ></span
+          >
+        </p>
 
         <div class="flex flex-wrap gap-4">
           <RouterLink
