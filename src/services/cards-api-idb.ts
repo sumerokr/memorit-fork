@@ -30,7 +30,7 @@ export const cardsAPI: CardsAPI = {
       );
 
     const result = [];
-    const limit = 32;
+    const limit = 64;
     let step = 0;
 
     while (cursor && step < limit) {

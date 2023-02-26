@@ -13,6 +13,4 @@ body {
   display: flex;
   flex-direction: column;
   margin: 0;
-  font-family: "IBM Plex Sans", sans-serif;
-  font-weight: 500;
 }
