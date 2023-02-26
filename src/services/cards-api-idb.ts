@@ -30,7 +30,7 @@ export const cardsAPI: CardsAPI = {
       );
 
     const result = [];
-    const limit = 64;
+    const limit = 32;
     let step = 0;
 
     while (cursor && step < limit) {
@@ -44,27 +44,12 @@ export const cardsAPI: CardsAPI = {
 
   getStudyCards: async (id) => {
     const db = await getDBInstance();
-
-    const transaction = db.transaction("cards");
-    let cursor = await transaction
-      .objectStore("cards")
-      .index("cardSetId_showAfter")
-      .openCursor(
-        IDBKeyRange.bound([id, ""], [id, new Date().toISOString()]),
-        "next"
-      );
-
-    const result = [];
-    const limit = 10;
-    let step = 0;
-
-    while (cursor && step < limit) {
-      result.push(cursor.value);
-      step += 1;
-      cursor = await cursor.continue();
-    }
-
-    return result;
+    return db.getAllFromIndex(
+      "cards",
+      "cardSetId_showAfter",
+      IDBKeyRange.bound([id, ""], [id, new Date().toISOString()]),
+      10
+    );
   },
 
   delete: async (id) => {
