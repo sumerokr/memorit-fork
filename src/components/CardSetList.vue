@@ -21,7 +21,7 @@ defineProps<Props>();
           <span
             >To study:
             <span
-              class="inline-block px-1 py-0.5 rounded-md"
+              class="inline-block -my-0.5 px-1 py-0.5 rounded-md"
               :class="
                 cardSet.cardsToStudyCount > 0 ? 'bg-amber-300' : 'bg-amber-100'
               "

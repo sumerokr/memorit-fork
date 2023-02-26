@@ -19,8 +19,8 @@ export const createCard = ({
 }: Pick<Card, "id" | "front" | "back" | "cardSetId" | "createdAt">): Card => {
   const progress = 0;
   const dateCreatedAt = new Date(createdAt);
-  const laterTS = dateCreatedAt.setDate(dateCreatedAt.getDate() + 1);
-  const showAfter = new Date(laterTS).toISOString();
+  // const laterTS = dateCreatedAt.setDate(dateCreatedAt.getDate() + 1);
+  const showAfter = dateCreatedAt.toISOString();
   return {
     id,
     front,
