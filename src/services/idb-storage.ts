@@ -31,19 +31,48 @@ export const getDBInstance = async () => {
   }
 
   db = openDB<MyDB>("memorit", 1, {
-    upgrade: (db) => {
-      const cardSetsStore = db.createObjectStore("card-sets", {
-        keyPath: "id",
-      });
-      cardSetsStore.createIndex("createdAt", "createdAt");
+    upgrade: (db, oldVersion /* , newVersion, transaction */) => {
+      const addCardSets = () => {
+        const cardSetsStore = db.createObjectStore("card-sets", {
+          keyPath: "id",
+        });
+        cardSetsStore.createIndex("createdAt", "createdAt");
+      };
+      const addCards = () => {
+        const cardsStore = db.createObjectStore("cards", {
+          keyPath: "id",
+        });
+        cardsStore.createIndex("createdAt", "createdAt");
+        cardsStore.createIndex("cardSetId", "cardSetId");
+        cardsStore.createIndex("cardSetId_createdAt", [
+          "cardSetId",
+          "createdAt",
+        ]);
+        cardsStore.createIndex("cardSetId_showAfter", [
+          "cardSetId",
+          "showAfter",
+        ]);
+      };
 
-      const cardsStore = db.createObjectStore("cards", {
-        keyPath: "id",
-      });
-      cardsStore.createIndex("createdAt", "createdAt");
-      cardsStore.createIndex("cardSetId", "cardSetId");
-      cardsStore.createIndex("cardSetId_createdAt", ["cardSetId", "createdAt"]);
-      cardsStore.createIndex("cardSetId_showAfter", ["cardSetId", "showAfter"]);
+      if (!oldVersion) {
+        addCardSets();
+        addCards();
+      } else {
+        const upgradeDBfromV1toV2 = () => {};
+        // const upgradeDBfromV2toV3 = () => {};
+
+        switch (oldVersion) {
+          case 1:
+            upgradeDBfromV1toV2();
+            break;
+          // falls through
+          // case 2:
+          //   upgradeDBfromV2toV3();
+          //   break;
+          default:
+            console.error("unknown db version");
+        }
+      }
     },
   });
   // @ts-ignore

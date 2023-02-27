@@ -10,7 +10,7 @@ export const updateCardSet: UpdateCardSetUC = async (id, data) => {
   try {
     console.time("cardSetAPI.update");
     await cardSetAPI.update(id, data);
-    console.time("cardSetAPI.update");
+    console.timeEnd("cardSetAPI.update");
     cardSetStorage.update(id, data);
     notificationService.notify("updated");
   } catch (error) {

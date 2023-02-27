@@ -39,11 +39,11 @@ export const cardSetAPI: CardSetAPI = {
     let step = 0;
 
     while (cursor && step < limit) {
-      const cardsCount = await transaction
+      const cardsCountPromise = transaction
         .objectStore("cards")
         .index("cardSetId")
         .count(cursor.value.id);
-      const cardsToStudyCount = await transaction
+      const cardsToStudyCountPromise = transaction
         .objectStore("cards")
         .index("cardSetId_showAfter")
         .count(
@@ -52,6 +52,11 @@ export const cardSetAPI: CardSetAPI = {
             [cursor.value.id, new Date().toISOString()]
           )
         );
+
+      const [cardsCount, cardsToStudyCount] = await Promise.all([
+        cardsCountPromise,
+        cardsToStudyCountPromise,
+      ]);
 
       result.push(
         cardSetPlainToCardSet(cursor.value, cardsCount, cardsToStudyCount)
