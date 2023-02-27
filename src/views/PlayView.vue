@@ -26,25 +26,20 @@ const current = ref(1);
 const currentCard = computed(() => {
   return cards.value[current.value - 1];
 });
-const prevCard = ref<Card>();
-watch(currentCard, (newCard, oldCard) => {
-  if (oldCard && oldCard.cardSetId === props.cardSetId) {
-    prevCard.value = oldCard;
-  }
-});
 
 const markHard = async () => {
-  const { id, progress } = currentCard.value;
+  const { id } = currentCard.value;
   isShown.value = false;
   current.value++;
-  const newProgress = (progress >= 2 ? progress - 1 : 1) as Card["progress"];
+  const newProgress = 1;
   await updateCardStatus({ id, progress: newProgress });
 };
 const markOk = async () => {
   const { id, progress } = currentCard.value;
   isShown.value = false;
   current.value++;
-  await updateCardStatus({ id, progress });
+  const newProgress = Math.max(progress - 1, 1) as Card["progress"];
+  await updateCardStatus({ id, progress: newProgress });
 };
 const markEasy = async () => {
   const { id, progress } = currentCard.value;
@@ -147,21 +142,6 @@ const markEasy = async () => {
               Reveal
             </button>
           </div>
-        </div>
-
-        <div class="mt-4 text-xs font-normal opacity-60">
-          <p class="mb-2">Debugging statistic</p>
-          <p>Current card</p>
-          <p>Progress: {{ currentCard.progress }}</p>
-          <p>Show after: {{ currentCard.showAfter }}</p>
-
-          <hr class="border-b my-2" />
-
-          <template v-if="prevCard">
-            <p>Previous card</p>
-            <p>Progress: {{ prevCard.progress }}</p>
-            <p>Show after: {{ prevCard.showAfter }}</p>
-          </template>
         </div>
       </template>
 
