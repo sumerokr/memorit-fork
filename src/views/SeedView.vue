@@ -133,6 +133,32 @@ const onMySeed = async () => {
     ["to stink", "stank, stunk"],
     ["to run", "ran, run"],
   ];
+  const set3 = [
+    ["Α α", "альфа"],
+    ["Β β ϐ", "бета (вита)"],
+    ["Γ γ", "гамма"],
+    ["Δ δ", "дельта"],
+    ["Ε ε ϵ", "эпсилон"],
+    ["Ζ ζ", "дзета (зита)"],
+    ["Η η", "эта (ита)"],
+    ["Θ θ ϴ ϑ", "тета (фита)"],
+    ["Ι ι", "йота"],
+    ["Κ κ ϰ", "каппа"],
+    ["Λ λ", "лямбда (лямда)"],
+    ["Μ μ", "мю (ми)"],
+    ["Ν ν", "ню (ни)"],
+    ["Ξ ξ", "кси"],
+    ["Ο ο", "омикрон"],
+    ["Π π ϖ", "пи"],
+    ["Ρ ρ ϱ", "ро"],
+    ["Σ σ ς", "сигма"],
+    ["Τ τ", "тау (тав)"],
+    ["Υ ϒ υ", "ипсилон"],
+    ["Φ φ ϕ", "фи"],
+    ["Χ χ", "хи"],
+    ["Ψ ψ", "пси"],
+    ["Ω ω", "омега"],
+  ];
 
   const cardSets = [
     createCardSet({
@@ -143,6 +169,11 @@ const onMySeed = async () => {
     createCardSet({
       id: nanoid(),
       title: "Conjunctions",
+      createdAt: faker.date.recent(30, "2022-12-31").toISOString(),
+    }),
+    createCardSet({
+      id: nanoid(),
+      title: "Греческий алфавит",
       createdAt: faker.date.recent(30, "2022-12-31").toISOString(),
     }),
   ];
@@ -163,6 +194,15 @@ const onMySeed = async () => {
         front: q,
         back: a,
         cardSetId: cardSets[1].id,
+        createdAt: faker.date.recent(30).toISOString(),
+      })
+    ),
+    ...set3.map(([q, a]) =>
+      createCard({
+        id: nanoid(),
+        front: q,
+        back: a,
+        cardSetId: cardSets[2].id,
         createdAt: faker.date.recent(30).toISOString(),
       })
     ),
