@@ -1,11 +1,12 @@
+// https://www.npmjs.com/package/idb
 import { openDB } from "idb";
-import type { DBSchema } from "idb";
+import type { DBSchema /* , IDBPDatabase */ } from "idb";
 import type { CardSet } from "@/domain/card-set";
 import type { Card } from "@/domain/card";
 
 export type CardSetPlain = Pick<CardSet, "id" | "title" | "createdAt">;
 
-interface MyDB extends DBSchema {
+interface MyDB1 extends DBSchema {
   "card-sets": {
     value: CardSetPlain;
     key: CardSetPlain["id"];
@@ -23,14 +24,14 @@ interface MyDB extends DBSchema {
   };
 }
 
-let db: ReturnType<typeof openDB<MyDB>>;
+let db: ReturnType<typeof openDB<MyDB1>>;
 
 export const getDBInstance = async () => {
   if (db) {
     return db;
   }
 
-  db = openDB<MyDB>("memorit", 1, {
+  db = openDB<MyDB1>("memorit", 1, {
     upgrade: (db, oldVersion /* , newVersion, transaction */) => {
       const addCardSets = () => {
         const cardSetsStore = db.createObjectStore("card-sets", {
@@ -54,24 +55,11 @@ export const getDBInstance = async () => {
         ]);
       };
 
-      if (!oldVersion) {
+      if (oldVersion < 1) {
+        // Cast a reference of the database to the old schema.
+        // const v1Db = db as unknown as IDBPDatabase<MyDBV1>;
         addCardSets();
         addCards();
-      } else {
-        const upgradeDBfromV1toV2 = () => {};
-        // const upgradeDBfromV2toV3 = () => {};
-
-        switch (oldVersion) {
-          case 1:
-            upgradeDBfromV1toV2();
-            break;
-          // falls through
-          // case 2:
-          //   upgradeDBfromV2toV3();
-          //   break;
-          default:
-            console.error("unknown db version");
-        }
       }
     },
   });
