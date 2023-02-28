@@ -70,7 +70,7 @@ const markEasy = async () => {
         <p class="mb-4 text-sm opacity-60">
           Card: {{ current }} of {{ total }}
         </p>
-        <div class="relative mb-4 h-40">
+        <div class="relative mb-4 h-52">
           <Transition name="slide-left">
             <div
               class="border rounded-xl p-4 bg-white absolute inset-0"
@@ -81,12 +81,16 @@ const markEasy = async () => {
                 :class="isShown ? '_grid-show' : '_grid-hide'"
               >
                 <p class="flex items-center justify-center">
-                  <span class="text-center">{{ currentCard.front }}</span>
+                  <span class="text-center text-xl">{{
+                    currentCard.front
+                  }}</span>
                 </p>
                 <p
                   class="_back flex items-center justify-center overflow-hidden"
                 >
-                  <span class="text-center">{{ currentCard.back }}</span>
+                  <span class="text-center text-xl">{{
+                    currentCard.back
+                  }}</span>
                 </p>
               </div>
             </div>

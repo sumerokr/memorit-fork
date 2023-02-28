@@ -7,6 +7,123 @@ import flatten from "lodash/flatten";
 import { deleteDB } from "idb";
 import { getDBInstance } from "@/services/idb-storage";
 
+const set1 = [
+  ["в интернет(е)", "on the internet"],
+  ["на публике", "in a public space"],
+  ["humble (adj)", "скромный"],
+  ["to brag", "хвастаться"],
+  ["skinny dipping", "купаться голышом"],
+  ["to get married", "жениться / выходить замуж"],
+  ["grinder", "измельчитель"],
+  ["intently", "внимательно, тщательно"],
+  ["twice a month", "дважды в месяц"],
+  ["make mistakes", "совершать ошибки"],
+  ["in the Balkan sea", "на Балканах"],
+  ["если бы ты покупал", "if you were to buy"],
+  ["cog in the system", "Мелкая часть чего-то большого"],
+  ["let’s crack on!", "let’s start!"],
+  ["to put on weight", "to gain weight"],
+  ["to convey", "передавать (мысль)"],
+  ["to make an effort", "прилагать усилие"],
+  ["talks to", "Разговаривать с"],
+  ["to be keen on", "увлекаться"],
+  ["to be eager", "быть нетерпеливым"],
+  ["rug", "коврик"],
+  ["doormat", "коврик в прихожей"],
+  ["I *am* a **sandwich**", "Ok"],
+];
+const set2 = [
+  ["to drive", "drove, driven"],
+  ["to forget", "forgot, forgotten"],
+  ["to brag", "bragged, bragged"],
+  ["to ride", "rode, ridden"],
+  ["to wake", "woke, woken"],
+  ["to wear", "wore, worn"],
+  ["to swear", "swore, sworn"],
+  ["to tear", "tore, torn"],
+  ["to fly", "flew, flown"],
+  ["to draw", "drew, drawn"],
+  ["to swim", "swam, swum"],
+  ["to ring", "rang, rung"],
+  ["to sing", "sang, sung"],
+  ["to stink", "stank, stunk"],
+  ["to run", "ran, run"],
+];
+const set3 = [
+  ["Α α", "альфа"],
+  ["Β β ϐ", "бета (вита)"],
+  ["Γ γ", "гамма"],
+  ["Δ δ", "дельта"],
+  ["Ε ε ϵ", "эпсилон"],
+  ["Ζ ζ", "дзета (зита)"],
+  ["Η η", "эта (ита)"],
+  ["Θ θ ϴ ϑ", "тета (фита)"],
+  ["Ι ι", "йота"],
+  ["Κ κ ϰ", "каппа"],
+  ["Λ λ", "лямбда (лямда)"],
+  ["Μ μ", "мю (ми)"],
+  ["Ν ν", "ню (ни)"],
+  ["Ξ ξ", "кси"],
+  ["Ο ο", "омикрон"],
+  ["Π π ϖ", "пи"],
+  ["Ρ ρ ϱ", "ро"],
+  ["Σ σ ς", "сигма"],
+  ["Τ τ", "тау (тав)"],
+  ["Υ ϒ υ", "ипсилон"],
+  ["Φ φ ϕ", "фи"],
+  ["Χ χ", "хи"],
+  ["Ψ ψ", "пси"],
+  ["Ω ω", "омега"],
+] as const;
+
+const cardSets = [
+  createCardSet({
+    id: nanoid(),
+    title: "English",
+    createdAt: faker.date.recent(30, "2022-12-31").toISOString(),
+  }),
+  createCardSet({
+    id: nanoid(),
+    title: "Conjunctions",
+    createdAt: faker.date.recent(30, "2022-12-31").toISOString(),
+  }),
+  createCardSet({
+    id: nanoid(),
+    title: "Греческий алфавит",
+    createdAt: faker.date.recent(30, "2022-12-31").toISOString(),
+  }),
+];
+
+const cards = [
+  ...set1.map(([q, a]) =>
+    createCard({
+      id: nanoid(),
+      front: q,
+      back: a,
+      cardSetId: cardSets[0].id,
+      createdAt: faker.date.recent(30).toISOString(),
+    })
+  ),
+  ...set2.map(([q, a]) =>
+    createCard({
+      id: nanoid(),
+      front: q,
+      back: a,
+      cardSetId: cardSets[1].id,
+      createdAt: faker.date.recent(30).toISOString(),
+    })
+  ),
+  ...set3.map(([q, a]) =>
+    createCard({
+      id: nanoid(),
+      front: q,
+      back: a,
+      cardSetId: cardSets[2].id,
+      createdAt: faker.date.recent(30).toISOString(),
+    })
+  ),
+];
+
 const onSeed = async (options: any) => {
   const [[cardSetMin, cardSetMax], [cardsMin, cardsMax]] = options;
   const cardSets = new Array(
@@ -91,123 +208,6 @@ const onDelete = async () => {
 };
 
 const onMySeed = async () => {
-  const set1 = [
-    ["в интернет(е)", "on the internet"],
-    ["на публике", "in a public space"],
-    ["humble (adj)", "скромный"],
-    ["to brag", "хвастаться"],
-    ["skinny dipping", "купаться голышом"],
-    ["to get married", "жениться / выходить замуж"],
-    ["grinder", "измельчитель"],
-    ["intently", "внимательно, тщательно"],
-    ["twice a month", "дважды в месяц"],
-    ["make mistakes", "совершать ошибки"],
-    ["in the Balkan sea", "на Балканах"],
-    ["если бы ты покупал", "if you were to buy"],
-    ["cog in the system", "Мелкая часть чего-то большого"],
-    ["let’s crack on!", "let’s start!"],
-    ["to put on weight", "to gain weight"],
-    ["to convey", "передавать (мысль)"],
-    ["to make an effort", "прилагать усилие"],
-    ["talks to", "Разговаривать с"],
-    ["to be keen on", "увлекаться"],
-    ["to be eager", "быть нетерпеливым"],
-    ["rug", "коврик"],
-    ["doormat", "коврик в прихожей"],
-    ["I *am* a **sandwich**", "Ok"],
-  ];
-  const set2 = [
-    ["to drive", "drove, driven"],
-    ["to forget", "forgot, forgotten"],
-    ["to brag", "bragged, bragged"],
-    ["to ride", "rode, ridden"],
-    ["to wake", "woke, woken"],
-    ["to wear", "wore, worn"],
-    ["to swear", "swore, sworn"],
-    ["to tear", "tore, torn"],
-    ["to fly", "flew, flown"],
-    ["to draw", "drew, drawn"],
-    ["to swim", "swam, swum"],
-    ["to ring", "rang, rung"],
-    ["to sing", "sang, sung"],
-    ["to stink", "stank, stunk"],
-    ["to run", "ran, run"],
-  ];
-  const set3 = [
-    ["Α α", "альфа"],
-    ["Β β ϐ", "бета (вита)"],
-    ["Γ γ", "гамма"],
-    ["Δ δ", "дельта"],
-    ["Ε ε ϵ", "эпсилон"],
-    ["Ζ ζ", "дзета (зита)"],
-    ["Η η", "эта (ита)"],
-    ["Θ θ ϴ ϑ", "тета (фита)"],
-    ["Ι ι", "йота"],
-    ["Κ κ ϰ", "каппа"],
-    ["Λ λ", "лямбда (лямда)"],
-    ["Μ μ", "мю (ми)"],
-    ["Ν ν", "ню (ни)"],
-    ["Ξ ξ", "кси"],
-    ["Ο ο", "омикрон"],
-    ["Π π ϖ", "пи"],
-    ["Ρ ρ ϱ", "ро"],
-    ["Σ σ ς", "сигма"],
-    ["Τ τ", "тау (тав)"],
-    ["Υ ϒ υ", "ипсилон"],
-    ["Φ φ ϕ", "фи"],
-    ["Χ χ", "хи"],
-    ["Ψ ψ", "пси"],
-    ["Ω ω", "омега"],
-  ];
-
-  const cardSets = [
-    createCardSet({
-      id: nanoid(),
-      title: "English",
-      createdAt: faker.date.recent(30, "2022-12-31").toISOString(),
-    }),
-    createCardSet({
-      id: nanoid(),
-      title: "Conjunctions",
-      createdAt: faker.date.recent(30, "2022-12-31").toISOString(),
-    }),
-    createCardSet({
-      id: nanoid(),
-      title: "Греческий алфавит",
-      createdAt: faker.date.recent(30, "2022-12-31").toISOString(),
-    }),
-  ];
-
-  const cards = [
-    ...set1.map(([q, a]) =>
-      createCard({
-        id: nanoid(),
-        front: q,
-        back: a,
-        cardSetId: cardSets[0].id,
-        createdAt: faker.date.recent(30).toISOString(),
-      })
-    ),
-    ...set2.map(([q, a]) =>
-      createCard({
-        id: nanoid(),
-        front: q,
-        back: a,
-        cardSetId: cardSets[1].id,
-        createdAt: faker.date.recent(30).toISOString(),
-      })
-    ),
-    ...set3.map(([q, a]) =>
-      createCard({
-        id: nanoid(),
-        front: q,
-        back: a,
-        cardSetId: cardSets[2].id,
-        createdAt: faker.date.recent(30).toISOString(),
-      })
-    ),
-  ];
-
   const db = await getDBInstance();
   console.time("create card-sets");
   const cardSetsTransaction = db.transaction("card-sets", "readwrite");
@@ -222,6 +222,36 @@ const onMySeed = async () => {
   const cardsPromises = cards.map((card) => cardsTransaction.store.add(card));
   await Promise.all([...cardsPromises, cardsTransaction.done]);
   console.timeEnd("create cards");
+
+  alert("Dummy data added");
+};
+
+const addGreek = async () => {
+  const db = await getDBInstance();
+
+  console.time("greek create card-sets");
+  const cardSetsTransaction = db.transaction("card-sets", "readwrite");
+  await Promise.all([
+    cardSetsTransaction.store.add(cardSets[2]),
+    cardSetsTransaction.done,
+  ]);
+  console.timeEnd("greek create card-sets");
+
+  console.time("create greek cards");
+  const cardsTransaction = db.transaction("cards", "readwrite");
+  const cardsPromises = set3
+    .map(([q, a]) =>
+      createCard({
+        id: nanoid(),
+        front: q,
+        back: a,
+        cardSetId: cardSets[2].id,
+        createdAt: faker.date.recent(30).toISOString(),
+      })
+    )
+    .map((card) => cardsTransaction.store.add(card));
+  await Promise.all([...cardsPromises, cardsTransaction.done]);
+  console.timeEnd("create greek cards");
 
   alert("Dummy data added");
 };
@@ -261,6 +291,17 @@ const onMySeed = async () => {
             [50, 500],
           ])
         "
+      >
+        Add data
+      </button>
+    </p>
+    <hr class="border-t my-4" />
+    <p>Add Greek alphabet</p>
+    <p>
+      <button
+        class="inline-flex gap-2 px-4 py-2 items-center bg-indigo-100 rounded-2xl justify-center"
+        type="button"
+        @click="addGreek"
       >
         Add data
       </button>
