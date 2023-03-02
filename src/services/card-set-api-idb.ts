@@ -29,7 +29,8 @@ export const cardSetAPI: CardSetAPI = {
   },
 
   getAll: async (args) => {
-    const { before, after } = args ?? {};
+    console.time("CardSetAPI.getAll");
+    const { before, after, query } = args ?? {};
     const response: Awaited<ReturnType<CardSetAPI["getAll"]>> = {
       data: [],
     };
@@ -42,28 +43,29 @@ export const cardSetAPI: CardSetAPI = {
 
     if (cursor) {
       const moveCursorToStartEntry = async (reference: string) => {
-        if (!cursor) {
-          return;
-        }
         const startEntry = await transaction
           .objectStore("card-sets")
           .get(reference);
         if (!startEntry) {
           // TODO: handle. Reverse cursor?
         } else {
-          if (cursor.primaryKey !== startEntry.id) {
-            return cursor.continuePrimaryKey(startEntry.createdAt, reference);
+          if (cursor!.primaryKey !== startEntry.id) {
+            return cursor!.continuePrimaryKey(startEntry.createdAt, reference);
+          } else {
+            return cursor;
           }
         }
       };
       if (before) {
-        await moveCursorToStartEntry(before);
+        // @ts-ignore
+        cursor = await moveCursorToStartEntry(before);
       } else if (after) {
-        await moveCursorToStartEntry(after);
+        // @ts-ignore
+        cursor = await moveCursorToStartEntry(after);
       }
     }
 
-    const limit = 12;
+    const limit = 2;
     let step = 0;
 
     while (cursor && step <= limit) {
@@ -71,19 +73,58 @@ export const cardSetAPI: CardSetAPI = {
         if (before) {
           response.after = cursor.primaryKey;
           step += 1;
-          await cursor.continue();
+          cursor = await cursor.continue();
           continue;
         } else if (after) {
-          response.before = cursor.primaryKey;
+          if (!query) {
+            response.before = cursor.primaryKey;
+          } else {
+            if (
+              !cursor.value.title.toLowerCase().includes(query.toLowerCase())
+            ) {
+              console.log("check in. no match. CONTINUE");
+              cursor = await cursor.continue();
+              continue;
+            } else {
+              response.before = cursor.primaryKey;
+            }
+          }
         }
       } else if (step === limit) {
         if (before) {
           response.before = cursor.primaryKey;
         } else {
-          response.after = cursor.primaryKey;
-          break;
+          if (!query) {
+            response.after = cursor.primaryKey;
+            break;
+          } else {
+            if (
+              !cursor.value.title.toLowerCase().includes(query.toLowerCase())
+            ) {
+              console.log("check in. no match. CONTINUE");
+              cursor = await cursor.continue();
+              continue;
+            } else {
+              response.after = cursor.primaryKey;
+              break;
+            }
+          }
         }
       }
+
+      // query search
+      console.log("check");
+      if (
+        query &&
+        !cursor.value.title.toLowerCase().includes(query.toLowerCase())
+      ) {
+        console.log("check in. no match. CONTINUE");
+        console.log("cursow was", cursor.key);
+        cursor = await cursor.continue();
+        continue;
+      }
+      console.log("check out");
+
       //#region meat
       const cardsCountPromise = transaction
         .objectStore("cards")
@@ -113,14 +154,30 @@ export const cardSetAPI: CardSetAPI = {
       cursor = await cursor.continue();
     }
 
-    if (before && !cursor) {
-      delete response.before;
+    if (before) {
+      if (!cursor) {
+        delete response.before;
+      } else if (query) {
+        while (cursor) {
+          if (!cursor.value.title.toLowerCase().includes(query.toLowerCase())) {
+            cursor = await cursor.continue();
+            continue;
+          } else {
+            break;
+          }
+        }
+
+        if (!cursor) {
+          delete response.before;
+        }
+      }
     }
 
     if (before) {
       response.data.reverse();
     }
 
+    console.timeEnd("CardSetAPI.getAll");
     return response;
   },
 

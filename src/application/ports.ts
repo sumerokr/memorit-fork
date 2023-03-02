@@ -51,7 +51,7 @@ export type GetCardSetsViewUC = () => Promise<void>;
 export type CardSetAPI = {
   save: (cardSet: CardSet) => Promise<void>;
   getAll: (
-    args?:
+    args?: (
       | {
           before: CardSet["id"];
           after?: never;
@@ -60,6 +60,9 @@ export type CardSetAPI = {
           before?: never;
           after: CardSet["id"];
         }
+    ) & {
+      query?: CardSet["title"];
+    }
   ) => Promise<{
     data: CardSet[];
     before?: CardSet["id"];
