@@ -65,7 +65,7 @@ export const cardSetAPI: CardSetAPI = {
       }
     }
 
-    const limit = 2;
+    const limit = 24;
     let step = 0;
 
     while (cursor && step <= limit) {
@@ -82,7 +82,6 @@ export const cardSetAPI: CardSetAPI = {
             if (
               !cursor.value.title.toLowerCase().includes(query.toLowerCase())
             ) {
-              console.log("check in. no match. CONTINUE");
               cursor = await cursor.continue();
               continue;
             } else {
@@ -101,7 +100,6 @@ export const cardSetAPI: CardSetAPI = {
             if (
               !cursor.value.title.toLowerCase().includes(query.toLowerCase())
             ) {
-              console.log("check in. no match. CONTINUE");
               cursor = await cursor.continue();
               continue;
             } else {
@@ -113,17 +111,13 @@ export const cardSetAPI: CardSetAPI = {
       }
 
       // query search
-      console.log("check");
       if (
         query &&
         !cursor.value.title.toLowerCase().includes(query.toLowerCase())
       ) {
-        console.log("check in. no match. CONTINUE");
-        console.log("cursow was", cursor.key);
         cursor = await cursor.continue();
         continue;
       }
-      console.log("check out");
 
       //#region meat
       const cardsCountPromise = transaction
