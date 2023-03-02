@@ -26,13 +26,37 @@ export const useDeleteCardSet = () => {
 };
 
 export const useGetCardSets = () => {
-  const { isReady, isLoading, execute } = useAsyncState(getCardSetsUC, null, {
+  const { isReady, isLoading, execute, state } = useAsyncState<
+    void | null | Parameters<Parameters<typeof getCardSetsUC>[0]["save"]>[0],
+    true
+  >(getCardSetsUC, null, {
     immediate: false,
+    onSuccess: (data) => {
+      console.log("call", data);
+    },
   });
   return {
+    state,
     isReady,
     isLoading,
-    execute,
+    execute: (args?: Parameters<typeof getCardSetsUC>[1]) => {
+      console.log("executed");
+
+      execute(
+        0,
+        {
+          save: (
+            cardSets: Parameters<Parameters<typeof getCardSetsUC>[0]["save"]>[0]
+          ) => {
+            console.log("save", cardSets);
+            console.log("state is", state);
+            state.value = cardSets;
+            console.log("state is", state);
+          },
+        },
+        args
+      );
+    },
   };
 };
 

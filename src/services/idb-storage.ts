@@ -1,6 +1,6 @@
 // https://www.npmjs.com/package/idb
 import { openDB } from "idb";
-import type { DBSchema /* , IDBPDatabase */ } from "idb";
+import type { DBSchema, IDBPDatabase } from "idb";
 import type { CardSet } from "@/domain/card-set";
 import type { Card } from "@/domain/card";
 
@@ -33,14 +33,15 @@ export const getDBInstance = async () => {
 
   db = openDB<MyDB1>("memorit", 1, {
     upgrade: (db, oldVersion /* , newVersion, transaction */) => {
-      const addCardSets = () => {
-        const cardSetsStore = db.createObjectStore("card-sets", {
+      if (oldVersion < 1) {
+        // Cast a reference of the database to the old schema.
+        const dbv1 = db as unknown as IDBPDatabase<MyDB1>;
+        const cardSetsStore = dbv1.createObjectStore("card-sets", {
           keyPath: "id",
         });
         cardSetsStore.createIndex("createdAt", "createdAt");
-      };
-      const addCards = () => {
-        const cardsStore = db.createObjectStore("cards", {
+
+        const cardsStore = dbv1.createObjectStore("cards", {
           keyPath: "id",
         });
         cardsStore.createIndex("createdAt", "createdAt");
@@ -53,13 +54,12 @@ export const getDBInstance = async () => {
           "cardSetId",
           "showAfter",
         ]);
-      };
 
-      if (oldVersion < 1) {
-        // Cast a reference of the database to the old schema.
-        // const v1Db = db as unknown as IDBPDatabase<MyDBV1>;
-        addCardSets();
-        addCards();
+        if (oldVersion < 1) {
+          // Cast a reference of the database to the old schema.
+          // const dbv2 = db as unknown as IDBPDatabase<MyDB2>;
+          // do something
+        }
       }
     },
   });

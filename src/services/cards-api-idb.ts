@@ -1,3 +1,5 @@
+// TODO: ensure that put only updates
+
 import type { CardsAPI } from "@/application/ports";
 import { getDBInstance } from "./idb-storage";
 

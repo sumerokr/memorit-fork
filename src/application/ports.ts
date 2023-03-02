@@ -4,7 +4,14 @@ import type { CardSet } from "../domain/card-set";
 //#region driving adapters
 //#region card sets
 export type CreateCardSetUC = (title: CardSet["title"]) => Promise<void>;
-export type GetCardSetsUC = () => Promise<void>;
+export type GetCardSetsUC = (
+  deps: {
+    save: (response: Awaited<ReturnType<CardSetAPI["getAll"]>>) => void;
+  },
+  args?:
+    | { before: CardSet["id"]; after?: never }
+    | { before?: never; after: CardSet["id"] }
+) => Promise<void>;
 export type GetCardSetByIdUC = (id: CardSet["id"]) => Promise<void>;
 export type UpdateCardSetUC = (
   id: CardSet["id"],
@@ -43,7 +50,21 @@ export type GetCardSetsViewUC = () => Promise<void>;
 //#region cardSets
 export type CardSetAPI = {
   save: (cardSet: CardSet) => Promise<void>;
-  getAll: () => Promise<CardSet[]>;
+  getAll: (
+    args?:
+      | {
+          before: CardSet["id"];
+          after?: never;
+        }
+      | {
+          before?: never;
+          after: CardSet["id"];
+        }
+  ) => Promise<{
+    data: CardSet[];
+    before?: CardSet["id"];
+    after?: CardSet["id"];
+  }>;
   getById: (id: CardSet["id"]) => Promise<CardSet>;
   update: (
     id: CardSet["id"],

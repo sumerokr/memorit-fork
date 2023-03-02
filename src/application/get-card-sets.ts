@@ -1,16 +1,18 @@
 import type { GetCardSetsUC } from "@/application/ports";
 import {
   cardSetAPI,
-  cardSetStorage,
+  // cardSetStorage,
   notificationService,
 } from "@/services/index";
 
-export const getCardSetsUC: GetCardSetsUC = async () => {
+export const getCardSetsUC: GetCardSetsUC = async (deps, args) => {
+  console.log("getCardSetsUC call");
+
   try {
     console.time("cardSetAPI.getAll");
-    const cardSets = await cardSetAPI.getAll();
+    const cardSets = await cardSetAPI.getAll(args);
     console.timeEnd("cardSetAPI.getAll");
-    cardSetStorage.set(cardSets);
+    deps.save(cardSets);
     notificationService.notify("received");
   } catch (error) {
     const message = (() => {

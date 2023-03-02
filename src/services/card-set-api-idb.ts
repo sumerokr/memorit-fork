@@ -1,3 +1,5 @@
+// TODO: ensure that put only updates
+
 import type { CardSetAPI } from "@/application/ports";
 import type { CardSet } from "@/domain/card-set";
 import { getDBInstance } from "./idb-storage";
@@ -26,19 +28,63 @@ export const cardSetAPI: CardSetAPI = {
     await db.add("card-sets", cardSetToCardSetPlain(cardSet));
   },
 
-  getAll: async () => {
+  getAll: async (args) => {
+    const { before, after } = args ?? {};
+    const response: Awaited<ReturnType<CardSetAPI["getAll"]>> = {
+      data: [],
+    };
     const db = await getDBInstance();
     const transaction = db.transaction(["card-sets", "cards"]);
     let cursor = await transaction
       .objectStore("card-sets")
       .index("createdAt")
-      .openCursor(null, "prev");
+      .openCursor(null, before ? "next" : "prev");
 
-    const result = [];
-    const limit = 64;
+    if (cursor) {
+      const moveCursorToStartEntry = async (reference: string) => {
+        if (!cursor) {
+          return;
+        }
+        const startEntry = await transaction
+          .objectStore("card-sets")
+          .get(reference);
+        if (!startEntry) {
+          // TODO: handle. Reverse cursor?
+        } else {
+          if (cursor.primaryKey !== startEntry.id) {
+            return cursor.continuePrimaryKey(startEntry.createdAt, reference);
+          }
+        }
+      };
+      if (before) {
+        await moveCursorToStartEntry(before);
+      } else if (after) {
+        await moveCursorToStartEntry(after);
+      }
+    }
+
+    const limit = 12;
     let step = 0;
 
-    while (cursor && step < limit) {
+    while (cursor && step <= limit) {
+      if (step === 0) {
+        if (before) {
+          response.after = cursor.primaryKey;
+          step += 1;
+          await cursor.continue();
+          continue;
+        } else if (after) {
+          response.before = cursor.primaryKey;
+        }
+      } else if (step === limit) {
+        if (before) {
+          response.before = cursor.primaryKey;
+        } else {
+          response.after = cursor.primaryKey;
+          break;
+        }
+      }
+      //#region meat
       const cardsCountPromise = transaction
         .objectStore("cards")
         .index("cardSetId")
@@ -58,14 +104,24 @@ export const cardSetAPI: CardSetAPI = {
         cardsToStudyCountPromise,
       ]);
 
-      result.push(
+      response.data.push(
         cardSetPlainToCardSet(cursor.value, cardsCount, cardsToStudyCount)
       );
+      //#endregion meat
+
       step += 1;
       cursor = await cursor.continue();
     }
 
-    return result;
+    if (before && !cursor) {
+      delete response.before;
+    }
+
+    if (before) {
+      response.data.reverse();
+    }
+
+    return response;
   },
 
   getById: async (id) => {
