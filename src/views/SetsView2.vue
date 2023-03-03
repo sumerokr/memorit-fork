@@ -92,7 +92,7 @@ const onSearch = async () => {
     >
       Error
     </p>
-    <template v-if="state">
+    <template v-if="state?.data.length">
       <CardSetList v-if="state.data.length" :card-sets="state.data" />
 
       <div
@@ -115,7 +115,7 @@ const onSearch = async () => {
       </div>
     </template>
 
-    <p v-else>
+    <p v-else-if="state && !state.data.length">
       You have no card sets yet.
       <RouterLink
         :to="{ name: 'new-card-set' }"
