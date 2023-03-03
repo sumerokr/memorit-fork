@@ -72,13 +72,14 @@ const onSearch = async () => {
       <h1 class="text-2xl">Card sets</h1>
       <div class="relative">
         <BaseButton
-          before="search"
+          :before="isSearchVisible ? 'close' : 'search'"
           class="relative z-20 -my-1 !pr-4 align-top"
           @click="onSearch"
         ></BaseButton>
         <input
           v-if="isSearchVisible"
           v-model="query"
+          @compositionstart="($event) => (($event.target as any).composing = false)"
           ref="queryEl"
           class="absolute z-10 -top-1 right-0 leading-5 border-2 rounded-2xl p-2 pr-16 w-56"
           type="text"
