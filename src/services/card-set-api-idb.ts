@@ -34,20 +34,23 @@ export const cardSetAPI: CardSetAPI = {
     const response: Awaited<ReturnType<CardSetAPI["getAll"]>> = {
       data: [],
     };
+
     const db = await getDBInstance();
     const transaction = db.transaction(["card-sets", "cards"]);
+
     let cursor = await transaction
       .objectStore("card-sets")
       .index("createdAt")
       .openCursor(null, before ? "next" : "prev");
 
     if (cursor) {
-      const moveCursorToStartEntry = async (reference: string) => {
+      const moveCursorToStartEntry = async (reference: CardSet["id"]) => {
         const startEntry = await transaction
           .objectStore("card-sets")
           .get(reference);
         if (!startEntry) {
           // TODO: handle. Reverse cursor?
+          return cursor;
         } else {
           if (cursor!.primaryKey !== startEntry.id) {
             return cursor!.continuePrimaryKey(startEntry.createdAt, reference);
@@ -57,10 +60,8 @@ export const cardSetAPI: CardSetAPI = {
         }
       };
       if (before) {
-        // @ts-ignore
         cursor = await moveCursorToStartEntry(before);
       } else if (after) {
-        // @ts-ignore
         cursor = await moveCursorToStartEntry(after);
       }
     }

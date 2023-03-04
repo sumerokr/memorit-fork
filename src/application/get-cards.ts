@@ -6,7 +6,7 @@ export const getCardsByCardSetId: GetCardsByCardSetIdUC = async (id) => {
     console.time("cardsAPI.getAllByCardSetId");
     const cards = await cardsAPI.getAllByCardSetId(id);
     console.timeEnd("cardsAPI.getAllByCardSetId");
-    cardsStorage.set(cards);
+    // cardsStorage.set(cards);
     notificationService.notify("received");
   } catch (error) {
     const message = (() => {

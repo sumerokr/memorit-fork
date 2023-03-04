@@ -34,7 +34,7 @@ const router = createRouter({
     {
       path: "/sets/:cardSetId/cards",
       name: "cards",
-      component: () => import("../views/CardsView.vue"),
+      component: () => import("../views/CardsView2.vue"),
       props: true,
     },
     {

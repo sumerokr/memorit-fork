@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, provide } from "vue";
+import { computed } from "vue";
 import CardList from "@/components/CardList.vue";
 import { useGetCardsByCardSetId } from "@/composables/use-cards";
 import { cardsByCardSetId } from "@/services/cards-storage";

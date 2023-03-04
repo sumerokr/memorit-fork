@@ -96,7 +96,25 @@ export type CardSetsViewStorage = {
 //#region cards
 export type CardsAPI = {
   save: (card: Card) => Promise<void>;
-  getAllByCardSetId: (id: CardSet["id"]) => Promise<Card[]>;
+  getAllByCardSetId: (
+    id: CardSet["id"],
+    args?: (
+      | {
+          before: Card["id"];
+          after?: never;
+        }
+      | {
+          before?: never;
+          after: Card["id"];
+        }
+    ) & {
+      query?: Card["front"] | Card["back"];
+    }
+  ) => Promise<{
+    data: Card[];
+    before?: Card["id"];
+    after?: Card["id"];
+  }>;
   getById: (id: Card["id"]) => Promise<Card>;
   getStudyCards: (id: CardSet["id"]) => Promise<Card[]>;
   update: (id: Card["id"], data: Partial<Omit<Card, "id">>) => Promise<void>;
