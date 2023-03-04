@@ -8,6 +8,7 @@ import { useRoute, useRouter } from "vue-router";
 import pickBy from "lodash/pickBy";
 import pick from "lodash/pick";
 import omit from "lodash/omit";
+import difference from "lodash/difference";
 import mapValues from "lodash/mapValues";
 
 const route = useRoute();
@@ -79,9 +80,20 @@ const nextNavigationParams = computed<
 watch(
   currentNavigationParams,
   (next, prev) => {
-    // do nothing if unneeded before parameter was removed
+    console.log("url has changed");
+    // do nothing if the only removed parameter was before
     if (!next.before && prev?.before) {
-      return;
+      const nextKeys = Object.keys(next) as (keyof typeof next)[];
+      const prevKeys = Object.keys(prev) as (keyof typeof prev)[];
+      const addedKeys = difference(nextKeys, prevKeys);
+      const removedKeys = difference(prevKeys, nextKeys);
+      if (
+        addedKeys.length === 1 &&
+        addedKeys[0] === "before" &&
+        removedKeys.length === 0
+      ) {
+        return;
+      }
     }
     execute(0, currentNavigationParams.value);
     window.scrollTo({

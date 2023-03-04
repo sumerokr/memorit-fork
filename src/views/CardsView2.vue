@@ -8,6 +8,7 @@ import { useRoute, useRouter } from "vue-router";
 import pickBy from "lodash/pickBy";
 import pick from "lodash/pick";
 import omit from "lodash/omit";
+import difference from "lodash/difference";
 import mapValues from "lodash/mapValues";
 
 type Props = {
@@ -85,9 +86,19 @@ const nextNavigationParams = computed<
 watch(
   currentNavigationParams,
   (next, prev) => {
-    // do nothing if unneeded before parameter was removed
+    // do nothing if the only removed parameter was before
     if (!next.before && prev?.before) {
-      return;
+      const nextKeys = Object.keys(next) as (keyof typeof next)[];
+      const prevKeys = Object.keys(prev) as (keyof typeof prev)[];
+      const addedKeys = difference(nextKeys, prevKeys);
+      const removedKeys = difference(prevKeys, nextKeys);
+      if (
+        addedKeys.length === 1 &&
+        addedKeys[0] === "before" &&
+        removedKeys.length === 0
+      ) {
+        return;
+      }
     }
     execute(0, props.cardSetId, currentNavigationParams.value);
     window.scrollTo({
@@ -176,7 +187,7 @@ watch(
           }"
           class="inline-flex gap-2 pr-4 pl-6 py-2 items-center rounded-2xl justify-center bg-indigo-100"
           before="chevron_left"
-          >prev<span class="material-symbols-outlined text-xl leading-none"
+          >next<span class="material-symbols-outlined text-xl leading-none"
             >chevron_right</span
           ></RouterLink
         >
