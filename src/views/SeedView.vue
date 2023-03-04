@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { reactive } from "vue";
 import { type Card, createCard } from "@/domain/card";
 import { type CardSet, createCardSet } from "@/domain/card-set";
 import { faker } from "@faker-js/faker";
@@ -290,6 +291,7 @@ setMap.set(nanoid(), [
 const iterative = [...setMap.entries()].map(
   ([id, [title, cards]]) => [id, title, cards.length] as const
 );
+const addedIds = reactive(new Set<CardSet["id"]>());
 const add = async (id: CardSet["id"]) => {
   const match = setMap.get(id);
   if (!match) {
@@ -300,13 +302,17 @@ const add = async (id: CardSet["id"]) => {
   const [cardSet, cards] = createSetWithCards(...match);
 
   const db = await getDBInstance();
-  console.time("create card-set");
   const tx = db.transaction(["card-sets", "cards"], "readwrite");
   const promise = tx.objectStore("card-sets").add(cardSet);
   const promises = cards.map((card) => tx.objectStore("cards").add(card));
   await Promise.all([...promises, promise, tx.done]);
-  console.timeEnd("create card-sets");
+
+  addedIds.add(id);
+  setTimeout(() => {
+    addedIds.delete(id);
+  }, 3000);
 };
+
 //#endregion ready sets
 
 const cards = [
@@ -490,11 +496,12 @@ const onMySeed = async () => {
           <span class="text-xs opacity-60">({{ length }} cards)</span></span
         >
         <button
-          class="flex rounded-2xl bg-green-50 p-2.5 shadow-md"
+          class="flex rounded-2xl p-2.5 shadow-md bg-green-50 disabled:opacity-40"
+          :disabled="addedIds.has(id)"
           @click="add(id)"
         >
           <span class="material-symbols-outlined text-xl leading-none">
-            add
+            {{ addedIds.has(id) ? "done" : "add" }}
           </span>
         </button>
       </li>
