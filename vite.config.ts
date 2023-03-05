@@ -30,6 +30,9 @@ export default defineConfig({
           },
         ],
       },
+      workbox: {
+        navigateFallbackDenylist: [/^\/api/],
+      },
     }),
   ],
   resolve: {
