@@ -1,10 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import {
-  useGetCardSetById,
-  useDeleteCardSet,
-} from "@/composables/use-card-sets";
-import { cardSetsById } from "@/services/card-sets-storage";
+import { ref } from "vue";
 import { useAsyncState, onClickOutside } from "@vueuse/core";
 import { useRouter } from "vue-router";
 
