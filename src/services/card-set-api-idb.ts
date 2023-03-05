@@ -24,8 +24,10 @@ const cardSetToCardSetPlain = (cardSet: CardSet): CardSetPlain => {
 // TODO: handle JSON errors
 export const cardSetAPI: CardSetAPI = {
   save: async (cardSet) => {
+    console.time("CardSetAPI.save");
     const db = await getDBInstance();
     await db.add("card-sets", cardSetToCardSetPlain(cardSet));
+    console.timeEnd("CardSetAPI.save");
   },
 
   getAll: async (args) => {
@@ -177,6 +179,7 @@ export const cardSetAPI: CardSetAPI = {
   },
 
   getById: async (id) => {
+    console.time("CardSetAPI.getById");
     const db = await getDBInstance();
     const transaction = db.transaction(["card-sets", "cards"]);
     const [cardSetPlain, cardsCount, cardsToStudyCount] = await Promise.all([
@@ -190,12 +193,14 @@ export const cardSetAPI: CardSetAPI = {
     ]);
 
     if (cardSetPlain) {
+      console.timeEnd("CardSetAPI.getById");
       return cardSetPlainToCardSet(cardSetPlain, cardsCount, cardsToStudyCount);
     }
     throw Error("IDB. Card sets. getById. No card set found.");
   },
 
   delete: async (id) => {
+    console.time("CardSetAPI.delete");
     const db = await getDBInstance();
     const transaction = db.transaction(["card-sets", "cards"], "readwrite");
     const promises = [];
@@ -213,15 +218,18 @@ export const cardSetAPI: CardSetAPI = {
     }
 
     await Promise.all(promises.concat(transaction.done));
+    console.timeEnd("CardSetAPI.delete");
   },
 
   update: async (id, data) => {
+    console.time("CardSetAPI.update");
     const db = await getDBInstance();
     const transaction = db.transaction("card-sets", "readwrite");
     const cardSet = await transaction.store.get(id);
     if (cardSet) {
       Object.assign(cardSet, data);
       await transaction.store.put(cardSet);
+      console.timeEnd("CardSetAPI.update");
     } else {
       // TODO: handle error better
       throw new Error("IDB. Card sets. Update. No card set found.");

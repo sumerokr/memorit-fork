@@ -5,8 +5,10 @@ import {
   useDeleteCardSet,
 } from "@/composables/use-card-sets";
 import { cardSetsById } from "@/services/card-sets-storage";
-import { onClickOutside } from "@vueuse/core";
+import { useAsyncState, onClickOutside } from "@vueuse/core";
 import { useRouter } from "vue-router";
+
+import { cardSetAPI } from "@/services/index";
 
 type Props = {
   cardSetId: string;
@@ -16,17 +18,31 @@ const props = defineProps<Props>();
 
 const router = useRouter();
 
-const { isLoading, isReady, execute } = useGetCardSetById();
-execute(props.cardSetId);
-const { deletingIds, execute: deleteCardSet } = useDeleteCardSet();
-const onDelete = async (id: Parameters<typeof deleteCardSet>[0]) => {
-  await deleteCardSet(id);
+//#region rewrite
+const {
+  isReady: getByIdIsReady,
+  isLoading: getByIdIsLoading,
+  state: cardSet,
+  error: getByIdError,
+} = useAsyncState(() => cardSetAPI.getById(props.cardSetId), null, {
+  throwError: true,
+});
+
+const {
+  isLoading: deleteCardSetIsLoading,
+  execute: deleteCardSet,
+  // TODO: handle
+  // error: deleteCardSetError,
+} = useAsyncState(() => cardSetAPI.delete(props.cardSetId), null, {
+  immediate: false,
+  throwError: true,
+});
+//#endregion
+
+const onDelete = async () => {
+  await deleteCardSet();
   router.replace({ name: "sets" });
 };
-
-const cardSet = computed(() => {
-  return cardSetsById.value[props.cardSetId];
-});
 
 const isMenuOpen = ref(false);
 const menuRef = ref(null);
@@ -45,87 +61,90 @@ onClickOutside(menuRef, () => {
       >
     </p>
 
-    <template v-if="isReady">
-      <div v-if="cardSet" class="border rounded-xl p-4 bg-white">
-        <div class="flex items-baseline justify-between mb-4">
-          <h1 class="text-3xl">{{ cardSet.title }}</h1>
-          <div class="relative ml-4" ref="menuRef">
+    <div
+      v-if="getByIdIsReady && cardSet"
+      class="border rounded-xl p-4 bg-white"
+    >
+      <div class="flex items-baseline justify-between mb-4">
+        <h1 class="text-3xl">{{ cardSet.title }}</h1>
+        <div class="relative ml-4" ref="menuRef">
+          <button
+            class="flex -m-1 p-2 rounded-2xl"
+            type="button"
+            @click="isMenuOpen = !isMenuOpen"
+          >
+            <span class="material-symbols-outlined">more_vert</span>
+          </button>
+          <div v-if="isMenuOpen" class="absolute -top-1 mr-2 right-full flex">
             <button
-              class="flex -m-1 p-2 rounded-2xl"
-              type="button"
-              @click="isMenuOpen = !isMenuOpen"
+              class="flex gap-2 px-4 py-2 mr-2 items-center bg-red-100 rounded-2xl justify-center"
+              :disabled="deleteCardSetIsLoading"
+              @click="onDelete"
             >
-              <span class="material-symbols-outlined">more_vert</span>
+              Delete
+              <span class="material-symbols-outlined text-xl leading-none">
+                delete
+              </span>
             </button>
-            <div v-if="isMenuOpen" class="absolute -top-1 mr-2 right-full flex">
-              <button
-                class="flex gap-2 px-4 py-2 mr-2 items-center bg-red-100 rounded-2xl justify-center"
-                :disabled="deletingIds.includes(cardSetId)"
-                @click="onDelete(cardSetId)"
-              >
-                Delete
-                <span class="material-symbols-outlined text-xl leading-none">
-                  delete
-                </span>
-              </button>
-              <RouterLink
-                :to="{ name: 'card-set-edit', params: { cardSetId } }"
-                class="flex gap-2 px-4 py-2 items-center bg-indigo-100 rounded-2xl justify-center"
-              >
-                Edit
-                <span class="material-symbols-outlined text-xl leading-none">
-                  edit
-                </span>
-              </RouterLink>
-            </div>
+            <RouterLink
+              :to="{ name: 'card-set-edit', params: { cardSetId } }"
+              class="flex gap-2 px-4 py-2 items-center bg-indigo-100 rounded-2xl justify-center"
+            >
+              Edit
+              <span class="material-symbols-outlined text-xl leading-none">
+                edit
+              </span>
+            </RouterLink>
           </div>
         </div>
-        <p class="mb-8 flex items-baseline justify-between opacity-60">
-          <span>Cards: {{ cardSet.cardsCount }}</span>
-          <span
-            >To study:
-            <span
-              class="inline-block px-1 py-0.5 rounded-md"
-              :class="
-                cardSet.cardsToStudyCount > 0 ? 'bg-amber-300' : 'bg-amber-100'
-              "
-              >{{ cardSet.cardsToStudyCount }}</span
-            ></span
-          >
-        </p>
-
-        <div class="flex flex-wrap gap-4">
-          <RouterLink
-            :to="{ name: 'cards', params: { cardSetId: props.cardSetId } }"
-            class="flex-grow gap-2 px-4 py-2 items-center bg-indigo-50 rounded-2xl flex justify-center"
-          >
-            View
-            <span class="material-symbols-outlined text-xl leading-none">
-              view_agenda
-            </span>
-          </RouterLink>
-          <RouterLink
-            :to="{ name: 'new-card', params: { cardSetId: props.cardSetId } }"
-            class="flex-grow gap-2 px-4 py-2 items-center bg-indigo-50 rounded-2xl flex justify-center"
-          >
-            Add
-            <span class="material-symbols-outlined text-xl leading-none">
-              add
-            </span>
-          </RouterLink>
-          <RouterLink
-            :to="{ name: 'study', params: { cardSetId: props.cardSetId } }"
-            class="flex-grow gap-2 px-4 py-2 items-center bg-indigo-200 rounded-2xl flex justify-center"
-          >
-            Study
-            <span class="material-symbols-outlined text-xl leading-none"
-              >play_arrow</span
-            >
-          </RouterLink>
-        </div>
       </div>
-      <div v-else>Error?</div>
-    </template>
-    <div v-else-if="isLoading">Loading...</div>
+      <p class="mb-8 flex items-baseline justify-between opacity-60">
+        <span>Cards: {{ cardSet.cardsCount }}</span>
+        <span
+          >To study:
+          <span
+            class="inline-block px-1 py-0.5 rounded-md"
+            :class="
+              cardSet.cardsToStudyCount > 0 ? 'bg-amber-300' : 'bg-amber-100'
+            "
+            >{{ cardSet.cardsToStudyCount }}</span
+          ></span
+        >
+      </p>
+
+      <div class="flex flex-wrap gap-4">
+        <RouterLink
+          :to="{ name: 'cards', params: { cardSetId: props.cardSetId } }"
+          class="flex-grow gap-2 px-4 py-2 items-center bg-indigo-50 rounded-2xl flex justify-center"
+        >
+          View
+          <span class="material-symbols-outlined text-xl leading-none">
+            view_agenda
+          </span>
+        </RouterLink>
+        <RouterLink
+          :to="{ name: 'new-card', params: { cardSetId: props.cardSetId } }"
+          class="flex-grow gap-2 px-4 py-2 items-center bg-indigo-50 rounded-2xl flex justify-center"
+        >
+          Add
+          <span class="material-symbols-outlined text-xl leading-none">
+            add
+          </span>
+        </RouterLink>
+        <RouterLink
+          :to="{ name: 'study', params: { cardSetId: props.cardSetId } }"
+          class="flex-grow gap-2 px-4 py-2 items-center bg-indigo-200 rounded-2xl flex justify-center"
+        >
+          Study
+          <span class="material-symbols-outlined text-xl leading-none"
+            >play_arrow</span
+          >
+        </RouterLink>
+      </div>
+    </div>
+
+    <div v-else-if="getByIdError">{{ getByIdError }}</div>
+
+    <div v-else-if="getByIdIsLoading">Loading...</div>
   </div>
 </template>
