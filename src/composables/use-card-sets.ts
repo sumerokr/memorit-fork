@@ -3,7 +3,6 @@ import { useAsyncState } from "@vueuse/core";
 import without from "lodash/without";
 import type { CardSet } from "@/domain/card-set";
 import { createCardSetUC } from "@/application/create-card-set";
-import { getCardSetsUC } from "@/application/get-card-sets";
 import { getCardSetByIdUC } from "@/application/get-card-set";
 import { updateCardSet } from "@/application/update-card-set";
 import { deleteCardSet } from "@/application/delete-card-set";
@@ -21,41 +20,6 @@ export const useDeleteCardSet = () => {
       deletingIds.value.push(id);
       await execute(0, id);
       deletingIds.value = without(deletingIds.value, id);
-    },
-  };
-};
-
-export const useGetCardSets = () => {
-  const { isReady, isLoading, execute, state } = useAsyncState<
-    void | null | Parameters<Parameters<typeof getCardSetsUC>[0]["save"]>[0],
-    true
-  >(getCardSetsUC, null, {
-    immediate: false,
-    onSuccess: (data) => {
-      console.log("call", data);
-    },
-  });
-  return {
-    state,
-    isReady,
-    isLoading,
-    execute: (args?: Parameters<typeof getCardSetsUC>[1]) => {
-      console.log("executed");
-
-      execute(
-        0,
-        {
-          save: (
-            cardSets: Parameters<Parameters<typeof getCardSetsUC>[0]["save"]>[0]
-          ) => {
-            console.log("save", cardSets);
-            console.log("state is", state);
-            state.value = cardSets;
-            console.log("state is", state);
-          },
-        },
-        args
-      );
     },
   };
 };
