@@ -48,6 +48,11 @@ const markEasy = async () => {
   const newProgress = (progress <= 9 ? progress + 1 : 10) as Card["progress"];
   await updateCardStatus({ id, progress: newProgress });
 };
+
+const restart = () => {
+  execute(props.cardSetId);
+  current.value = 1;
+};
 </script>
 
 <template>
@@ -153,15 +158,15 @@ const markEasy = async () => {
         <p>Congrats! You have studied {{ total }} cards.</p>
         <p class="mt-4">
           You can
-          <RouterLink
-            :to="{ name: 'study', params: { cardSetId: props.cardSetId } }"
+          <button
             class="inline-flex gap-2 px-4 py-2 items-center bg-indigo-200 rounded-2xl flex justify-center"
+            @click="restart"
           >
             Study
             <span class="material-symbols-outlined text-xl leading-none"
               >play_arrow</span
             >
-          </RouterLink>
+          </button>
           again.
         </p>
       </div>
