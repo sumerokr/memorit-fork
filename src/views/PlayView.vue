@@ -149,10 +149,27 @@ const markEasy = async () => {
         </div>
       </template>
 
-      <div v-else>Congrats! You have studied {{ total }} cards.</div>
+      <div v-else>
+        <p>Congrats! You have studied {{ total }} cards.</p>
+        <p class="mt-4">
+          You can
+          <RouterLink
+            :to="{ name: 'study', params: { cardSetId: props.cardSetId } }"
+            class="inline-flex gap-2 px-4 py-2 items-center bg-indigo-200 rounded-2xl flex justify-center"
+          >
+            Study
+            <span class="material-symbols-outlined text-xl leading-none"
+              >play_arrow</span
+            >
+          </RouterLink>
+          again.
+        </p>
+      </div>
     </template>
 
-    <div v-else>No cards to study (for now). Check again later.</div>
+    <div v-else class="mt-4">
+      No cards to study (for now). Check again later.
+    </div>
   </div>
 </template>
 
