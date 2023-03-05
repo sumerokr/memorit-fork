@@ -12,7 +12,7 @@ const router = createRouter({
     {
       path: "/sets",
       name: "sets",
-      component: () => import("../views/SetsView2.vue"),
+      component: () => import("../views/SetsView.vue"),
     },
     {
       path: "/sets/:cardSetId",
@@ -34,7 +34,7 @@ const router = createRouter({
     {
       path: "/sets/:cardSetId/cards",
       name: "cards",
-      component: () => import("../views/CardsView2.vue"),
+      component: () => import("../views/CardsView.vue"),
       props: true,
     },
     {

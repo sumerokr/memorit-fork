@@ -60,6 +60,10 @@ export type CardSetAPI = {
           before?: never;
           after: CardSet["id"];
         }
+      | {
+          before?: never;
+          after?: never;
+        }
     ) & {
       query?: CardSet["title"];
     }
@@ -106,6 +110,10 @@ export type CardsAPI = {
       | {
           before?: never;
           after: Card["id"];
+        }
+      | {
+          before?: never;
+          after?: never;
         }
     ) & {
       query?: Card["front"] | Card["back"];
