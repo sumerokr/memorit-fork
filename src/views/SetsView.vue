@@ -87,13 +87,14 @@ watch(
       const addedKeys = difference(nextKeys, prevKeys);
       const removedKeys = difference(prevKeys, nextKeys);
       if (
-        addedKeys.length === 1 &&
-        addedKeys[0] === "before" &&
-        removedKeys.length === 0
+        removedKeys.length === 1 &&
+        removedKeys[0] === "before" &&
+        addedKeys.length === 0
       ) {
         return;
       }
     }
+
     execute(0, currentNavigationParams.value);
     window.scrollTo({
       top: 0,
