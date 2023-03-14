@@ -8,5 +8,6 @@
         database
       </span></RouterLink
     >
+    <div>Version: {{ process.env.CF_PAGES_COMMIT_SHA }}</div>
   </div>
 </template>
