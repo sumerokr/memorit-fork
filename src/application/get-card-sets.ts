@@ -15,9 +15,6 @@ export const getCardSetsUC: GetCardSetsUC = async (deps, args) => {
     deps.save(cardSets);
     notificationService.notify("received");
   } catch (error) {
-    const message = (() => {
-      return error instanceof Error ? error.message : "unknown error";
-    })();
-    notificationService.notify(message);
+    notificationService.error(error);
   }
 };

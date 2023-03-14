@@ -9,9 +9,6 @@ export const getStudyCardsUC: GetStudyCardsUC = async (id) => {
     cardsStorage.set(cards);
     notificationService.notify("received");
   } catch (error) {
-    const message = (() => {
-      return error instanceof Error ? error.message : "unknown error";
-    })();
-    notificationService.notify(message);
+    notificationService.error(error);
   }
 };

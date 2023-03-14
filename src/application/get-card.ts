@@ -10,9 +10,6 @@ export const getCardByIdUC: GetCardByIdUC = async (id: Card["id"]) => {
     cardsStorage.save(card);
     notificationService.notify("received");
   } catch (error) {
-    const message = (() => {
-      return error instanceof Error ? error.message : "unknown error";
-    })();
-    notificationService.notify(message);
+    notificationService.error(error);
   }
 };

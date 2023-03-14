@@ -1,24 +1,36 @@
 import type { Card } from "@/domain/card";
-import type { CardSet } from "../domain/card-set";
+import type { CardSetV2 } from "../domain/card-set";
 
 //#region driving adapters
 //#region card sets
-export type CreateCardSetUC = (title: CardSet["title"]) => Promise<void>;
+export type CreateCardSetUC = (title: CardSetV2["title"]) => Promise<void>;
 export type GetCardSetsUC = (
   deps: {
     save: (response: Awaited<ReturnType<CardSetAPI["getAll"]>>) => void;
   },
-  args?:
-    | { before: CardSet["id"]; after?: never }
-    | { before?: never; after: CardSet["id"] }
+  args?: (
+    | {
+        before: CardSetV2["id"];
+        after?: never;
+      }
+    | {
+        before?: never;
+        after: CardSetV2["id"];
+      }
+    | {
+        before?: never;
+        after?: never;
+      }
+  ) & {
+    query?: CardSetV2["title"];
+  }
 ) => Promise<void>;
-export type GetCardSetByIdUC = (id: CardSet["id"]) => Promise<void>;
+export type GetCardSetByIdUC = (id: CardSetV2["id"]) => Promise<void>;
 export type UpdateCardSetUC = (
-  id: CardSet["id"],
-  data: Partial<Omit<CardSet, "id">>
+  id: CardSetV2["id"],
+  data: Partial<Pick<CardSetV2, "title" | "updatedAt" | "updatedBy">>
 ) => Promise<void>;
-export type DeleteCardSetUC = (id: CardSet["id"]) => Promise<void>;
-export type ToggleCardSetUC = (id: CardSet["id"]) => Promise<void>;
+export type DeleteCardSetUC = (id: CardSetV2["id"]) => Promise<void>;
 //#endregion
 
 //#region cards
@@ -34,8 +46,8 @@ export type UpdateCardUC = (
 ) => Promise<void>;
 export type DeleteCardUC = (id: Card["id"]) => Promise<void>;
 
-export type GetCardsByCardSetIdUC = (id: CardSet["id"]) => Promise<void>;
-export type GetStudyCardsUC = (id: CardSet["id"]) => Promise<void>;
+export type GetCardsByCardSetIdUC = (id: CardSetV2["id"]) => Promise<void>;
+export type GetStudyCardsUC = (id: CardSetV2["id"]) => Promise<void>;
 export type UpdateCardStatusUC = ({
   id,
   progress,
@@ -49,51 +61,49 @@ export type GetCardSetsViewUC = () => Promise<void>;
 
 //#region cardSets
 export type CardSetAPI = {
-  save: (cardSet: CardSet) => Promise<void>;
+  save: (cardSet: CardSetV2) => Promise<void>;
   getAll: (
     args?: (
       | {
-          before: CardSet["id"];
+          before: CardSetV2["id"];
           after?: never;
         }
       | {
           before?: never;
-          after: CardSet["id"];
+          after: CardSetV2["id"];
         }
       | {
           before?: never;
           after?: never;
         }
     ) & {
-      query?: CardSet["title"];
+      query?: CardSetV2["title"];
     }
   ) => Promise<{
-    data: CardSet[];
-    before?: CardSet["id"];
-    after?: CardSet["id"];
+    data: (CardSetV2 & {
+      cardsCount: number;
+      cardsToStudyCount: number;
+    })[];
+    before?: CardSetV2["id"];
+    after?: CardSetV2["id"];
   }>;
-  getById: (id: CardSet["id"]) => Promise<CardSet>;
+  getById: (id: CardSetV2["id"]) => Promise<
+    CardSetV2 & {
+      cardsCount: number;
+      cardsToStudyCount: number;
+    }
+  >;
   update: (
-    id: CardSet["id"],
-    data: Partial<Omit<CardSet, "id">>
+    id: CardSetV2["id"],
+    data: Partial<Pick<CardSetV2, "title" | "updatedAt" | "updatedBy">>
   ) => Promise<void>;
-  delete: (id: CardSet["id"]) => Promise<void>;
+  delete: (id: CardSetV2["id"]) => Promise<void>;
 };
 
 export type CardSetStorage = {
-  save: (cardSet: CardSet) => void;
-  set: (cardSets: CardSet[]) => void;
-  update: (id: CardSet["id"], data: Partial<Omit<CardSet, "id">>) => void;
-  delete: (id: CardSet["id"]) => void;
-  getById: (id: CardSet["id"]) => CardSet | undefined;
-};
-
-export type CardSetsViewStorage = {
-  save: (cardSet: CardSet) => void;
-  set: (cardSets: CardSet[]) => void;
-  update: (cardSet: CardSet) => void;
-  delete: (id: CardSet["id"]) => void;
-  getById: (id: CardSet["id"]) => CardSet | undefined;
+  save: (cardSet: CardSetV2) => void;
+  update: (id: CardSetV2["id"], data: Partial<Omit<CardSetV2, "id">>) => void;
+  delete: (id: CardSetV2["id"]) => void;
 };
 //#endregion
 
@@ -101,7 +111,7 @@ export type CardSetsViewStorage = {
 export type CardsAPI = {
   save: (card: Card) => Promise<void>;
   getAllByCardSetId: (
-    id: CardSet["id"],
+    id: CardSetV2["id"],
     args?: (
       | {
           before: Card["id"];
@@ -124,7 +134,7 @@ export type CardsAPI = {
     after?: Card["id"];
   }>;
   getById: (id: Card["id"]) => Promise<Card>;
-  getStudyCards: (id: CardSet["id"]) => Promise<Card[]>;
+  getStudyCards: (id: CardSetV2["id"]) => Promise<Card[]>;
   update: (id: Card["id"], data: Partial<Omit<Card, "id">>) => Promise<void>;
   delete: (id: Card["id"]) => Promise<void>;
 };

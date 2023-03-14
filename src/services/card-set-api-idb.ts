@@ -1,33 +1,16 @@
 // TODO: ensure that put only updates
 
 import type { CardSetAPI } from "@/application/ports";
-import type { CardSet } from "@/domain/card-set";
+import type { CardSetV2 } from "@/domain/card-set";
 import { getDBInstance } from "./idb-storage";
-import type { CardSetPlain } from "./idb-storage";
-
-const cardSetPlainToCardSet = (
-  cardSetPlain: CardSetPlain,
-  cardsCount: CardSet["cardsCount"],
-  cardsToStudyCount: CardSet["cardsToStudyCount"]
-): CardSet => {
-  return {
-    ...cardSetPlain,
-    cardsCount,
-    cardsToStudyCount,
-  };
-};
-const cardSetToCardSetPlain = (cardSet: CardSet): CardSetPlain => {
-  const { id, title, createdAt } = cardSet;
-  return { id, title, createdAt };
-};
 
 // TODO: handle JSON errors
 export const cardSetAPI: CardSetAPI = {
   save: async (cardSet) => {
-    console.time("CardSetAPI.save");
+    console.time("api/card-sets/save");
     const db = await getDBInstance();
-    await db.add("card-sets", cardSetToCardSetPlain(cardSet));
-    console.timeEnd("CardSetAPI.save");
+    await db.add("card-sets", cardSet);
+    console.timeEnd("api/card-sets/save");
   },
 
   getAll: async (args) => {
@@ -46,7 +29,7 @@ export const cardSetAPI: CardSetAPI = {
       .openCursor(null, before ? "next" : "prev");
 
     if (cursor) {
-      const moveCursorToStartEntry = async (reference: CardSet["id"]) => {
+      const moveCursorToStartEntry = async (reference: CardSetV2["id"]) => {
         const startEntry = await transaction
           .objectStore("card-sets")
           .get(reference);
@@ -142,9 +125,11 @@ export const cardSetAPI: CardSetAPI = {
         cardsToStudyCountPromise,
       ]);
 
-      response.data.push(
-        cardSetPlainToCardSet(cursor.value, cardsCount, cardsToStudyCount)
-      );
+      response.data.push({
+        ...cursor.value,
+        cardsCount,
+        cardsToStudyCount,
+      });
       //#endregion meat
 
       step += 1;
@@ -182,7 +167,7 @@ export const cardSetAPI: CardSetAPI = {
     console.time("CardSetAPI.getById");
     const db = await getDBInstance();
     const transaction = db.transaction(["card-sets", "cards"]);
-    const [cardSetPlain, cardsCount, cardsToStudyCount] = await Promise.all([
+    const [cardSet, cardsCount, cardsToStudyCount] = await Promise.all([
       transaction.objectStore("card-sets").get(id),
       transaction.objectStore("cards").index("cardSetId").count(id),
       transaction
@@ -192,9 +177,13 @@ export const cardSetAPI: CardSetAPI = {
       transaction.done,
     ]);
 
-    if (cardSetPlain) {
+    if (cardSet) {
       console.timeEnd("CardSetAPI.getById");
-      return cardSetPlainToCardSet(cardSetPlain, cardsCount, cardsToStudyCount);
+      return {
+        ...cardSet,
+        cardsCount,
+        cardsToStudyCount,
+      };
     }
     throw Error("IDB. Card sets. getById. No card set found.");
   },

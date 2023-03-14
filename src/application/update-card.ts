@@ -9,9 +9,6 @@ export const updateCardUC: UpdateCardUC = async (id, data) => {
     cardsStorage.update(id, data);
     notificationService.notify("updated");
   } catch (error) {
-    const message = (() => {
-      return error instanceof Error ? error.message : "unknown error";
-    })();
-    notificationService.notify(message);
+    notificationService.error(error);
   }
 };

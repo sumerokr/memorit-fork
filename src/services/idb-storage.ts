@@ -1,7 +1,7 @@
 // https://www.npmjs.com/package/idb
 import { openDB } from "idb";
 import type { DBSchema, IDBPDatabase } from "idb";
-import type { CardSet } from "@/domain/card-set";
+import type { CardSet, CardSetV2 } from "@/domain/card-set";
 import type { Card } from "@/domain/card";
 
 export type CardSetPlain = Pick<CardSet, "id" | "title" | "createdAt">;
@@ -24,15 +24,33 @@ interface MyDB1 extends DBSchema {
   };
 }
 
-let db: ReturnType<typeof openDB<MyDB1>>;
+interface MyDB2 extends DBSchema {
+  "card-sets": {
+    value: CardSetV2;
+    key: CardSetV2["id"];
+    indexes: { createdAt: CardSetV2["createdAt"] };
+  };
+  cards: {
+    value: Card;
+    key: Card["id"];
+    indexes: {
+      createdAt: Card["createdAt"];
+      cardSetId: Card["cardSetId"];
+      cardSetId_createdAt: [Card["cardSetId"], Card["createdAt"]];
+      cardSetId_showAfter: [Card["cardSetId"], Card["showAfter"]];
+    };
+  };
+}
+
+let db: ReturnType<typeof openDB<MyDB2>>;
 
 export const getDBInstance = async () => {
   if (db) {
     return db;
   }
 
-  db = openDB<MyDB1>("memorit", 1, {
-    upgrade: (db, oldVersion /* , newVersion, transaction */) => {
+  db = openDB<MyDB2>("memorit", 2, {
+    upgrade: async (db, oldVersion, newVersion, transaction) => {
       if (oldVersion < 1) {
         // Cast a reference of the database to the old schema.
         const dbv1 = db as unknown as IDBPDatabase<MyDB1>;
@@ -54,11 +72,24 @@ export const getDBInstance = async () => {
           "cardSetId",
           "showAfter",
         ]);
+      }
 
-        if (oldVersion < 1) {
-          // Cast a reference of the database to the old schema.
-          // const dbv2 = db as unknown as IDBPDatabase<MyDB2>;
-          // do something
+      if (oldVersion < 2) {
+        // Cast a reference of the database to the old schema.
+        let cursor = await transaction.objectStore("card-sets").openCursor();
+
+        while (cursor) {
+          const { id, title, createdAt } = cursor.value;
+          cursor.update({
+            id,
+            title,
+            createdAt,
+            createdBy: "",
+            updatedAt: createdAt,
+            updatedBy: "",
+            _v: 2,
+          });
+          cursor = await cursor.continue();
         }
       }
     },

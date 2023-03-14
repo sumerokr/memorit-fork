@@ -22,9 +22,6 @@ export const createCardUC: CreateCardUC = async ({
     cardsStorage.save(card);
     notificationService.notify("card saved");
   } catch (error) {
-    const message = (() => {
-      return error instanceof Error ? error.message : "unknown error";
-    })();
-    notificationService.notify(message);
+    notificationService.error(error);
   }
 };

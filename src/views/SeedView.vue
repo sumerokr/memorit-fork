@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive } from "vue";
 import { type Card, createCard } from "@/domain/card";
-import { type CardSet, createCardSet } from "@/domain/card-set";
+import { type CardSetV2, createCardSet } from "@/domain/card-set";
 import { faker } from "@faker-js/faker";
 import { nanoid } from "nanoid";
 import flatten from "lodash/flatten";
@@ -70,7 +70,7 @@ const cardSets = [
 ];
 
 const createSetWithCards = (
-  cardSetTitle: CardSet["title"],
+  cardSetTitle: CardSetV2["title"],
   cardsRaw: [front: Card["front"], back: Card["back"]][]
 ) => {
   const cardSet = createCardSet({
@@ -93,7 +93,7 @@ const createSetWithCards = (
 };
 
 //#region ready sets
-const setMap = new Map<CardSet["id"], [string, [string, string][]]>();
+const setMap = new Map<CardSetV2["id"], [string, [string, string][]]>();
 setMap.set(nanoid(), [
   "Немецкий B1 v1",
   [
@@ -291,8 +291,8 @@ setMap.set(nanoid(), [
 const iterative = [...setMap.entries()].map(
   ([id, [title, cards]]) => [id, title, cards.length] as const
 );
-const addedIds = reactive(new Set<CardSet["id"]>());
-const add = async (id: CardSet["id"]) => {
+const addedIds = reactive(new Set<CardSetV2["id"]>());
+const add = async (id: CardSetV2["id"]) => {
   const match = setMap.get(id);
   if (!match) {
     alert("set not found");
@@ -345,7 +345,7 @@ const onSeed = async (options: any) => {
     })
   )
     .fill(null)
-    .map<CardSet>(() =>
+    .map<CardSetV2>(() =>
       createCardSet({
         id: nanoid(),
         title: faker.random.words(

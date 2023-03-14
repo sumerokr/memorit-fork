@@ -9,9 +9,6 @@ export const deleteCardUC: DeleteCardUC = async (id) => {
     cardsStorage.delete(id);
     notificationService.notify("deleted");
   } catch (error) {
-    const message = (() => {
-      return error instanceof Error ? error.message : "unknown error";
-    })();
-    notificationService.notify(message);
+    notificationService.error(error);
   }
 };

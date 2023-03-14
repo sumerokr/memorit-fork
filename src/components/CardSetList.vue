@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import type { CardSet } from "@/domain/card-set";
+import type { CardSetV2 } from "@/domain/card-set";
 
 type Props = {
-  cardSets: CardSet[] | Readonly<CardSet[]>;
+  cardSets: (CardSetV2 & {
+    cardsCount: number;
+    cardsToStudyCount: number;
+  })[];
 };
 
 defineProps<Props>();

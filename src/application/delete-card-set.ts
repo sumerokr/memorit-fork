@@ -13,9 +13,6 @@ export const deleteCardSet: DeleteCardSetUC = async (id) => {
     cardSetStorage.delete(id);
     notificationService.notify("deleted");
   } catch (error) {
-    const message = (() => {
-      return error instanceof Error ? error.message : "unknown error";
-    })();
-    notificationService.notify(message);
+    notificationService.error(error);
   }
 };

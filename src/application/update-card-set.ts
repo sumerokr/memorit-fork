@@ -14,9 +14,6 @@ export const updateCardSet: UpdateCardSetUC = async (id, data) => {
     cardSetStorage.update(id, data);
     notificationService.notify("updated");
   } catch (error) {
-    const message = (() => {
-      return error instanceof Error ? error.message : "unknown error";
-    })();
-    notificationService.notify(message);
+    notificationService.error(error);
   }
 };

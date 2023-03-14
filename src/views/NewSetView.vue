@@ -3,12 +3,17 @@ import { ref } from "vue";
 import CardSetList from "@/components/CardSetList.vue";
 import { useCreateCardSet } from "@/composables/use-card-sets";
 import { cardSets } from "@/services/card-sets-storage";
-import type { CardSet } from "@/domain/card-set";
+import type { CardSetV2 } from "@/domain/card-set";
 
 const { isLoading, execute } = useCreateCardSet();
 
 const title = ref("");
-const createdCardSets = ref<CardSet[]>([]);
+const createdCardSets = ref<
+  (CardSetV2 & {
+    cardsCount: number;
+    cardsToStudyCount: number;
+  })[]
+>([]);
 
 const onSubmit = async () => {
   if (!title.value) {
@@ -20,7 +25,11 @@ const onSubmit = async () => {
   title.value = "";
 
   const lastCreatedCardSet = cardSets.value.slice(-1)[0];
-  createdCardSets.value.unshift(lastCreatedCardSet);
+  createdCardSets.value.unshift({
+    ...lastCreatedCardSet,
+    cardsCount: 0,
+    cardsToStudyCount: 0,
+  });
 };
 </script>
 
