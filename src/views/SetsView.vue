@@ -80,7 +80,6 @@ const nextNavigationParams = computed<
 watch(
   currentNavigationParams,
   (next, prev) => {
-    console.log("url has changed");
     // do nothing if the only removed parameter was before
     if (!next.before && prev?.before) {
       const nextKeys = Object.keys(next) as (keyof typeof next)[];
