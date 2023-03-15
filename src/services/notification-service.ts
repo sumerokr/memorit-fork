@@ -1,5 +1,12 @@
 import type { NotificationService } from "@/application/ports";
 
+export const errorHandler = (error: unknown) => {
+  const message = (() => {
+    return error instanceof Error ? error.message : "unknown error";
+  })();
+  alert(message);
+};
+
 export const notificationService: NotificationService = {
   notify: (message) => {
     console.info(message);
@@ -8,6 +15,6 @@ export const notificationService: NotificationService = {
     const message = (() => {
       return error instanceof Error ? error.message : "unknown error";
     })();
-    console.info(message);
+    alert(message);
   },
 };

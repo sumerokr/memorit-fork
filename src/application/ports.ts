@@ -3,7 +3,7 @@ import type { CardSetV2 } from "../domain/card-set";
 
 //#region driving adapters
 //#region card sets
-export type CreateCardSetUC = (title: CardSetV2["title"]) => Promise<void>;
+
 export type GetCardSetsUC = (
   deps: {
     save: (response: Awaited<ReturnType<CardSetAPI["getAll"]>>) => void;
@@ -61,7 +61,6 @@ export type GetCardSetsViewUC = () => Promise<void>;
 
 //#region cardSets
 export type CardSetAPI = {
-  save: (cardSet: CardSetV2) => Promise<void>;
   getAll: (
     args?: (
       | {

@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import CardSetList from "@/components/CardSetList.vue";
-import { useCreateCardSet } from "@/composables/use-card-sets";
-import { cardSets } from "@/services/card-sets-storage";
 import type { CardSetV2 } from "@/domain/card-set";
-
-const { isLoading, execute } = useCreateCardSet();
+import { setupCreateCardSetUC } from "@/application/create-card-set";
+import { useAsyncState } from "@vueuse/core";
 
 const title = ref("");
+const titleEl = ref<HTMLInputElement>();
 const createdCardSets = ref<
   (CardSetV2 & {
     cardsCount: number;
@@ -15,21 +14,34 @@ const createdCardSets = ref<
   })[]
 >([]);
 
+const createCardSetUC = setupCreateCardSetUC({
+  onSucces: (cardSet) => {
+    createdCardSets.value.unshift({
+      ...cardSet,
+      cardsCount: 0,
+      cardsToStudyCount: 0,
+    });
+
+    title.value = "";
+    titleEl.value?.focus();
+  },
+});
+
+const { isLoading, execute } = useAsyncState(createCardSetUC, null, {
+  immediate: false,
+});
+
 const onSubmit = async () => {
-  if (!title.value) {
+  if (isLoading.value) {
     return;
   }
 
-  await execute(title.value);
+  const trimmed = title.value.trim();
+  if (!trimmed) {
+    return;
+  }
 
-  title.value = "";
-
-  const lastCreatedCardSet = cardSets.value.slice(-1)[0];
-  createdCardSets.value.unshift({
-    ...lastCreatedCardSet,
-    cardsCount: 0,
-    cardsToStudyCount: 0,
-  });
+  await execute(0, trimmed);
 };
 </script>
 
@@ -56,6 +68,7 @@ const onSubmit = async () => {
           type="text"
           placeholder="Card set title"
           autocomplete="off"
+          ref="titleEl"
         />
       </p>
       <p class="text-right">

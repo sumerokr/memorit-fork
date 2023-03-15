@@ -12,6 +12,7 @@ defineProps<Props>();
 </script>
 
 <template>
+  <!-- TODO: remove v-if check! -->
   <ul v-if="cardSets.length" class="grid gap-2">
     <li v-for="cardSet of cardSets" :key="cardSet.id">
       <RouterLink

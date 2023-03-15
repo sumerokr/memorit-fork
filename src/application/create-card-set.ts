@@ -1,23 +1,39 @@
-import { createCardSet } from "@/domain/card-set";
-import {
-  cardSetAPI,
-  cardSetStorage,
-  notificationService,
-} from "@/services/index";
-import type { CreateCardSetUC } from "./ports";
+import { createCardSet, type CardSetV2 } from "@/domain/card-set";
+import { notificationService } from "@/services";
+import { createCardSetIdb } from "@/services/api/card-sets/create-idb";
 import { nanoid } from "nanoid";
 
-export const createCardSetUC: CreateCardSetUC = async (title) => {
-  try {
-    const cardSet = createCardSet({
-      id: nanoid(),
-      title,
-      createdAt: new Date().toISOString(),
-    });
-    await cardSetAPI.save(cardSet);
-    cardSetStorage.save(cardSet);
-    notificationService.notify("saved");
-  } catch (error) {
-    notificationService.error(error);
-  }
+export type apiCreateCardSetParameters = {
+  cardSet: CardSetV2;
 };
+
+export type apiCreateCardSetReturn = Promise<void>;
+
+export type apiCreateCardSet = (
+  args: apiCreateCardSetParameters
+) => apiCreateCardSetReturn;
+
+export type CreateCardSetUC = (title: CardSetV2["title"]) => Promise<void>;
+
+type SetupCreateCardSetUC = (args: {
+  onSucces: (cardSet: CardSetV2) => void;
+  onError?: (error: unknown) => void;
+}) => CreateCardSetUC;
+
+export const setupCreateCardSetUC: SetupCreateCardSetUC =
+  ({ onSucces, onError }) =>
+  async (title) => {
+    try {
+      const cardSet = createCardSet({
+        id: nanoid(),
+        title,
+        createdAt: new Date().toISOString(),
+      });
+      await createCardSetIdb({ cardSet });
+      notificationService.notify("created");
+      onSucces(cardSet);
+    } catch (error) {
+      onError?.(error);
+      notificationService.error(error);
+    }
+  };
