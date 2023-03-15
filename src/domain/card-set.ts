@@ -28,16 +28,3 @@ export const createCardSet = ({
     _v: 2,
   };
 };
-
-export const updateCardSet = ({
-  cardSet,
-  data,
-}: {
-  cardSet: CardSetV2;
-  data: Partial<Pick<CardSetV2, "title" | "updatedAt" | "updatedBy">>;
-}): CardSetV2 => {
-  return structuredClone({
-    ...cardSet,
-    ...data,
-  });
-};

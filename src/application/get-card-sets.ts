@@ -1,9 +1,5 @@
 import type { GetCardSetsUC } from "@/application/ports";
-import {
-  cardSetAPI,
-  // cardSetStorage,
-  notificationService,
-} from "@/services/index";
+import { cardSetAPI, notificationService } from "@/services/index";
 
 export const getCardSetsUC: GetCardSetsUC = async (deps, args) => {
   console.log("getCardSetsUC call");

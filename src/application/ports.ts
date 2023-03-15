@@ -25,12 +25,7 @@ export type GetCardSetsUC = (
     query?: CardSetV2["title"];
   }
 ) => Promise<void>;
-export type GetCardSetByIdUC = (id: CardSetV2["id"]) => Promise<void>;
-export type UpdateCardSetUC = (
-  id: CardSetV2["id"],
-  data: Partial<Pick<CardSetV2, "title" | "updatedAt" | "updatedBy">>
-) => Promise<void>;
-export type DeleteCardSetUC = (id: CardSetV2["id"]) => Promise<void>;
+
 //#endregion
 
 //#region cards
@@ -52,10 +47,9 @@ export type UpdateCardStatusUC = ({
   id,
   progress,
 }: Pick<Card, "id" | "progress">) => Promise<void>;
+//#endregion
 
 export type GetCardSetsViewUC = () => Promise<void>;
-//#endregion
-//#endregion
 
 //#region driven adapters
 
@@ -86,23 +80,6 @@ export type CardSetAPI = {
     before?: CardSetV2["id"];
     after?: CardSetV2["id"];
   }>;
-  getById: (id: CardSetV2["id"]) => Promise<
-    CardSetV2 & {
-      cardsCount: number;
-      cardsToStudyCount: number;
-    }
-  >;
-  update: (
-    id: CardSetV2["id"],
-    data: Partial<Pick<CardSetV2, "title" | "updatedAt" | "updatedBy">>
-  ) => Promise<void>;
-  delete: (id: CardSetV2["id"]) => Promise<void>;
-};
-
-export type CardSetStorage = {
-  save: (cardSet: CardSetV2) => void;
-  update: (id: CardSetV2["id"], data: Partial<Omit<CardSetV2, "id">>) => void;
-  delete: (id: CardSetV2["id"]) => void;
 };
 //#endregion
 

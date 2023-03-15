@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import CardSetList from "@/components/CardSetList.vue";
 import type { CardSetV2 } from "@/domain/card-set";
 import { setupCreateCardSetUC } from "@/application/create-card-set";
@@ -41,8 +41,12 @@ const onSubmit = async () => {
     return;
   }
 
-  await execute(0, trimmed);
+  await execute(0, { title: trimmed });
 };
+
+onMounted(() => {
+  titleEl.value?.focus();
+});
 </script>
 
 <template>

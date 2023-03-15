@@ -2,8 +2,9 @@
 import { ref } from "vue";
 import { useAsyncState, onClickOutside } from "@vueuse/core";
 import { useRouter } from "vue-router";
-
-import { cardSetAPI } from "@/services/index";
+import { setupGetCardSetUC } from "@/application/get-card-set";
+import { setupDeleteCardSetUC } from "@/application/delete-card-set";
+import type { CardSetV2 } from "@/domain/card-set";
 
 type Props = {
   cardSetId: string;
@@ -13,30 +14,35 @@ const props = defineProps<Props>();
 
 const router = useRouter();
 
-//#region rewrite
-const {
-  isReady: getByIdIsReady,
-  isLoading: getByIdIsLoading,
-  state: cardSet,
-  error: getByIdError,
-} = useAsyncState(() => cardSetAPI.getById(props.cardSetId), null, {
-  throwError: true,
+const cardSet = ref<
+  CardSetV2 & {
+    cardsCount: number;
+    cardsToStudyCount: number;
+  }
+>();
+
+const getCardSetUC = setupGetCardSetUC({
+  onSucces: (_cardSet) => {
+    cardSet.value = _cardSet;
+  },
 });
 
-const {
-  isLoading: deleteCardSetIsLoading,
-  execute: deleteCardSet,
-  // TODO: handle
-  // error: deleteCardSetError,
-} = useAsyncState(() => cardSetAPI.delete(props.cardSetId), null, {
-  immediate: false,
-  throwError: true,
+const { isLoading: isGetCardSetLoading, isReady: isGetCardSetReady } =
+  useAsyncState(() => getCardSetUC({ id: props.cardSetId }), null);
+
+const deleteCardSetUC = setupDeleteCardSetUC({
+  onSucces: () => {
+    router.replace({ name: "sets" });
+  },
 });
-//#endregion
+
+const { isLoading: isDeleteCardSetLoading, execute: deleteCardSet } =
+  useAsyncState(() => deleteCardSetUC({ id: props.cardSetId }), null, {
+    immediate: false,
+  });
 
 const onDelete = async () => {
   await deleteCardSet();
-  router.replace({ name: "sets" });
 };
 
 const isMenuOpen = ref(false);
@@ -57,7 +63,7 @@ onClickOutside(menuRef, () => {
     </p>
 
     <div
-      v-if="getByIdIsReady && cardSet"
+      v-if="isGetCardSetReady && cardSet"
       class="border rounded-xl p-4 bg-white"
     >
       <div class="flex items-baseline justify-between mb-4">
@@ -73,7 +79,7 @@ onClickOutside(menuRef, () => {
           <div v-if="isMenuOpen" class="absolute -top-1 mr-2 right-full flex">
             <button
               class="flex gap-2 px-4 py-2 mr-2 items-center bg-red-100 rounded-2xl justify-center"
-              :disabled="deleteCardSetIsLoading"
+              :disabled="isDeleteCardSetLoading"
               @click="onDelete"
             >
               Delete
@@ -138,8 +144,6 @@ onClickOutside(menuRef, () => {
       </div>
     </div>
 
-    <div v-else-if="getByIdError">{{ getByIdError }}</div>
-
-    <div v-else-if="getByIdIsLoading">Loading...</div>
+    <div v-else-if="isGetCardSetLoading">Loading...</div>
   </div>
 </template>

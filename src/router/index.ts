@@ -17,13 +17,13 @@ const router = createRouter({
     {
       path: "/sets/:cardSetId",
       name: "set",
-      component: () => import("../views/SetView.vue"),
+      component: () => import("../views/CardSetView.vue"),
       props: true,
     },
     {
       path: "/sets/new",
       name: "new-card-set",
-      component: () => import("../views/NewSetView.vue"),
+      component: () => import("../views/CardSetCreateView.vue"),
     },
     {
       path: "/sets/:cardSetId/edit",

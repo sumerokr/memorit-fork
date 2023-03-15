@@ -1,19 +1,43 @@
-import type { UpdateCardSetUC } from "@/application/ports";
-import { updateCardSet as _updateCardSet } from "@/domain/card-set";
-import {
-  cardSetAPI,
-  cardSetStorage,
-  notificationService,
-} from "@/services/index";
+import type { CardSetV2 } from "@/domain/card-set";
+import { updateCardSetApi } from "@/services/api/card-sets/update-idb";
+import { notificationService } from "@/services/index";
 
-export const updateCardSet: UpdateCardSetUC = async (id, data) => {
-  try {
-    console.time("cardSetAPI.update");
-    await cardSetAPI.update(id, data);
-    console.timeEnd("cardSetAPI.update");
-    cardSetStorage.update(id, data);
-    notificationService.notify("updated");
-  } catch (error) {
-    notificationService.error(error);
-  }
+//#region types
+export type UpdateCardSetApiParameters = {
+  id: CardSetV2["id"];
+  data: Partial<Pick<CardSetV2, "title" | "updatedAt" | "updatedBy">>;
 };
+
+export type UpdateCardSetApiReturn = Promise<void>;
+
+export type UpdateCardSetApi = (
+  args: UpdateCardSetApiParameters
+) => UpdateCardSetApiReturn;
+
+type UpdateCardSetParameters = {
+  id: CardSetV2["id"];
+  data: Partial<Pick<CardSetV2, "title" | "updatedAt" | "updatedBy">>;
+};
+
+export type UpdateCardSetUC = (args: UpdateCardSetParameters) => Promise<void>;
+
+type SetupUpdateCardSetUC = (args: {
+  onSucces: (
+    data: Partial<Pick<CardSetV2, "title" | "updatedAt" | "updatedBy">>
+  ) => void;
+  onError?: (error: unknown) => void;
+}) => UpdateCardSetUC;
+//#endregion
+
+export const setupUpdateCardSetUC: SetupUpdateCardSetUC =
+  ({ onSucces, onError }) =>
+  async ({ id, data }) => {
+    try {
+      await updateCardSetApi({ id, data });
+      onSucces(data);
+      notificationService.notify("updated");
+    } catch (error) {
+      onError?.(error);
+      notificationService.error(error);
+    }
+  };

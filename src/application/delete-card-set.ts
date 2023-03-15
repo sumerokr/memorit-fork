@@ -1,18 +1,39 @@
-import type { DeleteCardSetUC } from "@/application/ports";
-import {
-  cardSetAPI,
-  cardSetStorage,
-  notificationService,
-} from "@/services/index";
+import type { CardSetV2 } from "@/domain/card-set";
+import { deleteCardSetApi } from "@/services/api/card-sets/delete-idb";
+import { notificationService } from "@/services/index";
 
-export const deleteCardSet: DeleteCardSetUC = async (id) => {
-  try {
-    console.time("cardSetAPI.delete");
-    await cardSetAPI.delete(id);
-    console.timeEnd("cardSetAPI.delete");
-    cardSetStorage.delete(id);
-    notificationService.notify("deleted");
-  } catch (error) {
-    notificationService.error(error);
-  }
+//#region types
+export type DeleteCardSetApiParameters = {
+  id: CardSetV2["id"];
 };
+
+export type DeleteCardSetApiReturn = Promise<void>;
+
+export type DeleteCardSetApi = (
+  args: DeleteCardSetApiParameters
+) => DeleteCardSetApiReturn;
+
+type DeleteCardSetParameters = {
+  id: CardSetV2["id"];
+};
+
+export type DeleteCardSetUC = (args: DeleteCardSetParameters) => Promise<void>;
+
+type SetupDeleteCardSetUC = (args: {
+  onSucces: () => void;
+  onError?: (error: unknown) => void;
+}) => DeleteCardSetUC;
+//#endregion
+
+export const setupDeleteCardSetUC: SetupDeleteCardSetUC =
+  ({ onSucces, onError }) =>
+  async ({ id }) => {
+    try {
+      await deleteCardSetApi({ id });
+      onSucces();
+      notificationService.notify("deleted");
+    } catch (error) {
+      onError?.(error);
+      notificationService.error(error);
+    }
+  };

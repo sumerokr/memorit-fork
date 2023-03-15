@@ -15,6 +15,7 @@ export const notificationService: NotificationService = {
     const message = (() => {
       return error instanceof Error ? error.message : "unknown error";
     })();
+    console.log(error);
     alert(message);
   },
 };

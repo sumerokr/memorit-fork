@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
-import {
-  useGetCardSetById,
-  useUpdateCardSet,
-} from "@/composables/use-card-sets";
-import { cardSets } from "@/services/card-sets-storage";
+import { ref } from "vue";
+import { setupGetCardSetUC } from "@/application/get-card-set";
+import { setupUpdateCardSetUC } from "@/application/update-card-set";
+import { useAsyncState } from "@vueuse/core";
+import { useRouter } from "vue-router";
 
 type Props = {
   cardSetId: string;
@@ -12,43 +11,35 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const cardSet = computed(() => {
-  return cardSets.value.find((_cardSet) => _cardSet.id === props.cardSetId);
-});
-
-const {
-  isLoading: isGetCardSetLoading,
-  isReady: isGetCardSetReady,
-  execute: getCard,
-} = useGetCardSetById();
-getCard(props.cardSetId);
-
-const { isLoading: isUpdateCardSetLoading, execute: updateCardSet } =
-  useUpdateCardSet();
+const router = useRouter();
 
 const title = ref("");
-const showNotification = ref(false);
 
-const fillCard = () => {
-  if (cardSet.value) {
-    title.value = cardSet.value.title;
-  }
-};
-fillCard();
-
-watch(cardSet, () => {
-  fillCard();
+const getCardSetUC = setupGetCardSetUC({
+  onSucces: (_cardSet) => {
+    title.value = _cardSet.title;
+  },
 });
 
-const onSubmit = async () => {
-  await updateCardSet(props.cardSetId, {
-    title: title.value,
-  });
+const { isLoading: isGetCardSetLoading, isReady: isGetCardSetReady } =
+  useAsyncState(() => getCardSetUC({ id: props.cardSetId }), null);
 
-  showNotification.value = true;
-  setTimeout(() => {
-    showNotification.value = false;
-  }, 3000);
+const updateCardSetUC = setupUpdateCardSetUC({
+  onSucces: () => {
+    router.push({ name: "set", params: { cardSetId: props.cardSetId } });
+  },
+});
+
+const { isLoading: isUpdateCardSetLoading, execute: updateCardSet } =
+  useAsyncState(updateCardSetUC, null, { immediate: false });
+
+const onSubmit = async () => {
+  await updateCardSet(0, {
+    id: props.cardSetId,
+    data: {
+      title: title.value,
+    },
+  });
 };
 </script>
 
@@ -68,7 +59,7 @@ const onSubmit = async () => {
     <div v-if="isGetCardSetLoading">Loading...</div>
 
     <form
-      v-if="isGetCardSetReady && cardSet"
+      v-if="isGetCardSetReady"
       class="border rounded-xl mb-4 p-4 bg-white"
       @submit.prevent="onSubmit"
     >
@@ -83,9 +74,6 @@ const onSubmit = async () => {
         />
       </p>
       <p class="text-right">
-        <span v-if="showNotification" class="mr-2 text-green-700">
-          Saved!
-        </span>
         <button
           class="inline-flex justify-center gap-2 px-4 py-2 items-center bg-indigo-200 rounded-2xl"
           type="submit"
