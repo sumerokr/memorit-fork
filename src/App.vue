@@ -22,7 +22,7 @@ getDBInstance().then((db) => {
     <div
       class="fixed bottom-0 left-1/2 -translate-x-1/2 py-1 px-2 rounded-t-md text-xs bg-white opacity-50"
     >
-      ver: {{ 15032224 }}. DB ver: {{ dbVersion }}
+      ver: {{ 16032311 }}. DB ver: {{ dbVersion }}
     </div>
   </div>
 </template>
