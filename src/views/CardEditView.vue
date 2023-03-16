@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, nextTick } from "vue";
 import { useUpdateCard, useGetCard } from "@/composables/use-cards";
 import { cards } from "@/services/cards-storage";
 
@@ -24,8 +24,16 @@ getCard(props.id);
 const { isLoading: isUpdateCardLoading, execute: updateCard } = useUpdateCard();
 
 const front = ref("");
+const frontEl = ref<HTMLInputElement>();
 const back = ref("");
 const showNotification = ref(false);
+
+watch(isGetCardReady, async (flag) => {
+  if (flag) {
+    await nextTick();
+    frontEl.value?.focus();
+  }
+});
 
 const fillCard = () => {
   if (card.value) {
@@ -80,6 +88,7 @@ const onSubmit = async () => {
           type="text"
           placeholder="Card front"
           autocomplete="off"
+          ref="frontEl"
         />
       </p>
       <p class="mb-4">

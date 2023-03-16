@@ -14,6 +14,7 @@ const props = defineProps<Props>();
 const { isLoading, execute } = useCreateCard();
 
 const front = ref("");
+const frontEl = ref<HTMLInputElement>();
 const back = ref("");
 const createdCards = ref<Card[]>([]);
 
@@ -26,6 +27,8 @@ const onSubmit = async () => {
 
   front.value = "";
   back.value = "";
+
+  frontEl.value?.focus();
 
   const lastCreatedCard = cardsByCardSetId.value[props.cardSetId].slice(-1)[0];
   createdCards.value.unshift(lastCreatedCard);
@@ -57,6 +60,7 @@ const onSubmit = async () => {
           type="text"
           placeholder="Card front"
           autocomplete="off"
+          ref="frontEl"
         />
       </p>
       <p class="mb-4">

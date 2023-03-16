@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, nextTick } from "vue";
 import { setupGetCardSetUC } from "@/application/get-card-set";
 import { setupUpdateCardSetUC } from "@/application/update-card-set";
 import { useAsyncState } from "@vueuse/core";
@@ -14,15 +14,22 @@ const props = defineProps<Props>();
 const router = useRouter();
 
 const title = ref("");
+const titleEl = ref<HTMLInputElement>();
 
 const getCardSetUC = setupGetCardSetUC({
-  onSucces: (_cardSet) => {
+  onSucces: async (_cardSet) => {
     title.value = _cardSet.title;
+    titleEl.value?.focus();
   },
 });
 
 const { isLoading: isGetCardSetLoading, isReady: isGetCardSetReady } =
-  useAsyncState(() => getCardSetUC({ id: props.cardSetId }), null);
+  useAsyncState(() => getCardSetUC({ id: props.cardSetId }), null, {
+    onSuccess: async () => {
+      await nextTick();
+      titleEl.value?.focus();
+    },
+  });
 
 const updateCardSetUC = setupUpdateCardSetUC({
   onSucces: () => {
@@ -71,6 +78,7 @@ const onSubmit = async () => {
           type="text"
           placeholder="Card set title"
           autocomplete="off"
+          ref="titleEl"
         />
       </p>
       <p class="text-right">

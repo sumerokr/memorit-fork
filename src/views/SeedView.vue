@@ -2,72 +2,12 @@
 import { reactive } from "vue";
 import { type Card, createCard } from "@/domain/card";
 import { type CardSetV2, createCardSet } from "@/domain/card-set";
-import { faker } from "@faker-js/faker";
 import { nanoid } from "nanoid";
 import flatten from "lodash/flatten";
 import { deleteDB } from "idb";
 import { getDBInstance } from "@/services/idb-storage";
 
-const set1 = [
-  ["в интернет(е)", "on the internet"],
-  ["на публике", "in a public space"],
-  ["humble (adj)", "скромный"],
-  ["to brag", "хвастаться"],
-  ["skinny dipping", "купаться голышом"],
-  ["to get married", "жениться / выходить замуж"],
-  ["grinder", "измельчитель"],
-  ["intently", "внимательно, тщательно"],
-  ["twice a month", "дважды в месяц"],
-  ["make mistakes", "совершать ошибки"],
-  ["in the Balkan sea", "на Балканах"],
-  ["если бы ты покупал", "if you were to buy"],
-  ["cog in the system", "Мелкая часть чего-то большого"],
-  ["let’s crack on!", "let’s start!"],
-  ["to put on weight", "to gain weight"],
-  ["to convey", "передавать (мысль)"],
-  ["to make an effort", "прилагать усилие"],
-  ["talks to", "Разговаривать с"],
-  ["to be keen on", "увлекаться"],
-  ["to be eager", "быть нетерпеливым"],
-  ["rug", "коврик"],
-  ["doormat", "коврик в прихожей"],
-  ["I *am* a **sandwich**", "Ok"],
-];
-const set2 = [
-  ["to drive", "drove, driven"],
-  ["to forget", "forgot, forgotten"],
-  ["to brag", "bragged, bragged"],
-  ["to ride", "rode, ridden"],
-  ["to wake", "woke, woken"],
-  ["to wear", "wore, worn"],
-  ["to swear", "swore, sworn"],
-  ["to tear", "tore, torn"],
-  ["to fly", "flew, flown"],
-  ["to draw", "drew, drawn"],
-  ["to swim", "swam, swum"],
-  ["to ring", "rang, rung"],
-  ["to sing", "sang, sung"],
-  ["to stink", "stank, stunk"],
-  ["to run", "ran, run"],
-];
-
-const cardSets = [
-  createCardSet({
-    id: nanoid(),
-    title: "English",
-    createdAt: faker.date.recent(30, "2022-12-31").toISOString(),
-  }),
-  createCardSet({
-    id: nanoid(),
-    title: "Conjunctions",
-    createdAt: faker.date.recent(30, "2022-12-31").toISOString(),
-  }),
-  createCardSet({
-    id: nanoid(),
-    title: "Греческий алфавит",
-    createdAt: faker.date.recent(30, "2022-12-31").toISOString(),
-  }),
-];
+const _faker = () => import("@faker-js/faker");
 
 const createSetWithCards = (
   cardSetTitle: CardSetV2["title"],
@@ -313,31 +253,10 @@ const add = async (id: CardSetV2["id"]) => {
   }, 3000);
 };
 
-//#endregion ready sets
-
-const cards = [
-  ...set1.map(([q, a]) =>
-    createCard({
-      id: nanoid(),
-      front: q,
-      back: a,
-      cardSetId: cardSets[0].id,
-      createdAt: faker.date.recent(30).toISOString(),
-    })
-  ),
-  ...set2.map(([q, a]) =>
-    createCard({
-      id: nanoid(),
-      front: q,
-      back: a,
-      cardSetId: cardSets[1].id,
-      createdAt: faker.date.recent(30).toISOString(),
-    })
-  ),
-];
-
-const onSeed = async (options: any) => {
+const onSeed = async (options: number[][]) => {
   const [[cardSetMin, cardSetMax], [cardsMin, cardsMax]] = options;
+  const { faker } = await _faker();
+
   const cardSets = new Array(
     faker.datatype.number({
       min: cardSetMin,
@@ -417,25 +336,6 @@ const onDelete = async () => {
     },
   });
   alert("Dummy data deleted");
-};
-
-const onMySeed = async () => {
-  const db = await getDBInstance();
-  console.time("create card-sets");
-  const cardSetsTransaction = db.transaction("card-sets", "readwrite");
-  const cardSetsPromises = cardSets.map((cardSet) =>
-    cardSetsTransaction.store.add(cardSet)
-  );
-  await Promise.all([...cardSetsPromises, cardSetsTransaction.done]);
-  console.timeEnd("create card-sets");
-
-  console.time("create cards");
-  const cardsTransaction = db.transaction("cards", "readwrite");
-  const cardsPromises = cards.map((card) => cardsTransaction.store.add(card));
-  await Promise.all([...cardsPromises, cardsTransaction.done]);
-  console.timeEnd("create cards");
-
-  alert("Dummy data added");
 };
 </script>
 
@@ -521,17 +421,5 @@ const onMySeed = async () => {
         </button>
       </li>
     </ul>
-
-    <button
-      type="button"
-      class="fixed right-4 bottom-4 p-2.5 flex rounded-2xl bg-green-50 shadow-md opacity-10"
-      @click="onMySeed"
-    >
-      <span
-        class="material-symbols-outlined text-xl leading-none text-green-50"
-      >
-        database
-      </span>
-    </button>
   </div>
 </template>
