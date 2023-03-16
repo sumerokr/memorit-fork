@@ -2,31 +2,6 @@ import type { Card } from "@/domain/card";
 import type { CardSetV2 } from "../domain/card-set";
 
 //#region driving adapters
-//#region card sets
-
-export type GetCardSetsUC = (
-  deps: {
-    save: (response: Awaited<ReturnType<CardSetAPI["getAll"]>>) => void;
-  },
-  args?: (
-    | {
-        before: CardSetV2["id"];
-        after?: never;
-      }
-    | {
-        before?: never;
-        after: CardSetV2["id"];
-      }
-    | {
-        before?: never;
-        after?: never;
-      }
-  ) & {
-    query?: CardSetV2["title"];
-  }
-) => Promise<void>;
-
-//#endregion
 
 //#region cards
 export type CreateCardUC = ({

@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { ref, computed, nextTick, watch } from "vue";
 import { useAsyncState, watchDebounced } from "@vueuse/core";
-import { cardSetAPI } from "@/services/index";
+import {
+  setupGetCardSetsUC,
+  type GetCardSetsApiParameters,
+  type GetCardSetsApiReturn,
+} from "@/application/get-card-sets";
 import CardSetList from "@/components/CardSetList.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import { useRoute, useRouter } from "vue-router";
@@ -14,26 +18,33 @@ import mapValues from "lodash/mapValues";
 const route = useRoute();
 const router = useRouter();
 
-const currentNavigationParams = computed<
-  NonNullable<Parameters<(typeof cardSetAPI)["getAll"]>[0]>
->(() => {
-  const { before, after, query } = route.query;
-  const mapped = mapValues({ before, after, query }, (item) => {
-    const itemResolved = Array.isArray(item) ? item[0] : item;
-    return itemResolved ? itemResolved.trim() : "";
-  });
-  const picked = pickBy(mapped, (item) => {
-    return item.length > 0;
-  });
-  return picked.before && picked.after ? omit(picked, "before") : picked;
+const currentNavigationParams = computed<NonNullable<GetCardSetsApiParameters>>(
+  () => {
+    const { before, after, query } = route.query;
+    const mapped = mapValues({ before, after, query }, (item) => {
+      const itemResolved = Array.isArray(item) ? item[0] : item;
+      return itemResolved ? itemResolved.trim() : "";
+    });
+    const picked = pickBy(mapped, (item) => {
+      return item.length > 0;
+    });
+    return picked.before && picked.after ? omit(picked, "before") : picked;
+  }
+);
+
+const cardSets = ref<Awaited<GetCardSetsApiReturn>>();
+
+const getCardSetsUC = setupGetCardSetsUC({
+  onSucces: (_cardSets) => {
+    cardSets.value = _cardSets;
+  },
 });
 
-const { /* isReady, isLoading, */ execute, state, error } = useAsyncState(
-  cardSetAPI.getAll,
+const { /* isReady, isLoading, */ execute, error } = useAsyncState(
+  getCardSetsUC,
   null,
   {
     immediate: false,
-    throwError: true,
     resetOnExecute: false,
   }
 );
@@ -70,8 +81,8 @@ const nextNavigationParams = computed<
   return pickBy(
     {
       query: query.value,
-      before: state.value?.before,
-      after: state.value?.after,
+      before: cardSets.value?.before,
+      after: cardSets.value?.after,
     },
     (param) => param && param.trim().length > 0
   );
@@ -142,21 +153,21 @@ watch(
     >
       Error
     </p>
-    <template v-if="state?.data.length">
-      <CardSetList v-if="state.data.length" :card-sets="state.data" />
+    <template v-if="cardSets?.data.length">
+      <CardSetList v-if="cardSets.data.length" :card-sets="cardSets.data" />
 
       <div
-        v-if="state.before || state.after"
+        v-if="cardSets.before || cardSets.after"
         class="flex justify-end gap-4 mt-4"
       >
         <RouterLink
-          v-if="state.before"
+          v-if="cardSets.before"
           :to="{
             name: 'sets',
             query: pick(nextNavigationParams, ['query', 'before']),
           }"
           class="inline-flex gap-2 pr-6 pl-4 py-2 items-center rounded-2xl justify-center bg-indigo-100"
-          :disabled="!state.before"
+          :disabled="!cardSets.before"
           ><span class="material-symbols-outlined text-xl leading-none"
             >chevron_left</span
           >prev</RouterLink
@@ -164,7 +175,7 @@ watch(
         <BaseButton v-else before="chevron_left" disabled>prev</BaseButton>
 
         <RouterLink
-          v-if="state.after"
+          v-if="cardSets.after"
           :to="{
             name: 'sets',
             query: pick(nextNavigationParams, ['query', 'after']),
@@ -179,7 +190,10 @@ watch(
       </div>
     </template>
 
-    <div class="my-auto text-center" v-else-if="state && !state.data.length">
+    <div
+      class="my-auto text-center"
+      v-else-if="cardSets && !cardSets.data.length"
+    >
       You have no card sets yet.
       <RouterLink
         :to="{ name: 'new-card-set' }"
