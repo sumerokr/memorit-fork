@@ -18,28 +18,21 @@ export type GetCardSetApi = (
   args: GetCardSetApiParameters
 ) => GetCardSetApiReturn;
 
-export type GetCardSetUC = (args: { id: CardSetV2["id"] }) => Promise<void>;
-
-type SetupGetCardSetUC = (args: {
-  onSucces: (
-    cardSet: CardSetV2 & {
-      cardsCount: number;
-      cardsToStudyCount: number;
-    }
-  ) => void;
-  onError?: (error: unknown) => void;
-}) => GetCardSetUC;
+export type GetCardSetUC = (args: { id: CardSetV2["id"] }) => Promise<
+  CardSetV2 & {
+    cardsCount: number;
+    cardsToStudyCount: number;
+  }
+>;
 //#endregion
 
-export const setupGetCardSetUC: SetupGetCardSetUC =
-  ({ onSucces, onError }) =>
-  async ({ id }) => {
-    try {
-      const cardSet = await getCardSetApi({ id });
-      onSucces(cardSet);
-      notificationService.notify("received");
-    } catch (error) {
-      onError?.(error);
-      notificationService.error(error);
-    }
-  };
+export const getCardSetUC: GetCardSetUC = async ({ id }) => {
+  try {
+    const cardSet = await getCardSetApi({ id });
+    notificationService.notify("received");
+    return cardSet;
+  } catch (error) {
+    notificationService.error(error);
+    throw error;
+  }
+};

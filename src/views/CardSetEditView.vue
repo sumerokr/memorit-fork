@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, nextTick } from "vue";
-import { setupGetCardSetUC } from "@/application/get-card-set";
+import { getCardSetUC } from "@/application/get-card-set";
 import { setupUpdateCardSetUC } from "@/application/update-card-set";
 import { useAsyncState } from "@vueuse/core";
 import { useRouter } from "vue-router";
@@ -16,17 +16,14 @@ const router = useRouter();
 const title = ref("");
 const titleEl = ref<HTMLInputElement>();
 
-const getCardSetUC = setupGetCardSetUC({
-  onSucces: async (_cardSet) => {
-    title.value = _cardSet.title;
-    titleEl.value?.focus();
-  },
-});
-
 const { isLoading: isGetCardSetLoading, isReady: isGetCardSetReady } =
   useAsyncState(() => getCardSetUC({ id: props.cardSetId }), null, {
-    onSuccess: async () => {
+    onSuccess: async (data) => {
+      if (!data) {
+        return;
+      }
       await nextTick();
+      title.value = data.title;
       titleEl.value?.focus();
     },
   });

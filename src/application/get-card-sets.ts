@@ -52,7 +52,7 @@ export type GetCardSetsUC = (
   }
 ) => Promise<void>;
 
-type SetupGetCardSetUC = (args: {
+type SetupGetCardSetsUC = (args: {
   onSucces: (cardSets: {
     data: (CardSetV2 & {
       cardsCount: number;
@@ -65,7 +65,7 @@ type SetupGetCardSetUC = (args: {
 }) => GetCardSetsUC;
 //#endregion
 
-export const setupGetCardSetsUC: SetupGetCardSetUC =
+export const setupGetCardSetsUC: SetupGetCardSetsUC =
   ({ onSucces, onError }) =>
   async (args) => {
     try {

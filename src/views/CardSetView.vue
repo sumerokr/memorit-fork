@@ -2,9 +2,8 @@
 import { ref } from "vue";
 import { useAsyncState, onClickOutside } from "@vueuse/core";
 import { useRouter } from "vue-router";
-import { setupGetCardSetUC } from "@/application/get-card-set";
+import { getCardSetUC } from "@/application/get-card-set";
 import { setupDeleteCardSetUC } from "@/application/delete-card-set";
-import type { CardSetV2 } from "@/domain/card-set";
 
 type Props = {
   cardSetId: string;
@@ -14,21 +13,11 @@ const props = defineProps<Props>();
 
 const router = useRouter();
 
-const cardSet = ref<
-  CardSetV2 & {
-    cardsCount: number;
-    cardsToStudyCount: number;
-  }
->();
-
-const getCardSetUC = setupGetCardSetUC({
-  onSucces: (_cardSet) => {
-    cardSet.value = _cardSet;
-  },
-});
-
-const { isLoading: isGetCardSetLoading, isReady: isGetCardSetReady } =
-  useAsyncState(() => getCardSetUC({ id: props.cardSetId }), null);
+const {
+  state: cardSet,
+  isLoading: isGetCardSetLoading,
+  isReady: isGetCardSetReady,
+} = useAsyncState(() => getCardSetUC({ id: props.cardSetId }), null);
 
 const deleteCardSetUC = setupDeleteCardSetUC({
   onSucces: () => {
