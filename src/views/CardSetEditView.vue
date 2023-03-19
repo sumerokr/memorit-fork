@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, nextTick } from "vue";
 import { getCardSetUC } from "@/application/get-card-set";
-import { setupUpdateCardSetUC } from "@/application/update-card-set";
+import { updateCardSetUC } from "@/application/update-card-set";
 import { useAsyncState } from "@vueuse/core";
 import { useRouter } from "vue-router";
 
@@ -28,14 +28,13 @@ const { isLoading: isGetCardSetLoading, isReady: isGetCardSetReady } =
     },
   });
 
-const updateCardSetUC = setupUpdateCardSetUC({
-  onSucces: () => {
-    router.push({ name: "set", params: { cardSetId: props.cardSetId } });
-  },
-});
-
 const { isLoading: isUpdateCardSetLoading, execute: updateCardSet } =
-  useAsyncState(updateCardSetUC, null, { immediate: false });
+  useAsyncState(updateCardSetUC, null, {
+    immediate: false,
+    onSuccess: () => {
+      router.push({ name: "set", params: { cardSetId: props.cardSetId } });
+    },
+  });
 
 const onSubmit = async () => {
   await updateCardSet(0, {

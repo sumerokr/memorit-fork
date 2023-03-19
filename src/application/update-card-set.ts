@@ -19,25 +19,18 @@ type UpdateCardSetParameters = {
   data: Partial<Pick<CardSetV2, "title" | "updatedAt" | "updatedBy">>;
 };
 
-export type UpdateCardSetUC = (args: UpdateCardSetParameters) => Promise<void>;
-
-type SetupUpdateCardSetUC = (args: {
-  onSucces: (
-    data: Partial<Pick<CardSetV2, "title" | "updatedAt" | "updatedBy">>
-  ) => void;
-  onError?: (error: unknown) => void;
-}) => UpdateCardSetUC;
+export type UpdateCardSetUC = (
+  args: UpdateCardSetParameters
+) => Promise<Partial<Pick<CardSetV2, "title" | "updatedAt" | "updatedBy">>>;
 //#endregion
 
-export const setupUpdateCardSetUC: SetupUpdateCardSetUC =
-  ({ onSucces, onError }) =>
-  async ({ id, data }) => {
-    try {
-      await updateCardSetApi({ id, data });
-      onSucces(data);
-      notificationService.notify("updated");
-    } catch (error) {
-      onError?.(error);
-      notificationService.error(error);
-    }
-  };
+export const updateCardSetUC: UpdateCardSetUC = async ({ id, data }) => {
+  try {
+    await updateCardSetApi({ id, data });
+    notificationService.notify("updated");
+    return data;
+  } catch (error) {
+    notificationService.error(error);
+    throw error;
+  }
+};
