@@ -3,7 +3,7 @@ import { ref } from "vue";
 import { useAsyncState, onClickOutside } from "@vueuse/core";
 import { useRouter } from "vue-router";
 import { getCardSetUC } from "@/application/get-card-set";
-import { setupDeleteCardSetUC } from "@/application/delete-card-set";
+import { deleteCardSetUC } from "@/application/delete-card-set";
 
 type Props = {
   cardSetId: string;
@@ -19,15 +19,12 @@ const {
   isReady: isGetCardSetReady,
 } = useAsyncState(() => getCardSetUC({ id: props.cardSetId }), null);
 
-const deleteCardSetUC = setupDeleteCardSetUC({
-  onSucces: () => {
-    router.replace({ name: "sets" });
-  },
-});
-
 const { isLoading: isDeleteCardSetLoading, execute: deleteCardSet } =
   useAsyncState(() => deleteCardSetUC({ id: props.cardSetId }), null, {
     immediate: false,
+    onSuccess: () => {
+      router.replace({ name: "sets" });
+    },
   });
 
 const onDelete = async () => {

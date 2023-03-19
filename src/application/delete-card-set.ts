@@ -18,22 +18,14 @@ type DeleteCardSetParameters = {
 };
 
 export type DeleteCardSetUC = (args: DeleteCardSetParameters) => Promise<void>;
-
-type SetupDeleteCardSetUC = (args: {
-  onSucces: () => void;
-  onError?: (error: unknown) => void;
-}) => DeleteCardSetUC;
 //#endregion
 
-export const setupDeleteCardSetUC: SetupDeleteCardSetUC =
-  ({ onSucces, onError }) =>
-  async ({ id }) => {
-    try {
-      await deleteCardSetApi({ id });
-      onSucces();
-      notificationService.notify("deleted");
-    } catch (error) {
-      onError?.(error);
-      notificationService.error(error);
-    }
-  };
+export const deleteCardSetUC: DeleteCardSetUC = async ({ id }) => {
+  try {
+    await deleteCardSetApi({ id });
+    notificationService.notify("deleted");
+  } catch (error) {
+    notificationService.error(error);
+    throw error;
+  }
+};
