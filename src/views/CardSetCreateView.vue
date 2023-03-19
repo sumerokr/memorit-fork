@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue";
 import CardSetList from "@/components/CardSetList.vue";
 import type { CardSetV2 } from "@/domain/card-set";
-import { setupCreateCardSetUC } from "@/application/create-card-set";
+import { createCardSetUC } from "@/application/create-card-set";
 import { useAsyncState } from "@vueuse/core";
 
 const title = ref("");
@@ -14,8 +14,12 @@ const createdCardSets = ref<
   })[]
 >([]);
 
-const createCardSetUC = setupCreateCardSetUC({
-  onSucces: (cardSet) => {
+const { isLoading, execute } = useAsyncState(createCardSetUC, null, {
+  immediate: false,
+  onSuccess: (cardSet) => {
+    if (!cardSet) {
+      return;
+    }
     createdCardSets.value.unshift({
       ...cardSet,
       cardsCount: 0,
@@ -25,10 +29,6 @@ const createCardSetUC = setupCreateCardSetUC({
     title.value = "";
     titleEl.value?.focus();
   },
-});
-
-const { isLoading, execute } = useAsyncState(createCardSetUC, null, {
-  immediate: false,
 });
 
 const onSubmit = async () => {

@@ -20,28 +20,21 @@ type CreateCardSetUCParameters = {
 
 export type CreateCardSetUC = (
   args: CreateCardSetUCParameters
-) => Promise<void>;
-
-type SetupCreateCardSetUC = (args: {
-  onSucces: (cardSet: CardSetV2) => void;
-  onError?: (error: unknown) => void;
-}) => CreateCardSetUC;
+) => Promise<CardSetV2>;
 //#endregion
 
-export const setupCreateCardSetUC: SetupCreateCardSetUC =
-  ({ onSucces, onError }) =>
-  async ({ title }) => {
-    try {
-      const cardSet = createCardSet({
-        id: nanoid(),
-        title,
-        createdAt: new Date().toISOString(),
-      });
-      await createCardSetApi({ cardSet });
-      notificationService.notify("created");
-      onSucces(cardSet);
-    } catch (error) {
-      onError?.(error);
-      notificationService.error(error);
-    }
-  };
+export const createCardSetUC: CreateCardSetUC = async ({ title }) => {
+  try {
+    const cardSet = createCardSet({
+      id: nanoid(),
+      title,
+      createdAt: new Date().toISOString(),
+    });
+    await createCardSetApi({ cardSet });
+    notificationService.notify("created");
+    return cardSet;
+  } catch (error) {
+    notificationService.error(error);
+    throw error;
+  }
+};
