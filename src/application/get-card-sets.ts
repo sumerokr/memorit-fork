@@ -50,30 +50,23 @@ export type GetCardSetsUC = (
   ) & {
     query?: CardSetV2["title"];
   }
-) => Promise<void>;
-
-type SetupGetCardSetsUC = (args: {
-  onSucces: (cardSets: {
-    data: (CardSetV2 & {
-      cardsCount: number;
-      cardsToStudyCount: number;
-    })[];
-    before?: CardSetV2["id"];
-    after?: CardSetV2["id"];
-  }) => void;
-  onError?: (error: unknown) => void;
-}) => GetCardSetsUC;
+) => Promise<{
+  data: (CardSetV2 & {
+    cardsCount: number;
+    cardsToStudyCount: number;
+  })[];
+  before?: CardSetV2["id"];
+  after?: CardSetV2["id"];
+}>;
 //#endregion
 
-export const setupGetCardSetsUC: SetupGetCardSetsUC =
-  ({ onSucces, onError }) =>
-  async (args) => {
-    try {
-      const cardSets = await getAllCardSetsApi(args);
-      onSucces(cardSets);
-      notificationService.notify("received");
-    } catch (error) {
-      onError?.(error);
-      notificationService.error(error);
-    }
-  };
+export const getCardSetsUC: GetCardSetsUC = async (args) => {
+  try {
+    const cardSets = await getAllCardSetsApi(args);
+    notificationService.notify("received");
+    return cardSets;
+  } catch (error) {
+    notificationService.error(error);
+    throw error;
+  }
+};

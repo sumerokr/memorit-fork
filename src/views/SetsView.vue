@@ -2,9 +2,8 @@
 import { ref, computed, nextTick, watch } from "vue";
 import { useAsyncState, watchDebounced } from "@vueuse/core";
 import {
-  setupGetCardSetsUC,
+  getCardSetsUC,
   type GetCardSetsApiParameters,
-  type GetCardSetsApiReturn,
 } from "@/application/get-card-sets";
 import CardSetList from "@/components/CardSetList.vue";
 import BaseButton from "@/components/BaseButton.vue";
@@ -32,22 +31,14 @@ const currentNavigationParams = computed<NonNullable<GetCardSetsApiParameters>>(
   }
 );
 
-const cardSets = ref<Awaited<GetCardSetsApiReturn>>();
-
-const getCardSetsUC = setupGetCardSetsUC({
-  onSucces: (_cardSets) => {
-    cardSets.value = _cardSets;
-  },
+const {
+  execute,
+  state: cardSets,
+  error,
+} = useAsyncState(getCardSetsUC, null, {
+  immediate: false,
+  resetOnExecute: false,
 });
-
-const { /* isReady, isLoading, */ execute, error } = useAsyncState(
-  getCardSetsUC,
-  null,
-  {
-    immediate: false,
-    resetOnExecute: false,
-  }
-);
 
 const queryEl = ref<HTMLInputElement | null>(null);
 const query = ref<string>(currentNavigationParams.value.query ?? "");
