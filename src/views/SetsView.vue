@@ -6,7 +6,7 @@ import {
   type GetCardSetsApiParameters,
 } from "@/application/get-card-sets";
 import CardSetList from "@/components/CardSetList.vue";
-import BaseButton from "@/components/BaseButton.vue";
+import CommonButton from "@/components/CommonButton.vue";
 import IconButton from "@/components/IconButton.vue";
 import { useRoute, useRouter } from "vue-router";
 import pickBy from "lodash/pickBy";
@@ -14,6 +14,7 @@ import pick from "lodash/pick";
 import omit from "lodash/omit";
 import difference from "lodash/difference";
 import mapValues from "lodash/mapValues";
+import RouterLinkCommonButton from "@/components/RouterLinkCommonButton.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -152,33 +153,29 @@ watch(
         v-if="cardSets.before || cardSets.after"
         class="flex justify-end gap-4 mt-4"
       >
-        <RouterLink
+        <RouterLinkCommonButton
           v-if="cardSets.before"
           :to="{
             name: 'sets',
             query: pick(nextNavigationParams, ['query', 'before']),
           }"
-          class="inline-flex gap-2 pr-6 pl-4 py-2 items-center rounded-2xl justify-center bg-indigo-100"
-          :disabled="!cardSets.before"
-          ><span class="material-symbols-outlined text-xl leading-none"
-            >chevron_left</span
-          >prev</RouterLink
+          before="chevron_left"
+          class="bg-indigo-100"
+          >prev</RouterLinkCommonButton
         >
-        <BaseButton v-else before="chevron_left" disabled>prev</BaseButton>
+        <CommonButton v-else before="chevron_left" disabled>prev</CommonButton>
 
-        <RouterLink
+        <RouterLinkCommonButton
           v-if="cardSets.after"
           :to="{
             name: 'sets',
             query: pick(nextNavigationParams, ['query', 'after']),
           }"
+          after="chevron_right"
           class="inline-flex gap-2 pr-4 pl-6 py-2 items-center rounded-2xl justify-center bg-indigo-100"
-          before="chevron_left"
-          >prev<span class="material-symbols-outlined text-xl leading-none"
-            >chevron_right</span
-          ></RouterLink
+          >next</RouterLinkCommonButton
         >
-        <BaseButton v-else after="chevron_right" disabled>next</BaseButton>
+        <CommonButton v-else after="chevron_right" disabled>next</CommonButton>
       </div>
     </template>
 

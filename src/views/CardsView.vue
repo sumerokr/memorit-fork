@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import { ref, computed, nextTick, watch } from "vue";
-import type { Card } from "@/domain/card";
 import { useAsyncState, watchDebounced, onClickOutside } from "@vueuse/core";
 import { cardsAPI } from "@/services/index";
 import CardList from "@/components/CardList.vue";
-import BaseButton from "@/components/BaseButton.vue";
+import CommonButton from "@/components/CommonButton.vue";
+import IconButton from "@/components/IconButton.vue";
 import { useRoute, useRouter } from "vue-router";
 import pickBy from "lodash/pickBy";
 import pick from "lodash/pick";
 import omit from "lodash/omit";
 import difference from "lodash/difference";
 import mapValues from "lodash/mapValues";
+import RouterLinkCommonButton from "@/components/RouterLinkCommonButton.vue";
 
 type Props = {
   cardSetId: string;
@@ -139,12 +140,12 @@ watch(
 
     <div class="flex justify-between gap-4 mb-4">
       <h1 class="text-2xl">Cards</h1>
-      <div class="relative" ref="searchContainerEl">
-        <BaseButton
-          :before="isSearchVisible ? 'close' : 'search'"
-          class="relative z-20 -my-1 !pr-4 align-top"
+      <div class="relative leading-none" ref="searchContainerEl">
+        <IconButton
+          :icon="isSearchVisible ? 'close' : 'search'"
+          class="relative z-20 -my-2"
           @click="onSearch"
-        ></BaseButton>
+        ></IconButton>
         <input
           v-if="isSearchVisible"
           v-model="query"
@@ -168,35 +169,31 @@ watch(
         v-if="state.before || state.after"
         class="flex justify-end gap-4 mt-4"
       >
-        <RouterLink
+        <RouterLinkCommonButton
           v-if="state.before"
           :to="{
             name: 'cards',
             params: { cardSetId },
             query: pick(nextNavigationParams, ['query', 'before']),
           }"
-          class="inline-flex gap-2 pr-6 pl-4 py-2 items-center rounded-2xl justify-center bg-indigo-100"
-          :disabled="!state.before"
-          ><span class="material-symbols-outlined text-xl leading-none"
-            >chevron_left</span
-          >prev</RouterLink
+          before="chevron_left"
+          class="bg-indigo-100"
+          >prev</RouterLinkCommonButton
         >
-        <BaseButton v-else before="chevron_left" disabled>prev</BaseButton>
+        <CommonButton v-else before="chevron_left" disabled>prev</CommonButton>
 
-        <RouterLink
+        <RouterLinkCommonButton
           v-if="state.after"
           :to="{
             name: 'cards',
             params: { cardSetId },
             query: pick(nextNavigationParams, ['query', 'after']),
           }"
-          class="inline-flex gap-2 pr-4 pl-6 py-2 items-center rounded-2xl justify-center bg-indigo-100"
-          before="chevron_left"
-          >next<span class="material-symbols-outlined text-xl leading-none"
-            >chevron_right</span
-          ></RouterLink
+          after="chevron_right"
+          class="bg-indigo-100"
+          >next</RouterLinkCommonButton
         >
-        <BaseButton v-else after="chevron_right" disabled>next</BaseButton>
+        <CommonButton v-else after="chevron_right" disabled>next</CommonButton>
       </div>
     </template>
 
