@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import CardList from "@/components/CardList.vue";
 import { useCreateCard } from "@/composables/use-cards";
 import { cardsByCardSetId } from "@/services/cards-storage";
 import type { Card } from "@/domain/card";
+import CommonButton from "@/components/CommonButton.vue";
 
 type Props = {
   cardSetId: string;
@@ -19,9 +20,16 @@ const back = ref("");
 const createdCards = ref<Card[]>([]);
 
 const onSubmit = async () => {
+  const frontTrimmed = front.value.trim();
+  const backTrimmed = back.value.trim();
+
+  if (!frontTrimmed || !backTrimmed) {
+    return;
+  }
+
   await execute({
-    front: front.value,
-    back: back.value,
+    front: frontTrimmed,
+    back: backTrimmed,
     cardSetId: props.cardSetId,
   });
 
@@ -33,6 +41,10 @@ const onSubmit = async () => {
   const lastCreatedCard = cardsByCardSetId.value[props.cardSetId].slice(-1)[0];
   createdCards.value.unshift(lastCreatedCard);
 };
+
+onMounted(() => {
+  frontEl.value?.focus();
+});
 </script>
 
 <template>
@@ -74,16 +86,13 @@ const onSubmit = async () => {
         />
       </p>
       <p class="text-right">
-        <button
-          class="inline-flex justify-center gap-2 px-4 py-2 items-center bg-indigo-200 rounded-2xl"
+        <CommonButton
+          before="save"
+          class="bg-indigo-200"
           type="submit"
           :disabled="isLoading"
+          >Save</CommonButton
         >
-          <span>Save</span>
-          <span class="material-symbols-outlined text-xl leading-none">
-            save
-          </span>
-        </button>
       </p>
     </form>
 

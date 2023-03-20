@@ -2,6 +2,8 @@
 import { ref, computed, watch, nextTick } from "vue";
 import { useUpdateCard, useGetCard } from "@/composables/use-cards";
 import { cards } from "@/services/cards-storage";
+import CommonButton from "@/components/CommonButton.vue";
+import router from "@/router";
 
 type Props = {
   cardSetId: string;
@@ -26,7 +28,6 @@ const { isLoading: isUpdateCardLoading, execute: updateCard } = useUpdateCard();
 const front = ref("");
 const frontEl = ref<HTMLInputElement>();
 const back = ref("");
-const showNotification = ref(false);
 
 watch(isGetCardReady, async (flag) => {
   if (flag) {
@@ -53,10 +54,7 @@ const onSubmit = async () => {
     back: back.value,
   });
 
-  showNotification.value = true;
-  setTimeout(() => {
-    showNotification.value = false;
-  }, 3000);
+  router.push({ name: "cards", params: { cardSetId: props.cardSetId } });
 };
 </script>
 
@@ -64,7 +62,7 @@ const onSubmit = async () => {
   <div class="flex flex-col flex-grow p-4 bg-neutral-100">
     <p class="mb-4">
       <RouterLink
-        :to="{ name: 'cards', params: { cardSetId: cardSetId } }"
+        :to="{ name: 'cards', params: { cardSetId } }"
         class="text-indigo-500"
         ><span class="inline-block rotate-180">➜</span> Back to card
         set</RouterLink
@@ -102,19 +100,13 @@ const onSubmit = async () => {
         />
       </p>
       <p class="text-right">
-        <span v-if="showNotification" class="mr-2 text-green-700">
-          Saved!
-        </span>
-        <button
-          class="inline-flex justify-center gap-2 px-4 py-2 items-center bg-indigo-200 rounded-2xl"
+        <CommonButton
+          before="save"
+          class="bg-indigo-200"
           type="submit"
           :disabled="isUpdateCardLoading"
+          >Save</CommonButton
         >
-          <span>Save</span>
-          <span class="material-symbols-outlined text-xl leading-none">
-            save
-          </span>
-        </button>
       </p>
     </form>
   </div>

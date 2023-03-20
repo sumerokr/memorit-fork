@@ -10,7 +10,10 @@ defineProps<Props>();
 </script>
 
 <template>
-  <RouterLink class="inline-flex p-3 rounded-[50%]" v-bind="$props">
+  <RouterLink
+    v-bind="$props"
+    class="inline-flex items-center justify-center p-3 rounded-3xl"
+  >
     <span class="material-symbols-outlined leading-none">{{ icon }}</span>
   </RouterLink>
 </template>

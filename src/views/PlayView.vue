@@ -3,6 +3,8 @@ import { ref, computed } from "vue";
 import type { Card } from "@/domain/card";
 import { useGetStudyCards, useUpdateCardStatus } from "@/composables/use-cards";
 import { cards } from "@/services/cards-storage";
+import IconButton from "@/components/IconButton.vue";
+import CommonButton from "@/components/CommonButton.vue";
 
 type Props = {
   cardSetId: string;
@@ -107,34 +109,24 @@ const restart = () => {
             How well did you know the answer?
           </p>
           <div class="flex flex-wrap gap-4">
-            <button
-              type="button"
-              class="gap-2 px-4 py-2 items-center flex-1 bg-red-100 rounded-2xl flex justify-center"
+            <IconButton
+              icon="sentiment_dissatisfied"
+              class="bg-red-100 flex-grow"
               :disabled="isUpdateLoading"
               @click="markHard"
-            >
-              <span class="material-symbols-outlined">
-                sentiment_dissatisfied
-              </span>
-            </button>
-            <button
-              type="button"
-              class="gap-2 px-4 py-2 items-center flex-1 bg-yellow-100 rounded-2xl flex justify-center"
+            />
+            <IconButton
+              icon="sentiment_neutral"
+              class="bg-yellow-100 flex-grow"
               :disabled="isUpdateLoading"
               @click="markOk"
-            >
-              <span class="material-symbols-outlined"> sentiment_neutral </span>
-            </button>
-            <button
-              type="button"
-              class="gap-2 px-4 py-2 items-center flex-1 bg-green-100 rounded-2xl flex justify-center"
+            />
+            <IconButton
+              icon="sentiment_satisfied"
+              class="bg-green-100 flex-grow"
               :disabled="isUpdateLoading"
               @click="markEasy"
-            >
-              <span class="material-symbols-outlined">
-                sentiment_satisfied
-              </span>
-            </button>
+            />
           </div>
         </div>
 
@@ -143,13 +135,12 @@ const restart = () => {
             Do you remember the card? Let's find out
           </p>
           <div class="flex">
-            <button
-              type="button"
-              class="gap-2 px-4 py-2 items-center flex-1 bg-indigo-200 rounded-2xl flex justify-center"
+            <CommonButton
+              class="flex-grow bg-indigo-200"
               @click="isShown = !isShown"
             >
               Reveal
-            </button>
+            </CommonButton>
           </div>
         </div>
       </template>
@@ -158,15 +149,13 @@ const restart = () => {
         <p>Congrats! You have studied {{ total }} cards.</p>
         <p class="mt-4">
           You can
-          <button
-            class="inline-flex gap-2 px-4 py-2 items-center bg-indigo-200 rounded-2xl flex justify-center"
+          <CommonButton
+            before="play_arrow"
+            class="bg-indigo-200"
             @click="restart"
           >
             Study
-            <span class="material-symbols-outlined text-xl leading-none"
-              >play_arrow</span
-            >
-          </button>
+          </CommonButton>
           again.
         </p>
       </div>

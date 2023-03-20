@@ -10,7 +10,10 @@ withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-  <button class="inline-flex p-3 rounded-[50%]" :type="type">
+  <button
+    class="inline-flex items-center justify-center p-3 rounded-3xl"
+    :type="type"
+  >
     <span class="material-symbols-outlined leading-none">{{ icon }}</span>
   </button>
 </template>

@@ -4,6 +4,7 @@ import CardSetList from "@/components/CardSetList.vue";
 import type { CardSetV2 } from "@/domain/card-set";
 import { createCardSetUC } from "@/application/create-card-set";
 import { useAsyncState } from "@vueuse/core";
+import CommonButton from "@/components/CommonButton.vue";
 
 const title = ref("");
 const titleEl = ref<HTMLInputElement>();
@@ -76,16 +77,13 @@ onMounted(() => {
         />
       </p>
       <p class="text-right">
-        <button
-          class="inline-flex justify-center gap-2 px-4 py-2 items-center bg-indigo-200 rounded-2xl"
+        <CommonButton
+          before="save"
+          class="bg-indigo-200"
           type="submit"
           :disabled="isLoading"
-        >
-          <span>Save</span>
-          <span class="material-symbols-outlined text-xl leading-none">
-            save
-          </span>
-        </button>
+          >Save
+        </CommonButton>
       </p>
     </form>
 

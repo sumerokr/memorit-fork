@@ -21,7 +21,7 @@ const resolvedClasses = (() => {
 
 <template>
   <button
-    class="inline-flex py-3 items-center rounded-2xl justify-center disabled:opacity-40"
+    class="inline-flex py-3 items-center rounded-3xl justify-center disabled:opacity-40"
     :class="resolvedClasses"
   >
     <span v-if="before" class="material-symbols-outlined leading-none">

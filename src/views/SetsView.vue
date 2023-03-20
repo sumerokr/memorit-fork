@@ -184,15 +184,13 @@ watch(
       v-else-if="cardSets && !cardSets.data.length"
     >
       You have no card sets yet.
-      <RouterLink
+      <RouterLinkCommonButton
+        icon="add"
         :to="{ name: 'new-card-set' }"
-        class="gap-2 px-4 py-2 items-center bg-indigo-200 rounded-2xl inline-flex justify-center"
+        class="bg-indigo-200"
       >
         Create
-        <span class="material-symbols-outlined text-xl leading-none">
-          add
-        </span>
-      </RouterLink>
+      </RouterLinkCommonButton>
     </div>
 
     <RouterLink

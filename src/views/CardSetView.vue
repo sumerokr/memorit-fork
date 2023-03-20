@@ -4,6 +4,9 @@ import { useAsyncState, onClickOutside } from "@vueuse/core";
 import { useRouter } from "vue-router";
 import { getCardSetUC } from "@/application/get-card-set";
 import { deleteCardSetUC } from "@/application/delete-card-set";
+import IconButton from "@/components/IconButton.vue";
+import CommonButton from "@/components/CommonButton.vue";
+import RouterLinkCommonButton from "@/components/RouterLinkCommonButton.vue";
 
 type Props = {
   cardSetId: string;
@@ -52,36 +55,33 @@ onClickOutside(menuRef, () => {
       v-if="isGetCardSetReady && cardSet"
       class="border rounded-xl p-4 bg-white"
     >
-      <div class="flex items-baseline justify-between mb-4">
-        <h1 class="text-3xl">{{ cardSet.title }}</h1>
-        <div class="relative ml-4" ref="menuRef">
-          <button
-            class="flex -m-1 p-2 rounded-2xl"
-            type="button"
+      <div class="flex justify-between gap-4 mb-4">
+        <h1 class="text-2xl">{{ cardSet.title }}</h1>
+        <div class="relative leading-none" ref="menuRef">
+          <IconButton
+            icon="more_vert"
+            class="flex -m-2 p-2 rounded-2xl"
             @click="isMenuOpen = !isMenuOpen"
+          />
+          <div
+            v-if="isMenuOpen"
+            class="flex gap-2 absolute -top-2 mr-4 right-full"
           >
-            <span class="material-symbols-outlined">more_vert</span>
-          </button>
-          <div v-if="isMenuOpen" class="absolute -top-1 mr-2 right-full flex">
-            <button
-              class="flex gap-2 px-4 py-2 mr-2 items-center bg-red-100 rounded-2xl justify-center"
+            <CommonButton
+              before="delete"
+              class="bg-red-100"
               :disabled="isDeleteCardSetLoading"
               @click="onDelete"
             >
               Delete
-              <span class="material-symbols-outlined text-xl leading-none">
-                delete
-              </span>
-            </button>
-            <RouterLink
+            </CommonButton>
+            <RouterLinkCommonButton
               :to="{ name: 'card-set-edit', params: { cardSetId } }"
-              class="flex gap-2 px-4 py-2 items-center bg-indigo-100 rounded-2xl justify-center"
+              before="edit"
+              class="bg-indigo-100"
             >
               Edit
-              <span class="material-symbols-outlined text-xl leading-none">
-                edit
-              </span>
-            </RouterLink>
+            </RouterLinkCommonButton>
           </div>
         </div>
       </div>
@@ -100,33 +100,27 @@ onClickOutside(menuRef, () => {
       </p>
 
       <div class="flex flex-wrap gap-4">
-        <RouterLink
+        <RouterLinkCommonButton
           :to="{ name: 'cards', params: { cardSetId: props.cardSetId } }"
-          class="flex-grow gap-2 px-4 py-2 items-center bg-indigo-50 rounded-2xl flex justify-center"
+          before="view_agenda"
+          class="bg-indigo-50 flex-grow"
         >
           View
-          <span class="material-symbols-outlined text-xl leading-none">
-            view_agenda
-          </span>
-        </RouterLink>
-        <RouterLink
+        </RouterLinkCommonButton>
+        <RouterLinkCommonButton
           :to="{ name: 'new-card', params: { cardSetId: props.cardSetId } }"
-          class="flex-grow gap-2 px-4 py-2 items-center bg-indigo-50 rounded-2xl flex justify-center"
+          before="add"
+          class="bg-indigo-50 flex-grow"
         >
           Add
-          <span class="material-symbols-outlined text-xl leading-none">
-            add
-          </span>
-        </RouterLink>
-        <RouterLink
+        </RouterLinkCommonButton>
+        <RouterLinkCommonButton
           :to="{ name: 'study', params: { cardSetId: props.cardSetId } }"
-          class="flex-grow gap-2 px-4 py-2 items-center bg-indigo-200 rounded-2xl flex justify-center"
+          before="play_arrow"
+          class="bg-indigo-200 flex-grow"
         >
           Study
-          <span class="material-symbols-outlined text-xl leading-none"
-            >play_arrow</span
-          >
-        </RouterLink>
+        </RouterLinkCommonButton>
       </div>
     </div>
 

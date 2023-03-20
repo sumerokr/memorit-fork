@@ -4,6 +4,7 @@ import { getCardSetUC } from "@/application/get-card-set";
 import { updateCardSetUC } from "@/application/update-card-set";
 import { useAsyncState } from "@vueuse/core";
 import { useRouter } from "vue-router";
+import CommonButton from "@/components/CommonButton.vue";
 
 type Props = {
   cardSetId: string;
@@ -78,16 +79,13 @@ const onSubmit = async () => {
         />
       </p>
       <p class="text-right">
-        <button
-          class="inline-flex justify-center gap-2 px-4 py-2 items-center bg-indigo-200 rounded-2xl"
+        <CommonButton
+          before="save"
+          class="bg-indigo-200"
           type="submit"
           :disabled="isUpdateCardSetLoading"
+          >Save</CommonButton
         >
-          <span>Save</span>
-          <span class="material-symbols-outlined text-xl leading-none">
-            save
-          </span>
-        </button>
       </p>
     </form>
   </div>

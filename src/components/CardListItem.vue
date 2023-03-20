@@ -3,6 +3,9 @@ import { ref } from "vue";
 import type { Card } from "@/domain/card";
 import { onClickOutside } from "@vueuse/core";
 import { useDeleteCard } from "@/composables/use-cards";
+import IconButton from "@/components/IconButton.vue";
+import CommonButton from "@/components/CommonButton.vue";
+import RouterLinkCommonButton from "@/components/RouterLinkCommonButton.vue";
 
 type Props = {
   card: Card;
@@ -22,36 +25,33 @@ onClickOutside(menuRef, () => {
 
 <template>
   <li class="border rounded-xl p-4 bg-white">
-    <div class="flex items-start justify-between">
+    <div class="flex gap-4 items-start justify-between">
       <span class="">{{ card.front }}</span>
-      <div class="relative ml-4" ref="menuRef">
-        <button
-          class="flex -m-2 p-2 rounded-2xl"
-          type="button"
+      <div class="relative leading-none" ref="menuRef">
+        <IconButton
+          icon="more_vert"
+          class="flex -m-3 p-2 rounded-2xl"
           @click="isMenuOpen = !isMenuOpen"
+        />
+        <div
+          v-if="isMenuOpen"
+          class="flex gap-2 absolute -top-3 mr-2 right-full"
         >
-          <span class="material-symbols-outlined">more_vert</span>
-        </button>
-        <div v-if="isMenuOpen" class="absolute -top-2 mr-2 right-full flex">
-          <button
-            class="flex gap-2 px-4 py-2 mr-2 items-center bg-red-100 rounded-2xl justify-center"
+          <CommonButton
+            before="delete"
+            class="bg-red-100"
             :disabled="deletingIds.includes(card.id)"
             @click="execute(card.id)"
           >
-            Delete
-            <span class="material-symbols-outlined text-xl leading-none">
-              delete
-            </span>
-          </button>
-          <RouterLink
-            :to="{ name: 'card-edit', params: { id: card.id } }"
-            class="flex gap-2 px-4 py-2 items-center bg-indigo-100 rounded-2xl justify-center"
+            Delete</CommonButton
           >
-            Edit
-            <span class="material-symbols-outlined text-xl leading-none">
-              edit
-            </span>
-          </RouterLink>
+          <RouterLinkCommonButton
+            before="edit"
+            :to="{ name: 'card-edit', params: { id: card.id } }"
+            class="bg-indigo-100"
+          >
+            Edit</RouterLinkCommonButton
+          >
         </div>
       </div>
     </div>

@@ -6,6 +6,7 @@ import { nanoid } from "nanoid";
 import flatten from "lodash/flatten";
 import { deleteDB } from "idb";
 import { getDBInstance } from "@/services/idb-storage";
+import IconButton from "@/components/IconButton.vue";
 
 const _faker = () => import("@faker-js/faker");
 
@@ -352,8 +353,9 @@ const onDelete = async () => {
     <ul class="divide-y">
       <li class="flex items-start justify-between gap-4 py-4">
         <span class="py-2">Add 5-10 sets, 5-50 cards each</span>
-        <button
-          class="flex rounded-2xl bg-green-50 p-2.5 shadow-md"
+        <IconButton
+          icon="add"
+          class="-my-1 bg-green-100 shadow-md"
           @click="
             onSeed([
               [5, 10],
@@ -361,15 +363,13 @@ const onDelete = async () => {
             ])
           "
         >
-          <span class="material-symbols-outlined text-xl leading-none">
-            add
-          </span>
-        </button>
+        </IconButton>
       </li>
       <li class="flex items-start justify-between gap-4 py-4">
         <span class="py-2">Add 50-100 sets, 50-500 cards each</span>
-        <button
-          class="flex rounded-2xl bg-green-50 p-2.5 shadow-md"
+        <IconButton
+          icon="add"
+          class="-my-1 bg-green-100 shadow-md"
           @click="
             onSeed([
               [50, 100],
@@ -377,10 +377,7 @@ const onDelete = async () => {
             ])
           "
         >
-          <span class="material-symbols-outlined text-xl leading-none">
-            add
-          </span>
-        </button>
+        </IconButton>
       </li>
     </ul>
 
@@ -395,15 +392,13 @@ const onDelete = async () => {
           >{{ title }}
           <span class="text-xs opacity-60">({{ length }} cards)</span></span
         >
-        <button
-          class="flex rounded-2xl p-2.5 shadow-md bg-green-50 disabled:opacity-40"
+        <IconButton
+          :icon="addedIds.has(id) ? 'done' : 'add'"
+          class="-my-1 shadow-md bg-green-100 disabled:opacity-40"
           :disabled="addedIds.has(id)"
           @click="add(id)"
         >
-          <span class="material-symbols-outlined text-xl leading-none">
-            {{ addedIds.has(id) ? "done" : "add" }}
-          </span>
-        </button>
+        </IconButton>
       </li>
     </ul>
     <hr class="border-t my-4" />
@@ -411,14 +406,15 @@ const onDelete = async () => {
     <ul v-if="iterative.length" class="divide-y">
       <li class="flex items-start justify-between gap-4 py-4">
         <span class="py-2">Delete ALL data</span>
-        <button
-          class="flex rounded-2xl bg-red-50 p-2.5 shadow-md"
+        <IconButton
+          icon="delete"
+          class="-my-1 bg-red-100 shadow-md"
           @click="onDelete"
         >
           <span class="material-symbols-outlined text-xl leading-none">
             delete
           </span>
-        </button>
+        </IconButton>
       </li>
     </ul>
   </div>
