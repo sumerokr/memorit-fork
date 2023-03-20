@@ -7,6 +7,7 @@ import {
 } from "@/application/get-card-sets";
 import CardSetList from "@/components/CardSetList.vue";
 import BaseButton from "@/components/BaseButton.vue";
+import IconButton from "@/components/IconButton.vue";
 import { useRoute, useRouter } from "vue-router";
 import pickBy from "lodash/pickBy";
 import pick from "lodash/pick";
@@ -122,12 +123,12 @@ watch(
   <div class="flex flex-col flex-grow bg-neutral-100 p-4 pb-24">
     <div class="flex justify-between gap-4 mb-4">
       <h1 class="text-2xl">Card sets</h1>
-      <div class="relative">
-        <BaseButton
-          :before="isSearchVisible ? 'close' : 'search'"
-          class="relative z-20 -my-1 !pr-4 align-top"
+      <div class="relative leading-none">
+        <IconButton
+          :icon="isSearchVisible ? 'close' : 'search'"
+          class="relative z-20 -my-2"
           @click="onSearch"
-        ></BaseButton>
+        ></IconButton>
         <input
           v-if="isSearchVisible"
           v-model="query"
