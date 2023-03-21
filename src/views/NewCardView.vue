@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import CardList from "@/components/CardList.vue";
 import { useCreateCard } from "@/composables/use-cards";
 import { cardsByCardSetId } from "@/services/cards-storage";
 import type { Card } from "@/domain/card";
-import CommonButton from "@/components/CommonButton.vue";
+import NewCardForm from "@/components/NewCardForm.vue";
 
 type Props = {
   cardSetId: string;
@@ -15,36 +15,27 @@ const props = defineProps<Props>();
 const { isLoading, execute } = useCreateCard();
 
 const front = ref("");
-const frontEl = ref<HTMLInputElement>();
 const back = ref("");
+
 const createdCards = ref<Card[]>([]);
 
 const onSubmit = async () => {
-  const frontTrimmed = front.value.trim();
-  const backTrimmed = back.value.trim();
-
-  if (!frontTrimmed || !backTrimmed) {
+  if (!front.value || !back.value) {
     return;
   }
 
   await execute({
-    front: frontTrimmed,
-    back: backTrimmed,
+    front: front.value,
+    back: back.value,
     cardSetId: props.cardSetId,
   });
 
   front.value = "";
   back.value = "";
 
-  frontEl.value?.focus();
-
   const lastCreatedCard = cardsByCardSetId.value[props.cardSetId].slice(-1)[0];
   createdCards.value.unshift(lastCreatedCard);
 };
-
-onMounted(() => {
-  frontEl.value?.focus();
-});
 </script>
 
 <template>
@@ -60,41 +51,12 @@ onMounted(() => {
 
     <h1 class="text-3xl mb-4">Add new card</h1>
 
-    <form
-      class="mb-4 border rounded-xl p-4 bg-white"
-      @submit.prevent="onSubmit"
-    >
-      <p class="mb-4">
-        <input
-          v-model="front"
-          id="front"
-          class="leading-5 border-2 rounded-2xl p-2 w-full"
-          type="text"
-          placeholder="Card front"
-          autocomplete="off"
-          ref="frontEl"
-        />
-      </p>
-      <p class="mb-4">
-        <input
-          v-model="back"
-          id="back"
-          class="leading-5 border-2 rounded-2xl p-2 w-full"
-          type="text"
-          placeholder="Card back"
-          autocomplete="off"
-        />
-      </p>
-      <p class="text-right">
-        <CommonButton
-          before="save"
-          class="bg-indigo-200"
-          type="submit"
-          :disabled="isLoading"
-          >Save</CommonButton
-        >
-      </p>
-    </form>
+    <NewCardForm
+      v-model:front="front"
+      v-model:back="back"
+      :is-loading="isLoading"
+      @submit="onSubmit"
+    />
 
     <CardList :cards="createdCards" />
   </div>

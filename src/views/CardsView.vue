@@ -210,7 +210,7 @@ watch(
 
     <RouterLink
       class="fixed right-4 bottom-4 p-4 flex rounded-2xl bg-indigo-200 shadow-md"
-      :to="{ name: 'new-card-set' }"
+      :to="{ name: 'new-card', params: { cardSetId } }"
       ><span class="material-symbols-outlined text-2xl leading-none">
         add
       </span></RouterLink

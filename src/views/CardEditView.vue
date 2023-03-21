@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, watch, nextTick } from "vue";
+import { ref, computed, watch } from "vue";
 import { useUpdateCard, useGetCard } from "@/composables/use-cards";
 import { cards } from "@/services/cards-storage";
-import CommonButton from "@/components/CommonButton.vue";
+import NewCardForm from "@/components/NewCardForm.vue";
+
 import router from "@/router";
 
 type Props = {
@@ -16,25 +17,13 @@ const card = computed(() => {
   return cards.value.find((_card) => _card.id === props.id);
 });
 
-const {
-  isLoading: isGetCardLoading,
-  isReady: isGetCardReady,
-  execute: getCard,
-} = useGetCard();
+const { isLoading: isGetCardLoading, execute: getCard } = useGetCard();
 getCard(props.id);
 
 const { isLoading: isUpdateCardLoading, execute: updateCard } = useUpdateCard();
 
 const front = ref("");
-const frontEl = ref<HTMLInputElement>();
 const back = ref("");
-
-watch(isGetCardReady, async (flag) => {
-  if (flag) {
-    await nextTick();
-    frontEl.value?.focus();
-  }
-});
 
 const fillCard = () => {
   if (card.value) {
@@ -73,41 +62,12 @@ const onSubmit = async () => {
 
     <div v-if="isGetCardLoading">Loading...</div>
 
-    <form
-      v-if="isGetCardReady && card"
-      class="mb-4 border rounded-xl p-4 bg-white"
-      @submit.prevent="onSubmit"
-    >
-      <p class="mb-4">
-        <input
-          v-model="front"
-          id="front"
-          class="leading-5 border-2 rounded-2xl p-2 w-full"
-          type="text"
-          placeholder="Card front"
-          autocomplete="off"
-          ref="frontEl"
-        />
-      </p>
-      <p class="mb-4">
-        <input
-          v-model="back"
-          id="back"
-          class="leading-5 border-2 rounded-2xl p-2 w-full"
-          type="text"
-          placeholder="Card back"
-          autocomplete="off"
-        />
-      </p>
-      <p class="text-right">
-        <CommonButton
-          before="save"
-          class="bg-indigo-200"
-          type="submit"
-          :disabled="isUpdateCardLoading"
-          >Save</CommonButton
-        >
-      </p>
-    </form>
+    <NewCardForm
+      v-if="card"
+      v-model:front="front"
+      v-model:back="back"
+      :is-loading="isUpdateCardLoading"
+      @submit="onSubmit"
+    />
   </div>
 </template>
