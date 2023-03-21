@@ -13,14 +13,14 @@ defineProps<Props>();
 
 <template>
   <!-- TODO: remove v-if check! -->
-  <ul v-if="cardSets.length" class="grid gap-2">
+  <ul class="grid gap-2">
     <li v-for="cardSet of cardSets" :key="cardSet.id">
       <RouterLink
         :to="{ name: 'set', params: { cardSetId: cardSet.id } }"
         class="block border rounded-xl p-4 bg-white"
       >
-        <h2>{{ cardSet.title }}</h2>
-        <p class="flex items-baseline justify-between text-xs opacity-60">
+        <h2 class="text-xl mb-2">{{ cardSet.title }}</h2>
+        <p class="flex items-baseline justify-between opacity-60">
           <span>Cards: {{ cardSet.cardsCount }}</span>
           <span
             >To study:

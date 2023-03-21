@@ -27,7 +27,9 @@ const resolvedClasses = (() => {
     <span v-if="before" class="material-symbols-outlined leading-none">
       {{ before }}
     </span>
-    <slot />
+    <span class="font-medium">
+      <slot />
+    </span>
     <span v-if="after" class="material-symbols-outlined leading-none">
       {{ after }}
     </span>

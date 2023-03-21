@@ -35,7 +35,7 @@ onClickOutside(menuRef, () => {
         />
         <div
           v-if="isMenuOpen"
-          class="flex gap-2 absolute -top-3 mr-2 right-full"
+          class="flex gap-2 absolute -top-3 mr-5 right-full"
         >
           <CommonButton
             before="delete"
