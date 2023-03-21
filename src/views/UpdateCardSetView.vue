@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, nextTick } from "vue";
+import { ref } from "vue";
 import { getCardSetUC } from "@/application/get-card-set";
 import { updateCardSetUC } from "@/application/update-card-set";
 import { useAsyncState } from "@vueuse/core";
 import { useRouter } from "vue-router";
-import CommonButton from "@/components/CommonButton.vue";
+import CardSetForm from "@/components/CardSetForm.vue";
 
 type Props = {
   cardSetId: string;
@@ -15,19 +15,19 @@ const props = defineProps<Props>();
 const router = useRouter();
 
 const title = ref("");
-const titleEl = ref<HTMLInputElement>();
 
-const { isLoading: isGetCardSetLoading, isReady: isGetCardSetReady } =
-  useAsyncState(() => getCardSetUC({ id: props.cardSetId }), null, {
+const { isLoading: isGetCardSetLoading } = useAsyncState(
+  () => getCardSetUC({ id: props.cardSetId }),
+  null,
+  {
     onSuccess: async (data) => {
       if (!data) {
         return;
       }
-      await nextTick();
       title.value = data.title;
-      titleEl.value?.focus();
     },
-  });
+  }
+);
 
 const { isLoading: isUpdateCardSetLoading, execute: updateCardSet } =
   useAsyncState(updateCardSetUC, null, {
@@ -62,31 +62,10 @@ const onSubmit = async () => {
 
     <div v-if="isGetCardSetLoading">Loading...</div>
 
-    <form
-      v-if="isGetCardSetReady"
-      class="border rounded-xl mb-4 p-4 bg-white"
-      @submit.prevent="onSubmit"
-    >
-      <p class="mb-4">
-        <input
-          v-model="title"
-          id="title"
-          class="leading-5 border-2 rounded-2xl p-2 w-full"
-          type="text"
-          placeholder="Card set title"
-          autocomplete="off"
-          ref="titleEl"
-        />
-      </p>
-      <p class="text-right">
-        <CommonButton
-          before="save"
-          class="bg-indigo-200"
-          type="submit"
-          :disabled="isUpdateCardSetLoading"
-          >Save</CommonButton
-        >
-      </p>
-    </form>
+    <CardSetForm
+      v-model:title.trim="title"
+      :is-loading="isUpdateCardSetLoading"
+      @submit="onSubmit"
+    />
   </div>
 </template>

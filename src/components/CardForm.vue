@@ -19,11 +19,11 @@ const emit = defineEmits<{
 
 const front = computed({
   get: () => props.front,
-  set: (value) => emit("update:front", value.trim()),
+  set: (value) => emit("update:front", value),
 });
 const back = computed({
   get: () => props.back,
-  set: (value) => emit("update:back", value.trim()),
+  set: (value) => emit("update:back", value),
 });
 
 const frontEl = ref<HTMLInputElement>();

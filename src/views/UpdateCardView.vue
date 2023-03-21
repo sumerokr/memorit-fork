@@ -2,7 +2,7 @@
 import { ref, computed, watch } from "vue";
 import { useUpdateCard, useGetCard } from "@/composables/use-cards";
 import { cards } from "@/services/cards-storage";
-import NewCardForm from "@/components/NewCardForm.vue";
+import CardForm from "@/components/CardForm.vue";
 
 import router from "@/router";
 
@@ -62,10 +62,10 @@ const onSubmit = async () => {
 
     <div v-if="isGetCardLoading">Loading...</div>
 
-    <NewCardForm
+    <CardForm
       v-if="card"
-      v-model:front="front"
-      v-model:back="back"
+      v-model:front.trim="front"
+      v-model:back.trim="back"
       :is-loading="isUpdateCardLoading"
       @submit="onSubmit"
     />
