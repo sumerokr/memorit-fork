@@ -14,6 +14,8 @@ defineProps<Props>();
     v-bind="$props"
     class="inline-flex items-center justify-center p-3 rounded-3xl"
   >
-    <span class="material-symbols-outlined leading-none">{{ icon }}</span>
+    <span class="material-symbols-outlined leading-none"
+      >{{ icon }}<span class="sr-only"><slot /></span
+    ></span>
   </RouterLink>
 </template>

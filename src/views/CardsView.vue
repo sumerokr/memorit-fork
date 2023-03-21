@@ -12,6 +12,7 @@ import omit from "lodash/omit";
 import difference from "lodash/difference";
 import mapValues from "lodash/mapValues";
 import RouterLinkCommonButton from "@/components/RouterLinkCommonButton.vue";
+import RouterLinkIconButton from "@/components/RouterLinkIconButton.vue";
 
 type Props = {
   cardSetId: string;
@@ -61,6 +62,7 @@ watchDebounced(
   },
   { debounce: 500 }
 );
+
 onClickOutside(searchContainerEl, () => {
   isSearchVisible.value = false;
 });
@@ -129,21 +131,18 @@ watch(
 
 <template>
   <div class="flex flex-col flex-grow bg-neutral-100 p-4 pb-24">
-    <p class="mb-4">
-      <RouterLink
+    <div class="flex items-center mb-4">
+      <RouterLinkIconButton
+        icon="arrow_back"
+        class="-ml-3 mr-1"
         :to="{ name: 'set', params: { cardSetId } }"
-        class="text-indigo-500"
-        ><span class="inline-block rotate-180">➜</span> Back to card
-        set</RouterLink
+        >Back</RouterLinkIconButton
       >
-    </p>
-
-    <div class="flex justify-between gap-4 mb-4">
       <h1 class="text-2xl">Cards</h1>
-      <div class="relative leading-none" ref="searchContainerEl">
+      <div class="ml-auto -mr-3 relative" ref="searchContainerEl">
         <IconButton
           :icon="isSearchVisible ? 'close' : 'search'"
-          class="relative z-20 -my-2"
+          class="relative z-20"
           @click="onSearch"
         ></IconButton>
         <input
@@ -151,11 +150,12 @@ watch(
           v-model="query"
           @compositionstart="($event) => (($event.target as any).composing = false)"
           ref="queryEl"
-          class="absolute z-10 -top-1 right-0 leading-5 border-2 rounded-2xl p-2 pr-16 w-56"
+          class="absolute z-10 top-0 right-0 leading-7 border-2 rounded-2xl p-2 pr-16 w-56"
           type="text"
         />
       </div>
     </div>
+
     <p
       v-if="error"
       class="mb-4 border border-red-500 rounded-2xl p-4 bg-red-50"
