@@ -5,6 +5,7 @@ import { updateCardSetUC } from "@/application/update-card-set";
 import { useAsyncState } from "@vueuse/core";
 import { useRouter } from "vue-router";
 import CardSetForm from "@/components/CardSetForm.vue";
+import RouterLinkIconButton from "@/components/RouterLinkIconButton.vue";
 
 type Props = {
   cardSetId: string;
@@ -49,16 +50,15 @@ const onSubmit = async () => {
 
 <template>
   <div class="flex flex-col flex-grow p-4 bg-neutral-100">
-    <p class="mb-4">
-      <RouterLink
+    <div class="flex items-center mb-4">
+      <RouterLinkIconButton
+        icon="arrow_back"
+        class="-ml-3 mr-1"
         :to="{ name: 'set', params: { cardSetId } }"
-        class="text-indigo-500"
-        ><span class="inline-block rotate-180">➜</span> Back to card
-        set</RouterLink
+        >Back</RouterLinkIconButton
       >
-    </p>
-
-    <h1 class="text-3xl mb-4">Edit card set</h1>
+      <h1 class="text-2xl">Edit card set</h1>
+    </div>
 
     <div v-if="isGetCardSetLoading">Loading...</div>
 

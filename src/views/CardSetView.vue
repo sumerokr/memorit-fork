@@ -82,15 +82,15 @@ const onDelete = async () => {
         >
       </p>
 
-      <ul class="divide-y">
+      <ul class="bg-white rounded-2xl py-2 divide-y">
         <li>
           <RouterLink
             :to="{ name: 'cards', params: { cardSetId: props.cardSetId } }"
-            class="flex gap-1 py-2.5"
+            class="flex items-start gap-1 px-1 py-2.5"
           >
-            <IconButton icon="view_agenda" class="-ml-1" />
-            <div>
-              <h2>View cards</h2>
+            <IconButton icon="view_agenda" class="" />
+            <div class="py-0.5">
+              <h2 class="font-medium">View cards</h2>
               <p class="text-sm opacity-60">Review terms and definitions</p>
             </div>
           </RouterLink>
@@ -98,11 +98,11 @@ const onDelete = async () => {
         <li>
           <RouterLink
             :to="{ name: 'new-card', params: { cardSetId: props.cardSetId } }"
-            class="flex gap-1 py-2.5"
+            class="flex items-start gap-1 px-1 py-2.5"
           >
-            <IconButton icon="add" class="-ml-1" />
-            <div>
-              <h2>Add cards</h2>
+            <IconButton icon="add" class="" />
+            <div class="py-0.5">
+              <h2 class="font-medium">Add cards</h2>
               <p class="text-sm opacity-60">Add more cards to this Card set</p>
             </div>
           </RouterLink>
@@ -110,11 +110,11 @@ const onDelete = async () => {
         <li>
           <RouterLink
             :to="{ name: 'study', params: { cardSetId: props.cardSetId } }"
-            class="flex gap-1 py-2.5"
+            class="flex items-start gap-1 px-1 py-2.5"
           >
-            <IconButton icon="school" class="-ml-1" />
-            <div>
-              <h2>Study</h2>
+            <IconButton icon="school" class="" />
+            <div class="py-0.5">
+              <h2 class="font-medium">Study</h2>
               <p class="text-sm opacity-60">
                 Use the interval repetition technique
               </p>

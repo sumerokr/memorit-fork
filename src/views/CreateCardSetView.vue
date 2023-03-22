@@ -5,6 +5,7 @@ import type { CardSetV2 } from "@/domain/card-set";
 import { createCardSetUC } from "@/application/create-card-set";
 import { useAsyncState } from "@vueuse/core";
 import CardSetForm from "@/components/CardSetForm.vue";
+import RouterLinkIconButton from "@/components/RouterLinkIconButton.vue";
 
 const title = ref("");
 const createdCardSets = ref<
@@ -46,14 +47,15 @@ const onSubmit = async () => {
 
 <template>
   <div class="flex flex-col flex-grow p-4 bg-neutral-100">
-    <p class="mb-4">
-      <RouterLink :to="{ name: 'sets' }" class="text-indigo-500"
-        ><span class="inline-block rotate-180">➜</span> Back to card
-        sets</RouterLink
+    <div class="flex items-center mb-4">
+      <RouterLinkIconButton
+        icon="arrow_back"
+        class="-ml-3 mr-1"
+        :to="{ name: 'sets' }"
+        >Back</RouterLinkIconButton
       >
-    </p>
-
-    <h1 class="text-3xl mb-4">Add new card set</h1>
+      <h1 class="text-2xl">Add new card set</h1>
+    </div>
 
     <CardSetForm
       v-model:title.trim="title"
