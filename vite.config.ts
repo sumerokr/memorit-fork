@@ -14,8 +14,8 @@ export default defineConfig({
         name: "Memorit",
         short_name: "Memorit",
         description: "Improve your memory",
-        theme_color: "#6366f1",
-        background_color: "#c7d2fe",
+        theme_color: "#818cf8",
+        background_color: "#ffffff",
         display: "standalone",
         icons: [
           {
