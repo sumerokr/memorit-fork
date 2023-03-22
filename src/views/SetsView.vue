@@ -122,12 +122,12 @@ watch(
 
 <template>
   <div class="flex flex-col flex-grow bg-neutral-100 p-4 pb-24">
-    <div class="flex justify-between gap-4 mb-4">
+    <div class="flex items-center mb-4">
       <h1 class="text-2xl">Card sets</h1>
-      <div class="relative leading-none">
+      <div class="ml-auto -mr-3 relative" ref="searchContainerEl">
         <IconButton
           :icon="isSearchVisible ? 'close' : 'search'"
-          class="relative z-20 -my-2"
+          class="relative z-20"
           @click="onSearch"
         ></IconButton>
         <input
@@ -135,11 +135,12 @@ watch(
           v-model="query"
           @compositionstart="($event) => (($event.target as any).composing = false)"
           ref="queryEl"
-          class="absolute z-10 -top-1 right-0 leading-5 border-2 rounded-2xl p-2 pr-16 w-56"
+          class="absolute z-10 top-0 right-0 leading-7 border-2 rounded-2xl p-2 pr-16 w-56"
           type="text"
         />
       </div>
     </div>
+
     <p
       v-if="error"
       class="mb-4 border border-red-500 rounded-2xl p-4 bg-red-50"

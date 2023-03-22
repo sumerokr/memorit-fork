@@ -7,6 +7,7 @@ import { deleteCardSetUC } from "@/application/delete-card-set";
 import IconButton from "@/components/IconButton.vue";
 import CommonButton from "@/components/CommonButton.vue";
 import RouterLinkCommonButton from "@/components/RouterLinkCommonButton.vue";
+import RouterLinkIconButton from "@/components/RouterLinkIconButton.vue";
 
 type Props = {
   cardSetId: string;
@@ -31,60 +32,45 @@ const { isLoading: isDeleteCardSetLoading, execute: deleteCardSet } =
   });
 
 const onDelete = async () => {
+  const answer = confirm("Delete the Card set and all its cards?");
+  if (!answer) {
+    return;
+  }
   await deleteCardSet();
 };
-
-const isMenuOpen = ref(false);
-const menuRef = ref(null);
-
-onClickOutside(menuRef, () => {
-  isMenuOpen.value = false;
-});
 </script>
 
 <template>
   <div class="flex-grow flex flex-col p-4 bg-neutral-100">
-    <p class="mb-4">
-      <RouterLink :to="{ name: 'sets' }" class="text-indigo-500"
-        ><span class="inline-block rotate-180">➜</span> Back to card
-        sets</RouterLink
+    <div class="flex items-center mb-4">
+      <RouterLinkIconButton
+        icon="arrow_back"
+        class="-ml-3 mr-1"
+        :to="{ name: 'sets' }"
+        >Back</RouterLinkIconButton
       >
-    </p>
-
-    <div
-      v-if="isGetCardSetReady && cardSet"
-      class="border rounded-xl p-4 bg-white"
-    >
-      <div class="flex justify-between gap-4 mb-4">
-        <h1 class="text-2xl">{{ cardSet.title }}</h1>
-        <div class="relative leading-none" ref="menuRef">
-          <IconButton
-            icon="more_vert"
-            class="flex -m-2 p-2 rounded-2xl"
-            @click="isMenuOpen = !isMenuOpen"
-          />
-          <div
-            v-if="isMenuOpen"
-            class="flex gap-2 absolute -top-2 mr-4 right-full"
-          >
-            <CommonButton
-              before="delete"
-              class="bg-red-100"
-              :disabled="isDeleteCardSetLoading"
-              @click="onDelete"
-            >
-              Delete
-            </CommonButton>
-            <RouterLinkCommonButton
-              :to="{ name: 'card-set-edit', params: { cardSetId } }"
-              before="edit"
-              class="bg-indigo-100"
-            >
-              Edit
-            </RouterLinkCommonButton>
-          </div>
-        </div>
+      <div class="ml-auto -mr-3 relative" ref="searchContainerEl">
+        <RouterLinkIconButton
+          :to="{ name: 'card-set-edit', params: { cardSetId } }"
+          icon="edit"
+        >
+          Edit
+        </RouterLinkIconButton>
+        <IconButton
+          icon="delete"
+          :disabled="isDeleteCardSetLoading"
+          @click="onDelete"
+        >
+          Delete
+        </IconButton>
       </div>
+    </div>
+
+    <div v-if="isGetCardSetReady && cardSet">
+      <h1 class="text-3xl mb-8">
+        {{ cardSet.title }}
+      </h1>
+
       <p class="mb-8 flex items-baseline justify-between opacity-60">
         <span>Cards: {{ cardSet.cardsCount }}</span>
         <span
@@ -99,29 +85,46 @@ onClickOutside(menuRef, () => {
         >
       </p>
 
-      <div class="flex flex-wrap gap-4">
-        <RouterLinkCommonButton
-          :to="{ name: 'cards', params: { cardSetId: props.cardSetId } }"
-          before="view_agenda"
-          class="bg-indigo-50 flex-grow"
-        >
-          View
-        </RouterLinkCommonButton>
-        <RouterLinkCommonButton
-          :to="{ name: 'new-card', params: { cardSetId: props.cardSetId } }"
-          before="add"
-          class="bg-indigo-50 flex-grow"
-        >
-          Add
-        </RouterLinkCommonButton>
-        <RouterLinkCommonButton
-          :to="{ name: 'study', params: { cardSetId: props.cardSetId } }"
-          before="play_arrow"
-          class="bg-indigo-200 flex-grow"
-        >
-          Study
-        </RouterLinkCommonButton>
-      </div>
+      <ul class="divide-y">
+        <li>
+          <RouterLink
+            :to="{ name: 'cards', params: { cardSetId: props.cardSetId } }"
+            class="flex gap-1 py-2.5"
+          >
+            <IconButton icon="view_agenda" class="-ml-1" />
+            <div>
+              <h2>View cards</h2>
+              <p class="text-sm opacity-60">Review terms and definitions</p>
+            </div>
+          </RouterLink>
+        </li>
+        <li>
+          <RouterLink
+            :to="{ name: 'new-card', params: { cardSetId: props.cardSetId } }"
+            class="flex gap-1 py-2.5"
+          >
+            <IconButton icon="add" class="-ml-1" />
+            <div>
+              <h2>Add cards</h2>
+              <p class="text-sm opacity-60">Add more cards to this Card set</p>
+            </div>
+          </RouterLink>
+        </li>
+        <li>
+          <RouterLink
+            :to="{ name: 'study', params: { cardSetId: props.cardSetId } }"
+            class="flex gap-1 py-2.5"
+          >
+            <IconButton icon="school" class="-ml-1" />
+            <div>
+              <h2>Study</h2>
+              <p class="text-sm opacity-60">
+                Use the interval repetition technique
+              </p>
+            </div>
+          </RouterLink>
+        </li>
+      </ul>
     </div>
 
     <div v-else-if="isGetCardSetLoading">Loading...</div>
