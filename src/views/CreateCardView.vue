@@ -5,6 +5,7 @@ import { useCreateCard } from "@/composables/use-cards";
 import { cardsByCardSetId } from "@/services/cards-storage";
 import type { Card } from "@/domain/card";
 import NewCardForm from "@/components/CardForm.vue";
+import RouterLinkIconButton from "@/components/RouterLinkIconButton.vue";
 
 type Props = {
   cardSetId: string;
@@ -36,20 +37,21 @@ const onSubmit = async () => {
   const lastCreatedCard = cardsByCardSetId.value[props.cardSetId].slice(-1)[0];
   createdCards.value.unshift(lastCreatedCard);
 };
+
+const backLink = window.history.state?.back;
 </script>
 
 <template>
   <div class="flex flex-col flex-grow p-4 bg-neutral-100">
-    <p class="mb-4">
-      <RouterLink
-        :to="{ name: 'set', params: { cardSetId } }"
-        class="text-indigo-500"
-        ><span class="inline-block rotate-180">➜</span> Back to card
-        set</RouterLink
+    <div class="flex items-center mb-4">
+      <RouterLinkIconButton
+        icon="arrow_back"
+        class="-ml-3 mr-1"
+        :to="backLink ?? { name: 'set', params: { cardSetId } }"
+        >Back</RouterLinkIconButton
       >
-    </p>
-
-    <h1 class="text-3xl mb-4">Add new card</h1>
+      <h1 class="text-2xl">Add new card</h1>
+    </div>
 
     <NewCardForm
       v-model:front.trim="front"

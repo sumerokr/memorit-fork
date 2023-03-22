@@ -1,12 +1,9 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { useAsyncState, onClickOutside } from "@vueuse/core";
+import { useAsyncState } from "@vueuse/core";
 import { useRouter } from "vue-router";
 import { getCardSetUC } from "@/application/get-card-set";
 import { deleteCardSetUC } from "@/application/delete-card-set";
 import IconButton from "@/components/IconButton.vue";
-import CommonButton from "@/components/CommonButton.vue";
-import RouterLinkCommonButton from "@/components/RouterLinkCommonButton.vue";
 import RouterLinkIconButton from "@/components/RouterLinkIconButton.vue";
 
 type Props = {

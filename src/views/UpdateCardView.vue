@@ -3,6 +3,7 @@ import { ref, computed, watch } from "vue";
 import { useUpdateCard, useGetCard } from "@/composables/use-cards";
 import { cards } from "@/services/cards-storage";
 import CardForm from "@/components/CardForm.vue";
+import RouterLinkIconButton from "@/components/RouterLinkIconButton.vue";
 
 import router from "@/router";
 
@@ -49,16 +50,15 @@ const onSubmit = async () => {
 
 <template>
   <div class="flex flex-col flex-grow p-4 bg-neutral-100">
-    <p class="mb-4">
-      <RouterLink
+    <div class="flex items-center mb-4">
+      <RouterLinkIconButton
+        icon="arrow_back"
+        class="-ml-3 mr-1"
         :to="{ name: 'cards', params: { cardSetId } }"
-        class="text-indigo-500"
-        ><span class="inline-block rotate-180">➜</span> Back to card
-        set</RouterLink
+        >Back</RouterLinkIconButton
       >
-    </p>
-
-    <h1 class="text-3xl mb-4">Edit card</h1>
+      <h1 class="text-2xl">Update card</h1>
+    </div>
 
     <div v-if="isGetCardLoading">Loading...</div>
 
