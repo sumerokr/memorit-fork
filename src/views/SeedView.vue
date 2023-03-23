@@ -362,8 +362,7 @@ const onDelete = async () => {
               [5, 50],
             ])
           "
-        >
-        </IconButton>
+        />
       </li>
       <li class="flex items-start justify-between gap-4 py-4">
         <span class="py-2">Add 50-100 sets, 50-500 cards each</span>
@@ -376,8 +375,7 @@ const onDelete = async () => {
               [50, 500],
             ])
           "
-        >
-        </IconButton>
+        />
       </li>
     </ul>
 
@@ -397,8 +395,7 @@ const onDelete = async () => {
           class="-my-1 shadow-md bg-green-100 disabled:opacity-40"
           :disabled="addedIds.has(id)"
           @click="add(id)"
-        >
-        </IconButton>
+        />
       </li>
     </ul>
     <hr class="border-t my-4" />
@@ -410,11 +407,7 @@ const onDelete = async () => {
           icon="delete"
           class="-my-1 bg-red-100 shadow-md"
           @click="onDelete"
-        >
-          <span class="material-symbols-outlined text-xl leading-none">
-            delete
-          </span>
-        </IconButton>
+        />
       </li>
     </ul>
   </div>

@@ -1,0 +1,3 @@
+# This is a comment
+/assets/*
+  Cache-Control: public, max-age=15552000, immutable
