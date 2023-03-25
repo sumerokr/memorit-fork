@@ -39,7 +39,7 @@ onClickOutside(menuRef, () => {
         >
           <CommonButton
             before="delete"
-            class="bg-red-100"
+            class="bg-red-200"
             :disabled="deletingIds.includes(card.id)"
             @click="execute(card.id)"
           >
@@ -48,7 +48,7 @@ onClickOutside(menuRef, () => {
           <RouterLinkCommonButton
             before="edit"
             :to="{ name: 'card-edit', params: { id: card.id } }"
-            class="bg-indigo-100"
+            class="bg-indigo-200"
           >
             Edit</RouterLinkCommonButton
           >

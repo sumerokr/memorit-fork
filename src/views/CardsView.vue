@@ -177,7 +177,7 @@ watch(
             query: pick(nextNavigationParams, ['query', 'before']),
           }"
           before="chevron_left"
-          class="bg-indigo-100"
+          class="bg-indigo-200"
           >prev</RouterLinkCommonButton
         >
         <CommonButton v-else before="chevron_left" disabled>prev</CommonButton>
@@ -190,7 +190,7 @@ watch(
             query: pick(nextNavigationParams, ['query', 'after']),
           }"
           after="chevron_right"
-          class="bg-indigo-100"
+          class="bg-indigo-200"
           >next</RouterLinkCommonButton
         >
         <CommonButton v-else after="chevron_right" disabled>next</CommonButton>
@@ -209,7 +209,7 @@ watch(
     </div>
 
     <RouterLink
-      class="fixed right-4 bottom-4 p-4 flex rounded-2xl bg-indigo-200 shadow-md"
+      class="fixed right-4 bottom-4 p-4 flex rounded-2xl bg-indigo-500 text-white shadow-md"
       :to="{ name: 'new-card', params: { cardSetId } }"
       ><span class="material-symbols-outlined text-2xl leading-none">
         add

@@ -3,9 +3,8 @@ import { ref, computed } from "vue";
 import type { Card } from "@/domain/card";
 import { useGetStudyCards, useUpdateCardStatus } from "@/composables/use-cards";
 import { cards } from "@/services/cards-storage";
-import IconButton from "@/components/IconButton.vue";
-import CommonButton from "@/components/CommonButton.vue";
 import RouterLinkIconButton from "@/components/RouterLinkIconButton.vue";
+import WellDone from "@/components/WellDone.vue";
 
 type Props = {
   cardSetId: string;
@@ -30,30 +29,25 @@ const currentCard = computed(() => {
   return cards.value[current.value - 1];
 });
 
+const transitionName = ref("");
 const results: [number, number, number] = [0, 0, 0];
 
 const markHard = async () => {
-  const { id } = currentCard.value;
-  isShown.value = false;
-  current.value++;
-  results[0]++;
-  const newProgress = 1;
-  await updateCardStatus({ id, progress: newProgress });
-};
-const markOk = async () => {
   const { id, progress } = currentCard.value;
   isShown.value = false;
   current.value++;
-  results[1]++;
-  const newProgress = Math.max(progress - 1, 1) as Card["progress"];
+  transitionName.value = "slide-left";
+  results[0]++;
+  const newProgress = Math.max(Math.floor(progress / 2), 1) as Card["progress"];
   await updateCardStatus({ id, progress: newProgress });
 };
 const markEasy = async () => {
   const { id, progress } = currentCard.value;
   isShown.value = false;
   current.value++;
+  transitionName.value = "slide-right";
   results[2]++;
-  const newProgress = (progress <= 9 ? progress + 1 : 10) as Card["progress"];
+  const newProgress = Math.min(progress + 1, 10) as Card["progress"];
   await updateCardStatus({ id, progress: newProgress });
 };
 
@@ -65,7 +59,7 @@ const onRestart = () => {
 </script>
 
 <template>
-  <div class="flex-grow bg-neutral-100 p-4">
+  <div class="flex flex-col flex-grow bg-neutral-100 p-4">
     <div class="flex items-center mb-4">
       <RouterLinkIconButton
         icon="arrow_back"
@@ -83,7 +77,7 @@ const onRestart = () => {
       <template v-if="current <= total">
         <p class="mb-4 text-sm opacity-60">Card: {{ current }} / {{ total }}</p>
         <div class="_card relative mb-4">
-          <Transition name="slide-left">
+          <Transition :name="transitionName">
             <div
               class="border rounded-xl p-4 bg-white absolute inset-0"
               :key="currentCard.id"
@@ -114,24 +108,20 @@ const onRestart = () => {
             How well did you know the answer?
           </p>
           <div class="flex flex-wrap gap-4">
-            <IconButton
+            <CommonButton
               icon="sentiment_dissatisfied"
-              class="bg-red-200 flex-grow"
+              class="flex-1 bg-red-200"
               :disabled="isUpdateLoading"
               @click="markHard"
-            />
-            <IconButton
-              icon="sentiment_neutral"
-              class="bg-yellow-200 flex-grow"
-              :disabled="isUpdateLoading"
-              @click="markOk"
-            />
-            <IconButton
+              >Hard</CommonButton
+            >
+            <CommonButton
               icon="sentiment_satisfied"
-              class="bg-green-200 flex-grow"
+              class="flex-1 bg-green-200"
               :disabled="isUpdateLoading"
               @click="markEasy"
-            />
+              >Easy</CommonButton
+            >
           </div>
         </div>
 
@@ -150,36 +140,12 @@ const onRestart = () => {
         </div>
       </template>
 
-      <div v-else>
-        <p class="mb-4">Congrats! You have studied {{ total }} cards.</p>
-        <div
-          class="flex mb-24 h-4 border-2 border-neutral-500 rounded-xl overflow-hidden"
-        >
-          <div
-            class="bg-red-200 text-xs"
-            :style="`width: ${(results[0] / total) * 100}%`"
-          ></div>
-          <div
-            class="bg-yellow-200"
-            :style="`width: ${(results[1] / total) * 100}%`"
-          ></div>
-          <div
-            class="bg-green-200"
-            :style="`width: ${(results[2] / total) * 100}%`"
-          ></div>
-        </div>
-        <p class="mt-4 text-center">
-          You can
-          <CommonButton
-            before="play_arrow"
-            class="bg-indigo-200"
-            @click="onRestart"
-          >
-            Study
-          </CommonButton>
-          again.
-        </p>
-      </div>
+      <WellDone
+        v-else
+        card-set-id="cardSetId"
+        :results="results"
+        @restart="onRestart"
+      />
     </template>
 
     <div v-else class="mt-4">
@@ -190,7 +156,7 @@ const onRestart = () => {
 
 <style scoped>
 ._card {
-  height: min(24rem, 56vh);
+  height: clamp(10rem, 50vh, 24rem);
 }
 
 ._grid {
@@ -211,20 +177,28 @@ const onRestart = () => {
 }
 
 .slide-left-enter-active,
-.slide-left-leave-active {
+.slide-left-leave-active,
+.slide-right-enter-active,
+.slide-right-leave-active {
   transition: transform 0.2s ease-in;
 }
 
-.slide-left-enter-from {
+.slide-left-enter-from,
+.slide-right-enter-from {
   z-index: 0;
   transform: scale(80%);
 }
 
+.slide-right-leave-active,
 .slide-left-leave-active {
   z-index: 1;
 }
 
 .slide-left-leave-to {
   transform: translateX(calc(-100% - 1rem));
+}
+
+.slide-right-leave-to {
+  transform: translateX(calc(100% - 1rem));
 }
 </style>

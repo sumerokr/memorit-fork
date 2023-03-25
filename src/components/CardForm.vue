@@ -69,7 +69,7 @@ watch([front, back], (values) => {
     <p class="text-right">
       <CommonButton
         before="save"
-        class="bg-indigo-200"
+        class="bg-indigo-500 text-white"
         type="submit"
         :disabled="isLoading"
         >Save</CommonButton
