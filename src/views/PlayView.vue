@@ -4,6 +4,7 @@ import type { Card } from "@/domain/card";
 import { useGetStudyCards, useUpdateCardStatus } from "@/composables/use-cards";
 import { cards } from "@/services/cards-storage";
 import RouterLinkIconButton from "@/components/RouterLinkIconButton.vue";
+import CommonButton from "@/components/CommonButton.vue";
 import WellDone from "@/components/WellDone.vue";
 
 type Props = {
