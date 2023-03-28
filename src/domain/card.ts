@@ -1,4 +1,5 @@
 import type { CardSet } from "./card-set";
+import type { Entity } from "./entity";
 
 export type Card = {
   id: string;
@@ -10,17 +11,37 @@ export type Card = {
   showAfter: string;
 };
 
+export type CardV2 = {
+  front: string;
+  back: string;
+  cardSetId: CardSet["id"];
+  progress: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+  showAfter: string;
+  _v: 2;
+} & Entity;
+
+export const toV2 = (card: Card): CardV2 => {
+  return structuredClone({
+    ...card,
+    createdBy: "",
+    updatedAt: card.createdAt,
+    updatedBy: "",
+    _v: 2,
+  });
+};
+
 export const createCard = ({
   id,
   front,
   back,
   cardSetId,
   createdAt,
-}: Pick<Card, "id" | "front" | "back" | "cardSetId" | "createdAt">): Card => {
+  createdBy,
+}: Pick<
+  CardV2,
+  "id" | "front" | "back" | "cardSetId" | "createdAt" | "createdBy"
+>): CardV2 => {
   const progress = 0;
-  const dateCreatedAt = new Date(createdAt);
-  // const laterTS = dateCreatedAt.setDate(dateCreatedAt.getDate() + 1);
-  const showAfter = dateCreatedAt.toISOString();
   return {
     id,
     front,
@@ -28,7 +49,11 @@ export const createCard = ({
     cardSetId,
     progress,
     createdAt,
-    showAfter,
+    createdBy,
+    updatedAt: createdAt,
+    updatedBy: createdBy,
+    showAfter: createdAt,
+    _v: 2,
   };
 };
 
