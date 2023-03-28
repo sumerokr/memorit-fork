@@ -48,7 +48,6 @@ const total = computed(() => {
         :to="{ name: 'set', params: { cardSetId } }"
         before="arrow_back"
         class="flex-grow bg-indigo-500 text-white"
-        @click="emit('restart')"
         >Back to set
       </RouterLinkCommonButton>
       <CommonButton
