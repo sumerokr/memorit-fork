@@ -27,6 +27,7 @@ const createSetWithCards = (
       back,
       cardSetId: cardSet.id,
       createdAt: new Date().toISOString(),
+      createdBy: "",
     })
   );
 

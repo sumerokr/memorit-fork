@@ -58,18 +58,30 @@ export const createCard = ({
 };
 
 export const updateProgress = ({
-  progress,
+  card,
+  success,
   now,
 }: {
-  progress: Card["progress"];
+  card: CardV2;
+  success: boolean;
   now: string;
-}): Pick<Card, "progress" | "showAfter"> => {
-  const dateNow = new Date(now);
+}): CardV2 => {
+  const { progress: oldProgress } = card;
+  const progress = (() => {
+    return success
+      ? Math.min(oldProgress + 1, 10)
+      : Math.max(Math.floor(oldProgress / 2), 1);
+  })() as CardV2["progress"];
+
   const daysAfter = Math.pow(progress, 2);
+  const dateNow = new Date(now);
   const laterTS = dateNow.setDate(dateNow.getDate() + daysAfter);
   const showAfter = new Date(laterTS).toISOString();
-  return {
+
+  return structuredClone({
+    ...card,
     progress,
+    updatedAt: now,
     showAfter,
-  };
+  });
 };

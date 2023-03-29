@@ -18,10 +18,7 @@ export type DeleteCardUC = (id: Card["id"]) => Promise<void>;
 
 export type GetCardsByCardSetIdUC = (id: CardSetV2["id"]) => Promise<void>;
 export type GetStudyCardsUC = (id: CardSetV2["id"]) => Promise<void>;
-export type UpdateCardStatusUC = ({
-  id,
-  progress,
-}: Pick<Card, "id" | "progress">) => Promise<void>;
+
 //#endregion
 
 export type GetCardSetsViewUC = () => Promise<void>;

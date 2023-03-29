@@ -1,13 +1,20 @@
-import type { UpdateCardStatusUC } from "@/application/ports";
-import { updateProgress } from "@/domain/card";
+import { CardV2, updateProgress } from "@/domain/card";
 import { cardsAPI, cardsStorage, notificationService } from "@/services/index";
 
+export type UpdateCardStatusUC = ({
+  card,
+  success,
+}: {
+  card: CardV2;
+  success: boolean;
+}) => Promise<void>;
+
 export const updateCardStatusUC: UpdateCardStatusUC = async ({
-  id,
-  progress,
+  card,
+  success,
 }) => {
   const now = new Date().toISOString();
-  const data = updateProgress({ progress, now });
+  const updatedCard = updateProgress({ card, success, now });
 
   try {
     console.time("cardsAPI.update");
