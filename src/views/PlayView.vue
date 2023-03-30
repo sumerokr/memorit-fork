@@ -143,7 +143,7 @@ const onRestart = () => {
 
       <WellDone
         v-else
-        card-set-id="cardSetId"
+        :card-set-id="cardSetId"
         :results="results"
         @restart="onRestart"
       />

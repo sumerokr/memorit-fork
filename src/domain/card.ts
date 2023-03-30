@@ -40,7 +40,7 @@ export const updateProgress = ({
   now: string;
 }): Pick<Card, "progress" | "showAfter"> => {
   const dateNow = new Date(now);
-  const daysAfter = Math.pow(progress, 1);
+  const daysAfter = Math.pow(progress, 2);
   const laterTS = dateNow.setDate(dateNow.getDate() + daysAfter);
   const showAfter = new Date(laterTS).toISOString();
   return {
