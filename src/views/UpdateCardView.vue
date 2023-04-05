@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
-import { useUpdateCard, useGetCard } from "@/composables/use-cards";
-import { cards } from "@/services/cards-storage";
+import { getCardUC } from "@/application/get-card";
+import { updateCardUC } from "@/application/update-card";
+import { useAsyncState } from "@vueuse/core";
+import { useRouter } from "vue-router";
 import CardForm from "@/components/CardForm.vue";
 import RouterLinkIconButton from "@/components/RouterLinkIconButton.vue";
-
-import router from "@/router";
 
 type Props = {
   cardSetId: string;
@@ -14,37 +14,44 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const card = computed(() => {
-  return cards.value.find((_card) => _card.id === props.id);
-});
-
-const { isLoading: isGetCardLoading, execute: getCard } = useGetCard();
-getCard(props.id);
-
-const { isLoading: isUpdateCardLoading, execute: updateCard } = useUpdateCard();
+const router = useRouter();
 
 const front = ref("");
 const back = ref("");
 
-const fillCard = () => {
-  if (card.value) {
-    front.value = card.value.front;
-    back.value = card.value.back;
+const { isLoading: isGetCardLoading } = useAsyncState(
+  () => getCardUC({ id: props.id }),
+  null,
+  {
+    onSuccess: async (data) => {
+      if (!data) {
+        return;
+      }
+      front.value = data.front;
+      back.value = data.back;
+    },
   }
-};
-fillCard();
+);
 
-watch(card, () => {
-  fillCard();
-});
+const { isLoading: isUpdateCardLoading, execute: updateCard } = useAsyncState(
+  updateCardUC,
+  null,
+  {
+    immediate: false,
+    onSuccess: () => {
+      router.push({ name: "cards", params: { cardSetId: props.cardSetId } });
+    },
+  }
+);
 
 const onSubmit = async () => {
-  await updateCard(props.id, {
-    front: front.value,
-    back: back.value,
+  await updateCard(0, {
+    id: props.id,
+    data: {
+      front: front.value,
+      back: back.value,
+    },
   });
-
-  router.push({ name: "cards", params: { cardSetId: props.cardSetId } });
 };
 </script>
 
@@ -63,7 +70,6 @@ const onSubmit = async () => {
     <div v-if="isGetCardLoading">Loading...</div>
 
     <CardForm
-      v-if="card"
       v-model:front.trim="front"
       v-model:back.trim="back"
       :is-loading="isUpdateCardLoading"

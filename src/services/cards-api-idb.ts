@@ -6,21 +6,6 @@ import type { Card } from "@/domain/card";
 
 // TODO: handle JSON errors
 export const cardsAPI: CardsAPI = {
-  save: async (card) => {
-    const db = await getDBInstance();
-    db.add("cards", card);
-  },
-
-  getById: async (id) => {
-    const db = await getDBInstance();
-    const card = await db.get("cards", id);
-    if (card) {
-      return card;
-    }
-    // TODO: handle error better
-    throw new Error("IDB. Cards. getById. No card found.");
-  },
-
   getAllByCardSetId: async (id, args) => {
     console.time("CardsAPI.getAllByCardSetId");
     const { before, after, query } = args ?? {};
@@ -185,18 +170,5 @@ export const cardsAPI: CardsAPI = {
   delete: async (id) => {
     const db = await getDBInstance();
     await db.delete("cards", id);
-  },
-
-  update: async (id, data) => {
-    const db = await getDBInstance();
-    const transaction = db.transaction("cards", "readwrite");
-    const card = await transaction.store.get(id);
-    if (card) {
-      Object.assign(card, data);
-      await transaction.store.put(card);
-    } else {
-      // TODO: handle error better
-      throw new Error("IDB. Cards. Update. No card found.");
-    }
   },
 };

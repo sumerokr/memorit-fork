@@ -1,7 +1,27 @@
-import { createCard } from "@/domain/card";
-import { cardsAPI, cardsStorage, notificationService } from "@/services/index";
-import type { CreateCardUC } from "./ports";
+import { type CardV2, createCard } from "@/domain/card";
+import { createCardApi } from "@/services/api/cards/create-idb";
+import { notificationService } from "@/services/index";
 import { nanoid } from "nanoid";
+
+//#region types
+export type CreateCardApiParameters = {
+  card: CardV2;
+};
+
+export type CreateCardApiReturn = Promise<void>;
+
+export type CreateCardApi = (
+  args: CreateCardApiParameters
+) => CreateCardApiReturn;
+
+type CreateCardUCParameters = {
+  front: CardV2["front"];
+  back: CardV2["back"];
+  cardSetId: CardV2["cardSetId"];
+};
+
+export type CreateCardUC = (args: CreateCardUCParameters) => Promise<CardV2>;
+//#endregion
 
 export const createCardUC: CreateCardUC = async ({
   front,
@@ -17,12 +37,11 @@ export const createCardUC: CreateCardUC = async ({
       createdAt: new Date().toISOString(),
       createdBy: "",
     });
-    console.time("cardsAPI.save");
-    await cardsAPI.save(card);
-    console.timeEnd("cardsAPI.save");
-    cardsStorage.save(card);
+    await createCardApi({ card });
     notificationService.notify("card saved");
+    return card;
   } catch (error) {
     notificationService.error(error);
+    throw error;
   }
 };

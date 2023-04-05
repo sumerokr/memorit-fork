@@ -10,10 +10,7 @@ export type CreateCardUC = ({
   cardSetId,
 }: Pick<Card, "front" | "back" | "cardSetId">) => Promise<void>;
 export type GetCardByIdUC = (id: Card["id"]) => Promise<void>;
-export type UpdateCardUC = (
-  id: Card["id"],
-  data: Partial<Omit<Card, "id">>
-) => Promise<void>;
+
 export type DeleteCardUC = (id: Card["id"]) => Promise<void>;
 
 export type GetCardsByCardSetIdUC = (id: CardSetV2["id"]) => Promise<void>;
@@ -57,7 +54,6 @@ export type CardSetAPI = {
 
 //#region cards
 export type CardsAPI = {
-  save: (card: Card) => Promise<void>;
   getAllByCardSetId: (
     id: CardSetV2["id"],
     args?: (
@@ -83,7 +79,6 @@ export type CardsAPI = {
   }>;
   getById: (id: Card["id"]) => Promise<Card>;
   getStudyCards: (id: CardSetV2["id"]) => Promise<Card[]>;
-  update: (id: Card["id"], data: Partial<Omit<Card, "id">>) => Promise<void>;
   delete: (id: Card["id"]) => Promise<void>;
 };
 
