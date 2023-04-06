@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import type { Card } from "@/domain/card";
-import { useGetStudyCards, useUpdateCardStatus } from "@/composables/use-cards";
-import { cards } from "@/services/cards-storage";
+import { getStudyCardsUC } from "@/application/get-study-cards";
+import { updateCardProgressUC } from "@/application/update-card-progress";
+import { useAsyncState } from "@vueuse/core";
 import RouterLinkIconButton from "@/components/RouterLinkIconButton.vue";
 import CommonButton from "@/components/CommonButton.vue";
 import WellDone from "@/components/WellDone.vue";
@@ -13,47 +13,50 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const { isLoading, isReady, execute } = useGetStudyCards();
-execute(props.cardSetId);
+const {
+  isLoading: isGetStudyCardLoading,
+  execute: getStudyCards,
+  state: cards,
+} = useAsyncState(getStudyCardsUC, null);
 
-const { isLoading: isUpdateLoading, execute: updateCardStatus } =
-  useUpdateCardStatus();
+const { isLoading: isUpdateCardLoading, execute: updateCardProgress } =
+  useAsyncState(updateCardProgressUC, null, {
+    immediate: false,
+  });
 
 const isShown = ref(false);
 
 const total = computed(() => {
-  return cards.value.length;
+  return cards.value?.length || 0;
 });
 const current = ref(1);
 
 const currentCard = computed(() => {
-  return cards.value[current.value - 1];
+  return cards.value?.[current.value - 1];
 });
 
 const transitionName = ref("");
 const results: [number, number, number] = [0, 0, 0];
 
 const markHard = async () => {
-  const { id, progress } = currentCard.value;
+  const { id } = currentCard.value!;
   isShown.value = false;
   current.value++;
   transitionName.value = "slide-left";
   results[0]++;
-  const newProgress = Math.max(Math.floor(progress / 2), 1) as Card["progress"];
-  await updateCardStatus({ id, progress: newProgress });
+  await updateCardProgress(0, { id, success: true });
 };
 const markEasy = async () => {
-  const { id, progress } = currentCard.value;
+  const { id } = currentCard.value!;
   isShown.value = false;
   current.value++;
   transitionName.value = "slide-right";
   results[2]++;
-  const newProgress = Math.min(progress + 1, 10) as Card["progress"];
-  await updateCardStatus({ id, progress: newProgress });
+  await updateCardProgress(0, { id, success: false });
 };
 
-const onRestart = () => {
-  execute(props.cardSetId);
+const onRestart = async () => {
+  await getStudyCards(0, { cardSetId: props.cardSetId });
   current.value = 1;
   results[0] = results[1] = results[2] = 0;
 };
@@ -72,9 +75,9 @@ const onRestart = () => {
       <div class="ml-auto -mr-3 relative"></div>
     </div>
 
-    <div v-if="isLoading">Loading...</div>
+    <div v-if="isGetStudyCardLoading">Loading...</div>
 
-    <template v-else-if="isReady && total > 0">
+    <template v-else-if="currentCard && total > 0">
       <template v-if="current <= total">
         <p class="mb-4 text-sm opacity-60">Card: {{ current }} / {{ total }}</p>
         <div class="_card relative mb-4">
@@ -112,14 +115,14 @@ const onRestart = () => {
             <CommonButton
               icon="sentiment_dissatisfied"
               class="flex-1 bg-red-200"
-              :disabled="isUpdateLoading"
+              :disabled="isUpdateCardLoading"
               @click="markHard"
               >Hard</CommonButton
             >
             <CommonButton
               icon="sentiment_satisfied"
               class="flex-1 bg-green-200"
-              :disabled="isUpdateLoading"
+              :disabled="isUpdateCardLoading"
               @click="markEasy"
               >Easy</CommonButton
             >

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import CardList from "@/components/CardList.vue";
-import { useCreateCard } from "@/composables/use-cards";
-import { cardsByCardSetId } from "@/services/cards-storage";
-import type { Card } from "@/domain/card";
+import type { CardV2 } from "@/domain/card";
+import { createCardUC } from "@/application/create-card";
+import { useAsyncState } from "@vueuse/core";
 import NewCardForm from "@/components/CardForm.vue";
 import RouterLinkIconButton from "@/components/RouterLinkIconButton.vue";
 
@@ -13,29 +13,35 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const { isLoading, execute } = useCreateCard();
-
 const front = ref("");
 const back = ref("");
 
-const createdCards = ref<Card[]>([]);
+const createdCards = ref<CardV2[]>([]);
+
+const { isLoading, execute } = useAsyncState(createCardUC, null, {
+  immediate: false,
+  onSuccess: (card) => {
+    if (!card) {
+      return;
+    }
+
+    createdCards.value.unshift(card);
+
+    front.value = "";
+    back.value = "";
+  },
+});
 
 const onSubmit = async () => {
   if (!front.value || !back.value) {
     return;
   }
 
-  await execute({
+  await execute(0, {
     front: front.value,
     back: back.value,
     cardSetId: props.cardSetId,
   });
-
-  front.value = "";
-  back.value = "";
-
-  const lastCreatedCard = cardsByCardSetId.value[props.cardSetId].slice(-1)[0];
-  createdCards.value.unshift(lastCreatedCard);
 };
 
 const backLink = window.history.state?.back;

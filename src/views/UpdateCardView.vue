@@ -39,6 +39,7 @@ const { isLoading: isUpdateCardLoading, execute: updateCard } = useAsyncState(
   {
     immediate: false,
     onSuccess: () => {
+      // TODO: we have to take in account the prev. path parameters
       router.push({ name: "cards", params: { cardSetId: props.cardSetId } });
     },
   }

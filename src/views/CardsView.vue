@@ -95,7 +95,7 @@ const nextNavigationParams = computed<
 
 watch(
   currentNavigationParams,
-  (next, prev) => {
+  async (next, prev) => {
     // do nothing if the only removed parameter was before
     if (!next.before && prev?.before) {
       const nextKeys = Object.keys(next) as (keyof typeof next)[];
@@ -111,7 +111,7 @@ watch(
       }
     }
     // @ts-ignore Omit<> flattens original type
-    execute(0, { cardSetId: props.cardSetId, ...next });
+    await execute(0, { cardSetId: props.cardSetId, ...next });
     window.scrollTo({
       top: 0,
       behavior: "smooth",

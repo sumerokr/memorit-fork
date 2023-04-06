@@ -2,7 +2,7 @@ import type { DeleteCardSetApi } from "@/application/delete-card-set";
 import { getDBInstance } from "@/services/idb-storage";
 
 // TODO: handle JSON errors
-export const deleteCardSetApi: DeleteCardSetApi = async ({ id }) => {
+export const deleteCardApi: DeleteCardSetApi = async ({ id }) => {
   console.time("api/card-sets/deleteCardSetApi");
   const db = await getDBInstance();
   const transaction = db.transaction(["card-sets", "cards"], "readwrite");
