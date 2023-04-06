@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, nextTick, watch } from "vue";
-import { useAsyncState, watchDebounced } from "@vueuse/core";
+import { useAsyncState, watchDebounced, onClickOutside } from "@vueuse/core";
 import {
   getCardSetsUC,
   type GetCardSetsApiParameters,
@@ -45,7 +45,6 @@ const {
 const queryEl = ref<HTMLInputElement | null>(null);
 const query = ref<string>(currentNavigationParams.value.query ?? "");
 const isSearchVisible = ref<boolean>(!!query.value);
-const isSortVisible = ref<boolean>(false);
 watchDebounced(
   query,
   (newQuery, oldQuery) => {
@@ -57,6 +56,10 @@ watchDebounced(
   },
   { debounce: 500 }
 );
+
+onClickOutside(queryEl, () => {
+  isSearchVisible.value = false;
+});
 
 const onSearch = async () => {
   if (isSearchVisible.value) {
@@ -100,7 +103,7 @@ watch(
       }
     }
 
-    execute(0, currentNavigationParams.value);
+    execute(0, next);
     window.scrollTo({
       top: 0,
       behavior: "smooth",
@@ -141,85 +144,6 @@ watch(
             class="absolute z-10 top-0 right-0 leading-7 border-2 rounded-2xl p-2 pr-16 w-56"
             type="text"
           />
-        </div>
-
-        <div class="relative" hidden>
-          <IconButton
-            icon="sort"
-            class="relative z-10"
-            @click="isSortVisible = !isSortVisible"
-          ></IconButton>
-          <ul
-            v-if="isSortVisible"
-            class="absolute z-20 top-[100%] right-0 rounded-lg py-2 min-w-[6rem] w-max bg-indigo-50 shadow-md"
-          >
-            <li class="p-3">
-              Date created
-              <code
-                class="font-mono text-sm -my-1 rounded-md py-1 px-2 bg-neutral-200"
-                >new
-                <span class="material-symbols-outlined text-xs">
-                  arrow_right_alt
-                </span>
-                old</code
-              >
-            </li>
-            <li class="p-3">
-              Date created
-              <code
-                class="font-mono text-sm -my-1 rounded-md py-1 px-2 bg-neutral-200"
-                >old
-                <span class="material-symbols-outlined text-xs">
-                  arrow_right_alt
-                </span>
-                new</code
-              >
-            </li>
-            <li class="p-3">
-              Alphabetical
-              <code
-                class="font-mono text-sm -my-1 rounded-md py-1 px-2 bg-neutral-200"
-                >A
-                <span class="material-symbols-outlined text-xs">
-                  arrow_right_alt
-                </span>
-                Z</code
-              >
-            </li>
-            <li class="p-3">
-              Alphabetical
-              <code
-                class="font-mono text-sm -my-1 rounded-md py-1 px-2 bg-neutral-200"
-                >Z
-                <span class="material-symbols-outlined text-xs">
-                  arrow_right_alt
-                </span>
-                A</code
-              >
-            </li>
-            <li class="p-3">
-              Cards count
-              <code
-                class="font-mono text-sm -my-1 rounded-md py-1 px-2 bg-neutral-200"
-                >low
-                <span class="material-symbols-outlined text-xs">
-                  arrow_right_alt
-                </span>
-                high</code
-              >
-            </li>
-            <li class="p-3">
-              Cards count
-              <code
-                class="font-mono text-sm -my-1 rounded-md py-1 px-2 bg-neutral-200"
-                >high
-                <span class="material-symbols-outlined text-xs">
-                  arrow_right_alt
-                </span>
-                low</code
-              >
-            </li>
-          </ul>
         </div>
       </div>
     </div>
