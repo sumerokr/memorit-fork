@@ -17,7 +17,8 @@ const {
   isLoading: isGetStudyCardLoading,
   execute: getStudyCards,
   state: cards,
-} = useAsyncState(getStudyCardsUC, null);
+} = useAsyncState(() => getStudyCardsUC({ cardSetId: props.cardSetId }), null);
+getStudyCardsUC({ cardSetId: props.cardSetId });
 
 const { isLoading: isUpdateCardLoading, execute: updateCardProgress } =
   useAsyncState(updateCardProgressUC, null, {
@@ -56,7 +57,7 @@ const markEasy = async () => {
 };
 
 const onRestart = async () => {
-  await getStudyCards(0, { cardSetId: props.cardSetId });
+  await getStudyCards();
   current.value = 1;
   results[0] = results[1] = results[2] = 0;
 };
@@ -77,84 +78,76 @@ const onRestart = async () => {
 
     <div v-if="isGetStudyCardLoading">Loading...</div>
 
-    <template v-else-if="currentCard && total > 0">
-      <template v-if="current <= total">
-        <p class="mb-4 text-sm opacity-60">Card: {{ current }} / {{ total }}</p>
-        <div class="_card relative mb-4">
-          <Transition :name="transitionName">
-            <div
-              class="border rounded-xl p-4 bg-white absolute inset-0"
-              :key="currentCard.id"
-            >
-              <div
-                class="grid _grid h-full"
-                :class="isShown ? '_grid-show' : '_grid-hide'"
-              >
-                <p class="flex items-center justify-center">
-                  <span class="text-center text-2xl">{{
-                    currentCard.front
-                  }}</span>
-                </p>
-                <p
-                  class="_back flex items-center justify-center overflow-hidden"
-                >
-                  <span class="text-center text-xl">{{
-                    currentCard.back
-                  }}</span>
-                </p>
-              </div>
-            </div>
-          </Transition>
-        </div>
-
-        <div v-if="isShown" class="border rounded-xl p-4 bg-white">
-          <p class="mb-2 text-sm opacity-60">
-            How well did you know the answer?
-          </p>
-          <div class="flex flex-wrap gap-4">
-            <CommonButton
-              icon="sentiment_dissatisfied"
-              class="flex-1 bg-red-200"
-              :disabled="isUpdateCardLoading"
-              @click="markHard"
-              >Hard</CommonButton
-            >
-            <CommonButton
-              icon="sentiment_satisfied"
-              class="flex-1 bg-green-200"
-              :disabled="isUpdateCardLoading"
-              @click="markEasy"
-              >Easy</CommonButton
-            >
-          </div>
-        </div>
-
-        <div v-else class="border rounded-xl p-4 bg-white">
-          <p class="mb-2 text-sm opacity-60">
-            Do you remember the card? Let's find out
-          </p>
-          <div class="flex">
-            <CommonButton
-              class="flex-grow bg-indigo-200"
-              @click="isShown = !isShown"
-            >
-              Reveal
-            </CommonButton>
-          </div>
-        </div>
-      </template>
-
-      <WellDone
-        v-else
-        :card-set-id="cardSetId"
-        :results="results"
-        @restart="onRestart"
-      />
-    </template>
-
-    <div v-else class="mt-4">
+    <div v-else-if="total <= 0" class="mt-4">
       No cards to study (for now). Check again later.
     </div>
+
+    <template v-if="currentCard">
+      <p class="mb-4 text-sm opacity-60">Card: {{ current }} / {{ total }}</p>
+      <div class="_card relative mb-4">
+        <Transition :name="transitionName">
+          <div
+            class="border rounded-xl p-4 bg-white absolute inset-0"
+            :key="currentCard.id"
+          >
+            <div
+              class="grid _grid h-full"
+              :class="isShown ? '_grid-show' : '_grid-hide'"
+            >
+              <p class="flex items-center justify-center">
+                <span class="text-center text-2xl">{{
+                  currentCard.front
+                }}</span>
+              </p>
+              <p class="_back flex items-center justify-center overflow-hidden">
+                <span class="text-center text-xl">{{ currentCard.back }}</span>
+              </p>
+            </div>
+          </div>
+        </Transition>
+      </div>
+
+      <div v-if="isShown" class="border rounded-xl p-4 bg-white">
+        <p class="mb-2 text-sm opacity-60">How well did you know the answer?</p>
+        <div class="flex flex-wrap gap-4">
+          <CommonButton
+            icon="sentiment_dissatisfied"
+            class="flex-1 bg-red-200"
+            :disabled="isUpdateCardLoading"
+            @click="markHard"
+            >Hard</CommonButton
+          >
+          <CommonButton
+            icon="sentiment_satisfied"
+            class="flex-1 bg-green-200"
+            :disabled="isUpdateCardLoading"
+            @click="markEasy"
+            >Easy</CommonButton
+          >
+        </div>
+      </div>
+
+      <div v-else class="border rounded-xl p-4 bg-white">
+        <p class="mb-2 text-sm opacity-60">
+          Do you remember the card? Let's find out
+        </p>
+        <div class="flex">
+          <CommonButton
+            class="flex-grow bg-indigo-200"
+            @click="isShown = !isShown"
+          >
+            Reveal
+          </CommonButton>
+        </div>
+      </div>
+    </template>
+
+    <WellDone
+      v-else
+      :card-set-id="cardSetId"
+      :results="results"
+      @restart="onRestart"
+    />
   </div>
 </template>
 
