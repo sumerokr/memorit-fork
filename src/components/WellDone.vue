@@ -54,7 +54,7 @@ const total = computed(() => {
         before="school"
         class="flex-grow bg-indigo-200"
         @click="emit('restart')"
-        >Study again
+        >Study more
       </CommonButton>
     </p>
   </div>

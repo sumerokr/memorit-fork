@@ -18,7 +18,6 @@ const {
   execute: getStudyCards,
   state: cards,
 } = useAsyncState(() => getStudyCardsUC({ cardSetId: props.cardSetId }), null);
-getStudyCardsUC({ cardSetId: props.cardSetId });
 
 const { isLoading: isUpdateCardLoading, execute: updateCardProgress } =
   useAsyncState(updateCardProgressUC, null, {
@@ -64,7 +63,7 @@ const onRestart = async () => {
 </script>
 
 <template>
-  <div class="flex flex-col flex-grow bg-neutral-100 p-4">
+  <div class="flex flex-col flex-grow bg-neutral-100 p-4 overflow-hidden">
     <div class="flex items-center mb-4">
       <RouterLinkIconButton
         icon="arrow_back"
@@ -82,7 +81,7 @@ const onRestart = async () => {
       No cards to study (for now). Check again later.
     </div>
 
-    <template v-if="currentCard">
+    <template v-else-if="currentCard">
       <p class="mb-4 text-sm opacity-60">Card: {{ current }} / {{ total }}</p>
       <div class="_card relative mb-4">
         <Transition :name="transitionName">
