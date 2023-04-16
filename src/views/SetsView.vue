@@ -42,6 +42,7 @@ const {
   resetOnExecute: false,
 });
 
+const searchButton = ref<HTMLElement | null>(null);
 const queryEl = ref<HTMLInputElement | null>(null);
 const query = ref<string>(currentNavigationParams.value.query ?? "");
 const isSearchVisible = ref<boolean>(!!query.value);
@@ -57,11 +58,19 @@ watchDebounced(
   { debounce: 500 }
 );
 
-onClickOutside(queryEl, () => {
-  isSearchVisible.value = false;
-});
+onClickOutside(
+  queryEl,
+  () => {
+    if (!query.value) {
+      isSearchVisible.value = false;
+    }
+  },
+  { ignore: [searchButton] }
+);
 
 const onSearch = async () => {
+  console.log("got", isSearchVisible.value);
+
   if (isSearchVisible.value) {
     query.value = "";
     isSearchVisible.value = false;
@@ -134,6 +143,7 @@ watch(
           <IconButton
             :icon="isSearchVisible ? 'close' : 'search'"
             class="relative z-20"
+            ref="searchButton"
             @click="onSearch"
           ></IconButton>
           <input
