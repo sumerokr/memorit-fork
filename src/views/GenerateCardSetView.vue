@@ -1,47 +1,10 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import CardSetList from "@/components/CardSetList.vue";
-import type { CardSetV2 } from "@/domain/card-set";
-import { createCardSetUC } from "@/application/create-card-set";
-import { useAsyncState } from "@vueuse/core";
-import CardSetForm from "@/components/CardSetForm.vue";
 import RouterLinkIconButton from "@/components/RouterLinkIconButton.vue";
-
-const title = ref("");
-const createdCardSets = ref<
-  (CardSetV2 & {
-    cardsCount: number;
-    cardsToStudyCount: number;
-  })[]
->([]);
-
-const { isLoading, execute } = useAsyncState(createCardSetUC, null, {
-  immediate: false,
-  onSuccess: (cardSet) => {
-    if (!cardSet) {
-      return;
-    }
-
-    createdCardSets.value.unshift({
-      ...cardSet,
-      cardsCount: 0,
-      cardsToStudyCount: 0,
-    });
-
-    title.value = "";
-  },
-});
+import CommonButton from "@/components/CommonButton.vue";
 
 const onSubmit = async () => {
-  if (isLoading.value) {
-    return;
-  }
-
-  if (!title.value) {
-    return;
-  }
-
-  await execute(0, { title: title.value });
+  // emit("submit");
 };
 </script>
 
@@ -54,20 +17,37 @@ const onSubmit = async () => {
         :to="{ name: 'sets' }"
         >Back</RouterLinkIconButton
       >
-      <h1 class="text-2xl">Add new card set</h1>
+      <h1 class="text-2xl">Generate new card set</h1>
     </div>
 
-    <ul class="flexbox">
-      <li>
-        <RouterLink :to="{ name: 'new-card-set-create' }"
-          >Create manually</RouterLink
+    <form @submit.prevent="onSubmit">
+      <p class="mb-4">
+        <label for="subject">Subject</label>
+        <input
+          id="subject"
+          class="leading-5 border-2 rounded-2xl p-2 w-full"
+          type="text"
+          placeholder="Subject"
+          autocomplete="off"
+        />
+      </p>
+      <p class="mb-4">
+        <input
+          id="back"
+          class="leading-5 border-2 rounded-2xl p-2 w-full"
+          type="text"
+          placeholder="Card back"
+          autocomplete="off"
+        />
+      </p>
+      <p class="text-right">
+        <CommonButton
+          before="save"
+          class="bg-indigo-500 text-white"
+          type="submit"
+          >Save</CommonButton
         >
-      </li>
-      <li>
-        <RouterLink :to="{ name: 'new-card-set-generate' }"
-          >Create manually</RouterLink
-        >
-      </li>
-    </ul>
+      </p>
+    </form>
   </div>
 </template>
