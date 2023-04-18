@@ -27,25 +27,70 @@ const onSubmit = async () => {
           id="subject"
           class="leading-5 border-2 rounded-2xl p-2 w-full"
           type="text"
+          placeholder="Card set name"
+          autocomplete="off"
+        />
+      </p>
+      <p class="flex gap-4 mb-4">
+        <input
+          id="back"
+          class="basis-3/4 leading-5 border-2 rounded-2xl p-2 w-full"
+          type="text"
           placeholder="Subject"
           autocomplete="off"
         />
-      </p>
-      <p class="mb-4">
         <input
           id="back"
-          class="leading-5 border-2 rounded-2xl p-2 w-full"
+          class="basis-1/4 leading-5 border-2 rounded-2xl p-2 w-full"
           type="text"
-          placeholder="Card back"
+          placeholder="Count"
           autocomplete="off"
         />
       </p>
+      <fieldset>
+        <legend>Front</legend>
+        <p class="flex gap-4 mb-4">
+          <input
+            id="back"
+            class="basis-3/4 leading-5 border-2 rounded-2xl p-2 w-full"
+            type="text"
+            placeholder="Term"
+            autocomplete="off"
+          />
+          <input
+            id="back"
+            class="basis-1/4 leading-5 border-2 rounded-2xl p-2 w-full"
+            type="text"
+            placeholder="Lang"
+            autocomplete="off"
+          />
+        </p>
+      </fieldset>
+      <fieldset>
+        <legend>Back</legend>
+        <p class="flex gap-4 mb-4">
+          <input
+            id="back"
+            class="basis-3/4 leading-5 border-2 rounded-2xl p-2 w-full"
+            type="text"
+            placeholder="Term"
+            autocomplete="off"
+          />
+          <input
+            id="back"
+            class="basis-1/4 leading-5 border-2 rounded-2xl p-2 w-full"
+            type="text"
+            placeholder="Lang"
+            autocomplete="off"
+          />
+        </p>
+      </fieldset>
       <p class="text-right">
         <CommonButton
           before="save"
           class="bg-indigo-500 text-white"
           type="submit"
-          >Save</CommonButton
+          >Generate</CommonButton
         >
       </p>
     </form>
