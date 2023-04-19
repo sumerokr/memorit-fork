@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { ref } from "vue";
 import RouterLinkIconButton from "@/components/RouterLinkIconButton.vue";
 import CommonButton from "@/components/CommonButton.vue";
 
 const onSubmit = async () => {
-  // emit("submit");
+  fetch("http://localhost:8788/api/helloworld");
 };
 </script>
 
