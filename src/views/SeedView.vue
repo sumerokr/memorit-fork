@@ -1,18 +1,19 @@
 <script setup lang="ts">
 import { reactive } from "vue";
-import { type Card, createCard } from "@/domain/card";
+import { type CardV2, createCard } from "@/domain/card";
 import { type CardSetV2, createCardSet } from "@/domain/card-set";
 import { nanoid } from "nanoid";
-import flatten from "lodash/flatten";
 import { deleteDB } from "idb";
 import { getDBInstance } from "@/services/idb-storage";
 import IconButton from "@/components/IconButton.vue";
+import { createCardUC } from "@/application/create-card";
+import { createCardSetUC } from "@/application/create-card-set";
 
 const _faker = () => import("@faker-js/faker");
 
 const createSetWithCards = (
   cardSetTitle: CardSetV2["title"],
-  cardsRaw: [front: Card["front"], back: Card["back"]][]
+  cardsRaw: [front: CardV2["front"], back: CardV2["back"]][]
 ) => {
   const cardSet = createCardSet({
     id: nanoid(),
@@ -27,6 +28,7 @@ const createSetWithCards = (
       back,
       cardSetId: cardSet.id,
       createdAt: new Date().toISOString(),
+      createdBy: "",
     })
   );
 
@@ -200,32 +202,79 @@ setMap.set(nanoid(), [
   ],
 ]);
 setMap.set(nanoid(), [
-  "Греческий алфавит",
+  "Немецкая стоматология",
   [
-    ["Α α", "альфа"],
-    ["Β β ϐ", "бета (вита)"],
-    ["Γ γ", "гамма"],
-    ["Δ δ", "дельта"],
-    ["Ε ε ϵ", "эпсилон"],
-    ["Ζ ζ", "дзета (зита)"],
-    ["Η η", "эта (ита)"],
-    ["Θ θ ϴ ϑ", "тета (фита)"],
-    ["Ι ι", "йота"],
-    ["Κ κ ϰ", "каппа"],
-    ["Λ λ", "лямбда (лямда)"],
-    ["Μ μ", "мю (ми)"],
-    ["Ν ν", "ню (ни)"],
-    ["Ξ ξ", "кси"],
-    ["Ο ο", "омикрон"],
-    ["Π π ϖ", "пи"],
-    ["Ρ ρ ϱ", "ро"],
-    ["Σ σ ς", "сигма"],
-    ["Τ τ", "тау (тав)"],
-    ["Υ ϒ υ", "ипсилон"],
-    ["Φ φ ϕ", "фи"],
-    ["Χ χ", "хи"],
-    ["Ψ ψ", "пси"],
-    ["Ω ω", "омега"],
+    ["Стоматология", "Zahnheilkunde / Zahnmedizin"],
+    ["Дентальный", "Dentale"],
+    ["Процедура", "Verfahren"],
+    ["Лечение", "Behandlung"],
+    ["Зубы", "Zähne"],
+    ["Установка", "Installation"],
+    ["Пломбирование", "Füllung"],
+    ["Винир", "Veneers"],
+    ["Кариес", "Karies"],
+    ["Пародонтит", "Parodontitis"],
+    ["Протезирование", "Prothetik"],
+    ["Канал", "Kanal"],
+    ["Мини-имплант", "Mini-Implantat"],
+    ["Филлинг", "Füllung"],
+    ["Ортодонтия", "Kieferorthopädie"],
+    ["Брекет", "Bracket"],
+    ["Анкер", "Anker"],
+    ["Бормашина", "Bohrer"],
+    ["Флюорикс", "Fluorix"],
+    ["Иссечение", "Ausschneiden"],
+    ["Диагностика", "Diagnose"],
+    ["Хирургия", "Chirurgie"],
+    ["Заболевание", "Krankheit"],
+    ["Коронка", "Krone"],
+    ["Припуск", "Passung"],
+    ["Гигиена", "Hygiene"],
+    ["Профилактика", "Prävention"],
+    ["Пластика", "Plastik"],
+    ["Отбеливатель", "Bleichmittel"],
+    ["Осмотр", "Untersuchung"],
+    ["Прием", "Empfang"],
+    ["Скальпель", "Schleifkopf"],
+    ["Инструмент", "Instrument"],
+    ["Анестезия", "Anästhesie"],
+    ["Бесплатный", "Kostenlos"],
+    ["Фрезер", "Fräser"],
+    ["Обследование", "Untersuchung"],
+    ["Открытие", "Öffnung"],
+    ["Коррекция", "Korrektur"],
+    ["Заполнитель", "Füllstoff"],
+    ["Заместитель", "Ersatz"],
+    ["Удаление", "Entfernung"],
+    ["Реконструкция", "Rekonstruktion"],
+    ["Терапия", "Therapie"],
+    ["Тренировка", "Training"],
+    ["Острие", "Spitze"],
+    ["Протез", "Prothese"],
+    ["Пломба", "Füllung"],
+    ["Консультация", "Beratung"],
+    ["Восстановление", "Wiederherstellung"],
+    ["Отбеливание", "Aufhellen / Bleichen"],
+    ["Аппаратное", "Apparat"],
+    ["Корректировка", "Korrektur"],
+    ["Безопасность", "Sicherheit"],
+    ["Инфекция", "Infektion"],
+    ["Имплантация", "Implantation"],
+    ["Камни", "Steine"],
+    ["Протезирование", "Versorgung"],
+    ["Диагностика", "Diagnose"],
+    ["Профилактика", "Prävention"],
+    ["Десны", "Zahnfleisch"],
+    ["Бренд", "Marke"],
+    ["Сверление", "Bohren"],
+    ["Пломбирование", "Füllung"],
+    ["Импланты", "Implantate"],
+    ["Рентген", "Röntgen"],
+    ["Ортодонтический", "Kieferorthopädische"],
+    ["Техника", "Technik"],
+    ["Удаление", "Entfernung"],
+    ["Флорисан", "Fluorid"],
+    ["Инструментарий", "Instrumentarium"],
   ],
 ]);
 
@@ -258,37 +307,36 @@ const onSeed = async (options: number[][]) => {
   const [[cardSetMin, cardSetMax], [cardsMin, cardsMax]] = options;
   const { faker } = await _faker();
 
-  const cardSets = new Array(
+  const createCardSetPromises = new Array(
     faker.datatype.number({
       min: cardSetMin,
       max: cardSetMax,
     })
   )
     .fill(null)
-    .map<CardSetV2>(() =>
-      createCardSet({
-        id: nanoid(),
+    .map(() =>
+      createCardSetUC({
         title: faker.random.words(
           faker.datatype.number({
             min: 1,
             max: 3,
           })
         ),
-        createdAt: faker.date.recent(30).toISOString(),
       })
     );
 
-  const cards = flatten(
-    cardSets.map((cardSet) => {
-      return new Array(
-        faker.datatype.number({
-          min: cardsMin,
-          max: cardsMax,
-        })
-      )
-        .fill(null)
-        .map<Card>(() => ({
-          id: nanoid(),
+  const cardSets = await Promise.all(createCardSetPromises);
+
+  const createCardPromises = cardSets.map((cardSet) => {
+    return new Array(
+      faker.datatype.number({
+        min: cardsMin,
+        max: cardsMax,
+      })
+    )
+      .fill(null)
+      .map(() =>
+        createCardUC({
           front: faker.random.words(
             faker.datatype.number({
               min: 1,
@@ -297,35 +345,11 @@ const onSeed = async (options: number[][]) => {
           ),
           back: faker.random.words(2),
           cardSetId: cardSet.id,
-          progress: faker.datatype.number({
-            min: 0,
-            max: 10,
-          }) as Card["progress"],
-          createdAt: faker.date.recent(30).toISOString(),
-          showAfter: faker.date
-            .between(
-              faker.date.recent(10).toISOString(),
-              faker.date.soon(10).toISOString()
-            )
-            .toISOString(),
-        }));
-    })
-  );
+        })
+      );
+  });
 
-  const db = await getDBInstance();
-  console.time("create card-sets");
-  const cardSetsTransaction = db.transaction("card-sets", "readwrite");
-  const cardSetsPromises = cardSets.map((cardSet) =>
-    cardSetsTransaction.store.add(cardSet)
-  );
-  await Promise.all([...cardSetsPromises, cardSetsTransaction.done]);
-  console.timeEnd("create card-sets");
-
-  console.time("create cards");
-  const cardsTransaction = db.transaction("cards", "readwrite");
-  const cardsPromises = cards.map((card) => cardsTransaction.store.add(card));
-  await Promise.all([...cardsPromises, cardsTransaction.done]);
-  console.timeEnd("create cards");
+  await Promise.all(createCardPromises);
 
   alert("Dummy data added");
 };
