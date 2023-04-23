@@ -67,7 +67,7 @@ export const getDBInstance = async () => {
     return db;
   }
 
-  db = openDB<MyDB3>("memorit", 2, {
+  db = openDB<MyDB3>("memorit", 3, {
     upgrade: async (db, oldVersion, newVersion, transaction) => {
       if (oldVersion < 1) {
         // Cast a reference of the database to the old schema.
@@ -98,7 +98,7 @@ export const getDBInstance = async () => {
 
         while (cursor) {
           const { id, title, createdAt } = cursor.value;
-          cursor.update({
+          await cursor.update({
             id,
             title,
             createdAt,
@@ -117,7 +117,7 @@ export const getDBInstance = async () => {
 
         while (cursor) {
           const cardV2 = toV2(cursor.value);
-          cursor.update(cardV2);
+          await cursor.update(cardV2);
           cursor = await cursor.continue();
         }
       }

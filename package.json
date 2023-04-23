@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@faker-js/faker": "^7.6.0",
+    "@supabase/supabase-js": "^2.21.0",
     "@vueuse/core": "^9.12.0",
     "idb": "^7.1.1",
     "lodash": "^4.17.21",
