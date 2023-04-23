@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@faker-js/faker": "^7.6.0",
+    "@supabase/supabase-js": "^2.21.0",
     "@vueuse/core": "^9.12.0",
     "idb": "^7.1.1",
     "lodash": "^4.17.21",
@@ -22,6 +23,7 @@
     "vue-router": "^4.1.6"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20230404.0",
     "@playwright/test": "^1.28.1",
     "@rushstack/eslint-patch": "^1.1.4",
     "@types/jsdom": "^20.0.1",

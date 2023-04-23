@@ -2,7 +2,7 @@
 import { openDB } from "idb";
 import type { DBSchema, IDBPDatabase } from "idb";
 import type { CardSet, CardSetV2 } from "@/domain/card-set";
-import type { Card } from "@/domain/card";
+import { type Card, type CardV2, toV2 } from "@/domain/card";
 
 export type CardSetPlain = Pick<CardSet, "id" | "title" | "createdAt">;
 
@@ -42,14 +42,32 @@ interface MyDB2 extends DBSchema {
   };
 }
 
-let db: ReturnType<typeof openDB<MyDB2>>;
+interface MyDB3 extends DBSchema {
+  "card-sets": {
+    value: CardSetV2;
+    key: CardSetV2["id"];
+    indexes: { createdAt: CardSetV2["createdAt"] };
+  };
+  cards: {
+    value: CardV2;
+    key: CardV2["id"];
+    indexes: {
+      createdAt: CardV2["createdAt"];
+      cardSetId: CardV2["cardSetId"];
+      cardSetId_createdAt: [CardV2["cardSetId"], CardV2["createdAt"]];
+      cardSetId_showAfter: [CardV2["cardSetId"], CardV2["showAfter"]];
+    };
+  };
+}
+
+let db: ReturnType<typeof openDB<MyDB3>>;
 
 export const getDBInstance = async () => {
   if (db) {
     return db;
   }
 
-  db = openDB<MyDB2>("memorit", 2, {
+  db = openDB<MyDB3>("memorit", 3, {
     upgrade: async (db, oldVersion, newVersion, transaction) => {
       if (oldVersion < 1) {
         // Cast a reference of the database to the old schema.
@@ -80,7 +98,7 @@ export const getDBInstance = async () => {
 
         while (cursor) {
           const { id, title, createdAt } = cursor.value;
-          cursor.update({
+          await cursor.update({
             id,
             title,
             createdAt,
@@ -89,6 +107,17 @@ export const getDBInstance = async () => {
             updatedBy: "",
             _v: 2,
           });
+          cursor = await cursor.continue();
+        }
+      }
+
+      if (oldVersion < 3) {
+        // Cast a reference of the database to the old schema.
+        let cursor = await transaction.objectStore("cards").openCursor();
+
+        while (cursor) {
+          const cardV2 = toV2(cursor.value);
+          await cursor.update(cardV2);
           cursor = await cursor.continue();
         }
       }

@@ -31,7 +31,7 @@ export const createCardSetUC: CreateCardSetUC = async ({ title }) => {
       createdAt: new Date().toISOString(),
     });
     await createCardSetApi({ cardSet });
-    notificationService.notify("created");
+    notificationService.notify("card-set created");
     return cardSet;
   } catch (error) {
     notificationService.error(error);

@@ -10,6 +10,11 @@ const router = createRouter({
       component: HomeView,
     },
     {
+      path: "/login",
+      name: "login",
+      component: () => import("../views/LoginView.vue"),
+    },
+    {
       path: "/sets",
       name: "sets",
       component: () => import("../views/SetsView.vue"),
@@ -23,7 +28,17 @@ const router = createRouter({
     {
       path: "/sets/new",
       name: "new-card-set",
+      component: () => import("../views/CreateCardSetView0.vue"),
+    },
+    {
+      path: "/sets/new/create",
+      name: "new-card-set-create",
       component: () => import("../views/CreateCardSetView.vue"),
+    },
+    {
+      path: "/sets/new/generate",
+      name: "new-card-set-generate",
+      component: () => import("../views/GenerateCardSetView.vue"),
     },
     {
       path: "/sets/:cardSetId/edit",

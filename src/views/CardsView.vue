@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, nextTick, watch } from "vue";
 import { useAsyncState, watchDebounced, onClickOutside } from "@vueuse/core";
-import { cardsAPI } from "@/services/index";
+import {
+  getCardsUC,
+  type GetCardsApiParameters,
+} from "@/application/get-cards";
 import CardList from "@/components/CardList.vue";
 import CommonButton from "@/components/CommonButton.vue";
 import IconButton from "@/components/IconButton.vue";
@@ -24,7 +27,7 @@ const route = useRoute();
 const router = useRouter();
 
 const currentNavigationParams = computed<
-  NonNullable<Parameters<(typeof cardsAPI)["getAllByCardSetId"]>[1]>
+  NonNullable<Omit<GetCardsApiParameters, "cardSetId">>
 >(() => {
   const { before, after, query } = route.query;
   const mapped = mapValues({ before, after, query }, (item) => {
@@ -36,18 +39,18 @@ const currentNavigationParams = computed<
   });
   return picked.before && picked.after ? omit(picked, "before") : picked;
 });
+currentNavigationParams.value.before && currentNavigationParams.value.after;
 
-const { /* isReady, isLoading, */ execute, state, error } = useAsyncState(
-  cardsAPI.getAllByCardSetId,
-  null,
-  {
-    immediate: false,
-    throwError: true,
-    resetOnExecute: false,
-  }
-);
+const {
+  execute,
+  state: cards,
+  error,
+} = useAsyncState(getCardsUC, null, {
+  immediate: false,
+  resetOnExecute: false,
+});
 
-const searchContainerEl = ref<HTMLInputElement | null>(null);
+const searchButton = ref<HTMLElement | null>(null);
 const queryEl = ref<HTMLInputElement | null>(null);
 const query = ref<string>(currentNavigationParams.value.query ?? "");
 const isSearchVisible = ref<boolean>(!!query.value);
@@ -63,9 +66,13 @@ watchDebounced(
   { debounce: 500 }
 );
 
-onClickOutside(searchContainerEl, () => {
-  isSearchVisible.value = false;
-});
+onClickOutside(
+  queryEl,
+  () => {
+    isSearchVisible.value = false;
+  },
+  { ignore: [searchButton] }
+);
 
 const onSearch = async () => {
   if (isSearchVisible.value) {
@@ -84,8 +91,8 @@ const nextNavigationParams = computed<
   return pickBy(
     {
       query: query.value,
-      before: state.value?.before,
-      after: state.value?.after,
+      before: cards.value?.before,
+      after: cards.value?.after,
     },
     (param) => param && param.trim().length > 0
   );
@@ -93,7 +100,7 @@ const nextNavigationParams = computed<
 
 watch(
   currentNavigationParams,
-  (next, prev) => {
+  async (next, prev) => {
     // do nothing if the only removed parameter was before
     if (!next.before && prev?.before) {
       const nextKeys = Object.keys(next) as (keyof typeof next)[];
@@ -108,7 +115,8 @@ watch(
         return;
       }
     }
-    execute(0, props.cardSetId, next);
+    // @ts-ignore Omit<> flattens original type
+    await execute(0, { cardSetId: props.cardSetId, ...next });
     window.scrollTo({
       top: 0,
       behavior: "smooth",
@@ -139,20 +147,24 @@ watch(
         >Back</RouterLinkIconButton
       >
       <h1 class="text-2xl">Cards</h1>
-      <div class="ml-auto -mr-3 relative" ref="searchContainerEl">
-        <IconButton
-          :icon="isSearchVisible ? 'close' : 'search'"
-          class="relative z-20"
-          @click="onSearch"
-        ></IconButton>
-        <input
-          v-if="isSearchVisible"
-          v-model="query"
-          @compositionstart="($event) => (($event.target as any).composing = false)"
-          ref="queryEl"
-          class="absolute z-10 top-0 right-0 leading-7 border-2 rounded-2xl p-2 pr-16 w-56"
-          type="text"
-        />
+
+      <div class="flex ml-auto -mr-3">
+        <div class="relative">
+          <IconButton
+            :icon="isSearchVisible ? 'close' : 'search'"
+            class="relative z-20"
+            ref="searchButton"
+            @click="onSearch"
+          ></IconButton>
+          <input
+            v-if="isSearchVisible"
+            v-model="query"
+            @compositionstart="($event) => (($event.target as any).composing = false)"
+            ref="queryEl"
+            class="absolute z-10 top-0 right-0 leading-7 border-2 rounded-2xl p-2 pr-16 w-56"
+            type="text"
+          />
+        </div>
       </div>
     </div>
 
@@ -162,15 +174,15 @@ watch(
     >
       Error
     </p>
-    <template v-if="state?.data.length">
-      <CardList v-if="state.data.length" :cards="state.data" />
+    <template v-if="cards?.data.length">
+      <CardList v-if="cards.data.length" :cards="cards.data" />
 
       <div
-        v-if="state.before || state.after"
+        v-if="cards.before || cards.after"
         class="flex justify-end gap-4 mt-4"
       >
         <RouterLinkCommonButton
-          v-if="state.before"
+          v-if="cards.before"
           :to="{
             name: 'cards',
             params: { cardSetId },
@@ -183,7 +195,7 @@ watch(
         <CommonButton v-else before="chevron_left" disabled>prev</CommonButton>
 
         <RouterLinkCommonButton
-          v-if="state.after"
+          v-if="cards.after"
           :to="{
             name: 'cards',
             params: { cardSetId },
@@ -197,11 +209,11 @@ watch(
       </div>
     </template>
 
-    <div class="my-auto text-center" v-else-if="state && !state.data.length">
+    <div class="my-auto text-center" v-else-if="cards && !cards.data.length">
       You have no cards yet.
       <RouterLinkCommonButton
         before="add"
-        :to="{ name: 'new-card', params: { cardSetId: props.cardSetId } }"
+        :to="{ name: 'new-card', params: { cardSetId: cardSetId } }"
         class="bg-indigo-200"
       >
         Create
