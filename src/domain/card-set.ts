@@ -17,14 +17,15 @@ export const createCardSet = ({
   id,
   title,
   createdAt,
-}: Pick<CardSetV2, "id" | "title" | "createdAt">): CardSetV2 => {
+  createdBy,
+}: Pick<CardSetV2, "id" | "title" | "createdAt" | "createdBy">): CardSetV2 => {
   return {
     id,
     title,
     createdAt,
-    createdBy: "",
+    createdBy,
     updatedAt: createdAt,
-    updatedBy: "",
+    updatedBy: createdBy,
     _v: 2,
   };
 };

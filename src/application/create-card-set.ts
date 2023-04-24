@@ -1,5 +1,6 @@
 import { createCardSet, type CardSetV2 } from "@/domain/card-set";
 import { createCardSetApi } from "@/services/api/card-sets/create-idb";
+import { usersService } from "@/services/users-service";
 import { notificationService } from "@/services";
 import { nanoid } from "nanoid";
 
@@ -24,11 +25,13 @@ export type CreateCardSetUC = (
 //#endregion
 
 export const createCardSetUC: CreateCardSetUC = async ({ title }) => {
+  const userId = await usersService.getUserId();
   try {
     const cardSet = createCardSet({
       id: nanoid(),
       title,
       createdAt: new Date().toISOString(),
+      createdBy: userId ?? "",
     });
     await createCardSetApi({ cardSet });
     notificationService.notify("card-set created");
