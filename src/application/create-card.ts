@@ -1,5 +1,6 @@
 import { type CardV2, createCard } from "@/domain/card";
 import { createCardApi } from "@/services/api/cards/create-idb";
+import { usersService } from "@/services/users-service";
 import { notificationService } from "@/services/index";
 import { nanoid } from "nanoid";
 
@@ -29,13 +30,14 @@ export const createCardUC: CreateCardUC = async ({
   cardSetId,
 }) => {
   try {
+    const userId = await usersService.getUserId();
     const card = createCard({
       id: nanoid(),
       front,
       back,
       cardSetId,
       createdAt: new Date().toISOString(),
-      createdBy: "",
+      createdBy: userId,
     });
     await createCardApi({ card });
     notificationService.notify("card saved");

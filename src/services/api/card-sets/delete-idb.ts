@@ -8,6 +8,7 @@ export const deleteCardSetApi: DeleteCardSetApi = async ({ id }) => {
   const transaction = db.transaction(["card-sets", "cards"], "readwrite");
   const promises = [];
 
+  // TODO: check user id
   promises.push(transaction.objectStore("card-sets").delete(id));
 
   let cursor = await transaction

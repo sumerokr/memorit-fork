@@ -1,5 +1,5 @@
 export interface UsersService {
-  getUserId: () => Promise<string | null>;
+  getUserId: () => Promise<string>;
 }
 
 //#region notification
