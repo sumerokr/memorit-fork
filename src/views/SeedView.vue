@@ -368,17 +368,17 @@ const onDelete = async () => {
 };
 
 const onGoogle = () => {
-  const state = crypto.randomUUID();
-  const nonce = crypto.randomUUID();
-  cookies.set("state", state, {
-    path: "/api/auth",
-  });
-  cookies.set("nonce", nonce, {
-    path: "/api/auth",
-    // secure: true,
-    httpOnly: true,
-    sameSite: "strict",
-  });
+  // const state = crypto.randomUUID();
+  // const nonce = crypto.randomUUID();
+  // cookies.set("state", state, {
+  //   path: "/api/auth",
+  // });
+  // cookies.set("nonce", nonce, {
+  //   path: "/api/auth",
+  //   // secure: true,
+  //   httpOnly: true,
+  //   sameSite: "strict",
+  // });
   window.location.assign("/api/auth");
 };
 </script>
