@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 import type { Card } from "@/domain/card";
 import { useAsyncState } from "@vueuse/core";
 import { onClickOutside } from "@vueuse/core";
@@ -14,12 +15,17 @@ type Props = {
 
 const props = defineProps<Props>();
 
+const router = useRouter();
+
 // we have to inform a card view that some card was deleted
 const { isLoading: isDeleteCardLoading, execute: deleteCard } = useAsyncState(
   () => deleteCardUC({ id: props.card.id }),
   null,
   {
     immediate: false,
+    onSuccess: () => {
+      router.push({ name: "set", params: { cardSetId: props.card.cardSetId } });
+    },
   }
 );
 
