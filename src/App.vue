@@ -25,7 +25,7 @@ getDBInstance().then((db) => {
       v-if="route.name === 'sets'"
       class="fixed bottom-0 left-1/2 -translate-x-1/2 py-1 px-2 rounded-t-md text-xs bg-white opacity-50"
     >
-      ver: {{ 24040003 }}. DB ver: {{ dbVersion }}
+      ver: 08101038. DB ver: {{ dbVersion }}
     </div>
   </div>
 </template>
