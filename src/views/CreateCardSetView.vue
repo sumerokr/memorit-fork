@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import CardSetList from "@/components/CardSetList.vue";
-import type { CardSetV2 } from "@/domain/card-set";
+import type { CardSet } from "@/domain/card-set";
 import { createCardSetUC } from "@/application/create-card-set";
 import { useAsyncState } from "@vueuse/core";
 import CardSetForm from "@/components/CardSetForm.vue";
 import RouterLinkIconButton from "@/components/RouterLinkIconButton.vue";
 
 const title = ref("");
+const error = ref("");
 const createdCardSets = ref<
-  (CardSetV2 & {
+  (CardSet & {
     cardsCount: number;
     cardsToStudyCount: number;
   })[]
@@ -30,6 +31,9 @@ const { isLoading, execute } = useAsyncState(createCardSetUC, null, {
 
     title.value = "";
   },
+  onError: (err) => {
+    error.value = String(err);
+  },
 });
 
 const onSubmit = async () => {
@@ -41,7 +45,9 @@ const onSubmit = async () => {
     return;
   }
 
+  console.time("submit");
   await execute(0, { title: title.value });
+  console.timeEnd("submit");
 };
 </script>
 
@@ -63,6 +69,7 @@ const onSubmit = async () => {
       @submit="onSubmit"
     />
 
+    <p v-if="error">{{ error }}</p>
     <CardSetList :cardSets="createdCardSets" />
   </div>
 </template>

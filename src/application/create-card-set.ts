@@ -1,34 +1,37 @@
-import { createCardSet, type CardSetV2 } from "@/domain/card-set";
+import { createCardSet, type CardSet } from "@/domain/card-set";
 import { createCardSetApi } from "@/services/api/card-sets/create-idb";
 import { usersService } from "@/services/users-service";
 import { notificationService } from "@/services";
-import { nanoid } from "nanoid";
 
 //#region types
+//#region API type
 export type CreateCardSetApiParameters = {
-  cardSet: CardSetV2;
+  cardSet: CardSet;
 };
 
-export type CreateCardSetApiReturn = Promise<void>;
+export type CreateCardSetApiReturn = Promise<CardSet>;
 
 export type CreateCardSetApi = (
   args: CreateCardSetApiParameters
 ) => CreateCardSetApiReturn;
+//#endregion
 
+//#region UC type
 type CreateCardSetUCParameters = {
-  title: CardSetV2["title"];
+  title: CardSet["title"];
 };
 
 export type CreateCardSetUC = (
   args: CreateCardSetUCParameters
-) => Promise<CardSetV2>;
+) => Promise<CardSet>;
+//#endregion
 //#endregion
 
 export const createCardSetUC: CreateCardSetUC = async ({ title }) => {
   const userId = await usersService.getUserId();
   try {
     const cardSet = createCardSet({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       title,
       createdAt: new Date().toISOString(),
       createdBy: userId,
