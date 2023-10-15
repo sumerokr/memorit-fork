@@ -10,13 +10,16 @@ export const updateCardSetApi: UpdateCardSetApi = async ({ id, data }) => {
   const cardSet = await transaction.store.get(id);
 
   if (cardSet) {
-    Object.assign(cardSet, data);
-    await transaction.store.put(cardSet);
+    const updatedCardSet = {
+      ...cardSet,
+      ...data,
+    };
+    await transaction.store.put(updatedCardSet);
+    console.timeEnd("api/card-sets/updateCardSetApi");
+    return updatedCardSet;
   } else {
     // TODO: handle error better
     console.timeEnd("api/card-sets/updateCardSetApi");
     throw new Error("api/card-sets/updateCardSetApi");
   }
-
-  console.timeEnd("api/card-sets/updateCardSetApi");
 };

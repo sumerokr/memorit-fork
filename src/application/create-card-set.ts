@@ -4,27 +4,11 @@ import { usersService } from "@/services/users-service";
 import { notificationService } from "@/services";
 
 //#region types
-//#region API type
-export type CreateCardSetApiParameters = {
-  cardSet: CardSet;
-};
+export type CreateCardSetApi = (args: { cardSet: CardSet }) => Promise<CardSet>;
 
-export type CreateCardSetApiReturn = Promise<CardSet>;
-
-export type CreateCardSetApi = (
-  args: CreateCardSetApiParameters
-) => CreateCardSetApiReturn;
-//#endregion
-
-//#region UC type
-type CreateCardSetUCParameters = {
+export type CreateCardSetUC = (args: {
   title: CardSet["title"];
-};
-
-export type CreateCardSetUC = (
-  args: CreateCardSetUCParameters
-) => Promise<CardSet>;
-//#endregion
+}) => Promise<CardSet>;
 //#endregion
 
 export const createCardSetUC: CreateCardSetUC = async ({ title }) => {

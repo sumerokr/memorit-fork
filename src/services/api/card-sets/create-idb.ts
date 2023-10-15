@@ -5,11 +5,7 @@ import { getDBInstance } from "@/services/idb-storage";
 export const createCardSetApi: CreateCardSetApi = async ({ cardSet }) => {
   console.time("api/card-sets/createCardSetApi");
   const db = await getDBInstance();
-  const savedCardSet = await db.add("card-sets", cardSet);
-  console.log(
-    "🚀 ~ file: create-idb.ts:9 ~ constcreateCardSetApi:CreateCardSetApi= ~ savedCardSet:",
-    savedCardSet
-  );
+  await db.add("card-sets", cardSet);
   console.timeEnd("api/card-sets/createCardSetApi");
-  return savedCardSet;
+  return cardSet;
 };

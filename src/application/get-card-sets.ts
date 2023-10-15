@@ -1,62 +1,62 @@
-import type { CardSetV2 } from "@/domain/card-set";
+import type { CardSet } from "@/domain/card-set";
 import { getAllCardSetsApi } from "@/services/api/card-sets/get-all-idb";
 import { notificationService } from "@/services/index";
 
 //#region types
-export type GetCardSetsApiParameters = (
-  | {
-      before: CardSetV2["id"];
-      after?: never;
-    }
-  | {
-      before?: never;
-      after: CardSetV2["id"];
-    }
-  | {
-      before?: never;
-      after?: never;
-    }
-) & {
-  query?: CardSetV2["title"];
-};
-
-export type GetCardSetsApiReturn = Promise<{
-  data: (CardSetV2 & {
-    cardsCount: number;
-    cardsToStudyCount: number;
-  })[];
-  before?: CardSetV2["id"];
-  after?: CardSetV2["id"];
-}>;
-
 export type GetCardSetsApi = (
-  args?: GetCardSetsApiParameters
-) => GetCardSetsApiReturn;
-
-export type GetCardSetsUC = (
   args?: (
     | {
-        before: CardSetV2["id"];
+        before: CardSet["id"];
         after?: never;
       }
     | {
         before?: never;
-        after: CardSetV2["id"];
+        after: CardSet["id"];
       }
     | {
         before?: never;
         after?: never;
       }
   ) & {
-    query?: CardSetV2["title"];
+    query?: CardSet["title"];
   }
 ) => Promise<{
-  data: (CardSetV2 & {
-    cardsCount: number;
-    cardsToStudyCount: number;
-  })[];
-  before?: CardSetV2["id"];
-  after?: CardSetV2["id"];
+  data: Array<
+    CardSet & {
+      cardsCount: number;
+      cardsToStudyCount: number;
+    }
+  >;
+  before?: CardSet["id"];
+  after?: CardSet["id"];
+}>;
+
+export type GetCardSetsUC = (
+  args?: (
+    | {
+        before: CardSet["id"];
+        after?: never;
+      }
+    | {
+        before?: never;
+        after: CardSet["id"];
+      }
+    | {
+        before?: never;
+        after?: never;
+      }
+  ) & {
+    query?: CardSet["title"];
+  }
+) => Promise<{
+  data: Array<
+    CardSet & {
+      cardsCount: number;
+      cardsToStudyCount: number;
+    }
+  >;
+  before?: CardSet["id"];
+  after?: CardSet["id"];
 }>;
 //#endregion
 

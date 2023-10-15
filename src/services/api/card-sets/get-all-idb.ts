@@ -1,15 +1,12 @@
-import type {
-  GetCardSetsApi,
-  GetCardSetsApiReturn,
-} from "@/application/get-card-sets";
+import type { GetCardSetsApi } from "@/application/get-card-sets";
 import { getDBInstance } from "@/services/idb-storage";
-import type { CardSetV2 } from "@/domain/card-set";
+import type { CardSet } from "@/domain/card-set";
 
 // TODO: handle JSON errors
 export const getAllCardSetsApi: GetCardSetsApi = async (args) => {
   console.time("api/card-sets/getAllCardSetsApi");
   const { before, after, query } = args ?? {};
-  const response: Awaited<GetCardSetsApiReturn> = {
+  const response: Awaited<ReturnType<GetCardSetsApi>> = {
     data: [],
   };
 
@@ -22,7 +19,7 @@ export const getAllCardSetsApi: GetCardSetsApi = async (args) => {
     .openCursor(null, before ? "next" : "prev");
 
   if (cursor) {
-    const moveCursorToStartEntry = async (reference: CardSetV2["id"]) => {
+    const moveCursorToStartEntry = async (reference: CardSet["id"]) => {
       const startEntry = await transaction
         .objectStore("card-sets")
         .get(reference);
