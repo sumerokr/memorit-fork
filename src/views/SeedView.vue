@@ -1,27 +1,26 @@
 <script setup lang="ts">
 import { reactive } from "vue";
-import { type CardV2, createCard } from "@/domain/card";
-import { type CardSetV2, createCardSet } from "@/domain/card-set";
 import { deleteDB } from "idb";
+import { type Card, createCard } from "@/domain/card";
+import { type CardSet, createCardSet } from "@/domain/card-set";
 import { getDBInstance } from "@/services/idb-storage";
-import IconButton from "@/components/IconButton.vue";
 import { createCardUC } from "@/application/create-card";
 import { createCardSetUC } from "@/application/create-card-set";
-import { useCookies } from "@vueuse/integrations/useCookies";
+import IconButton from "@/components/IconButton.vue";
 
 const _faker = () => import("@faker-js/faker");
 
-const cookies = useCookies();
+type DummyCardSet = {
+  title: string;
+  items: Array<[front: string, back: string]>;
+};
 
-const createSetWithCards = (
-  cardSetTitle: CardSetV2["title"],
-  cardsRaw: [front: CardV2["front"], back: CardV2["back"]][]
-) => {
+const createSetWithCards = ({ title, items }: DummyCardSet) => {
   const cardSet = createCardSet({
     id: crypto.randomUUID(),
-    title: cardSetTitle,
+    title,
     createdAt: new Date().toISOString(),
-    createdBy: "",
+    createdBy: "local-user",
   });
 
   const cards = cardsRaw.map(([front, back]) =>
@@ -31,7 +30,7 @@ const createSetWithCards = (
       back,
       cardSetId: cardSet.id,
       createdAt: new Date().toISOString(),
-      createdBy: "",
+      createdBy: "local-user",
     })
   );
 
@@ -39,7 +38,7 @@ const createSetWithCards = (
 };
 
 //#region ready sets
-const setMap = new Map<CardSetV2["id"], [string, [string, string][]]>();
+const setMap = new Map<CardSet["id"], [string, [string, string][]]>();
 setMap.set(crypto.randomUUID(), [
   "Немецкий B1 v1",
   [
@@ -285,8 +284,8 @@ setMap.set(crypto.randomUUID(), [
 const iterative = [...setMap.entries()].map(
   ([id, [title, cards]]) => [id, title, cards.length] as const
 );
-const addedIds = reactive(new Set<CardSetV2["id"]>());
-const add = async (id: CardSetV2["id"]) => {
+const addedIds = reactive(new Set<CardSet["id"]>());
+const add = async (id: CardSet["id"]) => {
   const match = setMap.get(id);
   if (!match) {
     alert("set not found");
@@ -366,21 +365,6 @@ const onDelete = async () => {
   });
   alert("Dummy data deleted");
 };
-
-const onGoogle = () => {
-  // const state = crypto.randomUUID();
-  // const nonce = crypto.randomUUID();
-  // cookies.set("state", state, {
-  //   path: "/api/auth",
-  // });
-  // cookies.set("nonce", nonce, {
-  //   path: "/api/auth",
-  //   // secure: true,
-  //   httpOnly: true,
-  //   sameSite: "strict",
-  // });
-  window.location.assign("/api/auth");
-};
 </script>
 
 <template>
@@ -451,9 +435,6 @@ const onGoogle = () => {
           class="-my-1 bg-red-100 shadow-md"
           @click="onDelete"
         />
-      </li>
-      <li class="flex items-start justify-between gap-4 py-4">
-        <button type="button" @click="onGoogle">Ginlo</button>
       </li>
     </ul>
   </div>
