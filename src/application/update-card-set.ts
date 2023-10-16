@@ -8,10 +8,7 @@ export type UpdateCardSetApi = (args: {
   data: Partial<Pick<CardSet, "title" | "updatedAt" | "updatedBy">>;
 }) => Promise<CardSet>;
 
-export type UpdateCardSetUC = (args: {
-  id: CardSet["id"];
-  data: Partial<Pick<CardSet, "title" | "updatedAt" | "updatedBy">>;
-}) => Promise<CardSet>;
+export type UpdateCardSetUC = UpdateCardSetApi;
 //#endregion
 
 export const updateCardSetUC: UpdateCardSetUC = async ({ id, data }) => {

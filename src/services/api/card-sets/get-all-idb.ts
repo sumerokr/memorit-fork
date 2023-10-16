@@ -96,20 +96,9 @@ export const getAllCardSetsApi: GetCardSetsApi = async (args) => {
       .objectStore("cards")
       .index("cardSetId")
       .count(cursor.value.id);
-    const cardsToStudyCountPromise = transaction
-      .objectStore("cards")
-      .index("cardSetId_showAfter")
-      .count(
-        IDBKeyRange.bound(
-          [cursor.value.id, ""],
-          [cursor.value.id, new Date().toISOString()]
-        )
-      );
+    const cardsToStudyCount = 0;
 
-    const [cardsCount, cardsToStudyCount] = await Promise.all([
-      cardsCountPromise,
-      cardsToStudyCountPromise,
-    ]);
+    const cardsCount = await cardsCountPromise;
 
     response.data.push({
       ...cursor.value,

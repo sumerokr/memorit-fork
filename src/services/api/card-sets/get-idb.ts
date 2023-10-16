@@ -6,13 +6,9 @@ export const getCardSetApi: GetCardSetApi = async ({ id }) => {
   const db = await getDBInstance();
   const transaction = db.transaction(["card-sets", "cards"]);
 
-  const [cardSet, cardsCount, cardsToStudyCount] = await Promise.all([
+  const [cardSet, cardsCount] = await Promise.all([
     transaction.objectStore("card-sets").get(id),
     transaction.objectStore("cards").index("cardSetId").count(id),
-    transaction
-      .objectStore("cards")
-      .index("cardSetId_showAfter")
-      .count(IDBKeyRange.bound([id, ""], [id, new Date().toISOString()])),
     transaction.done,
   ]);
 
@@ -21,7 +17,7 @@ export const getCardSetApi: GetCardSetApi = async ({ id }) => {
     return {
       ...cardSet,
       cardsCount,
-      cardsToStudyCount,
+      cardsToStudyCount: 0,
     };
   }
   console.timeEnd("api/card-sets/getCardSetApi");

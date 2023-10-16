@@ -1,29 +1,16 @@
-import type { CardSetV2 } from "@/domain/card-set";
+import type { CardSet } from "@/domain/card-set";
 import { getCardSetApi } from "@/services/api/card-sets/get-idb";
 import { notificationService } from "@/services/index";
 
 //#region types
-export type GetCardSetApiParameters = {
-  id: CardSetV2["id"];
-};
-
-export type GetCardSetApiReturn = Promise<
-  CardSetV2 & {
+export type GetCardSetApi = (args: { id: CardSet["id"] }) => Promise<
+  CardSet & {
     cardsCount: number;
     cardsToStudyCount: number;
   }
 >;
 
-export type GetCardSetApi = (
-  args: GetCardSetApiParameters
-) => GetCardSetApiReturn;
-
-export type GetCardSetUC = (args: { id: CardSetV2["id"] }) => Promise<
-  CardSetV2 & {
-    cardsCount: number;
-    cardsToStudyCount: number;
-  }
->;
+export type GetCardSetUC = GetCardSetApi;
 //#endregion
 
 export const getCardSetUC: GetCardSetUC = async ({ id }) => {
