@@ -11,8 +11,9 @@ export default defineConfig({
     VitePWA({
       registerType: "prompt",
       manifest: {
-        name: "Memorit",
-        short_name: "Memorit",
+        name: process.env.CF_PAGES_BRANCH === "prod" ? "Memorit" : "[M]emorit",
+        short_name:
+          process.env.CF_PAGES_BRANCH === "prod" ? "Memorit" : "[M]emorit",
         description: "Improve your memory",
         theme_color: "#818cf8",
         background_color: "#ffffff",
@@ -56,5 +57,6 @@ export default defineConfig({
   },
   define: {
     __CF_PAGES_BRANCH__: process.env.CF_PAGES_BRANCH,
+    __CF_PAGES_COMMIT_SHA__: process.env.CF_PAGES_COMMIT_SHA,
   },
 });
