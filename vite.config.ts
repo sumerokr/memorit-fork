@@ -54,4 +54,7 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
+  define: {
+    VITE_CF_PAGES_BRANCH: JSON.stringify(process.env.CF_PAGES_BRANCH),
+  },
 });

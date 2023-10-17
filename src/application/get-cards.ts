@@ -3,36 +3,16 @@ import { getAllCardsApi } from "@/services/api/cards/get-all-idb";
 import { notificationService } from "@/services/index";
 
 //#region types
-export type GetCardsApi = (
-  args?: {
-    cardSetId: Card["cardSetId"];
-    query?: Card["front"] | Card["back"];
-  } & (
-    | {
-        before: Card["id"];
-        after?: never;
-      }
-    | {
-        before?: never;
-        after: Card["id"];
-      }
-    | {
-        before?: never;
-        after?: never;
-      }
-  )
-) => Promise<{
-  data: Card[];
-  before?: Card["id"];
-  after?: Card["id"];
-}>;
+export type GetCardsApi = (args: {
+  cardSetId: Card["cardSetId"];
+}) => Promise<Array<Card>>;
 
 export type GetCardsUC = GetCardsApi;
 //#endregion
 
-export const getCardsUC: GetCardsUC = async (args) => {
+export const getCardsUC: GetCardsUC = async ({ cardSetId }) => {
   try {
-    const cards = await getAllCardsApi(args);
+    const cards = await getAllCardsApi({ cardSetId });
     notificationService.notify("cards received");
     return cards;
   } catch (error) {

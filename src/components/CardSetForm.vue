@@ -11,8 +11,8 @@ type Props = {
 const props = defineProps<Props>();
 
 const emit = defineEmits<{
-  (e: "update:title", title: Props["title"]): void;
-  (e: "submit"): void;
+  "update:title": [title: Props["title"]];
+  submit: [];
 }>();
 
 const title = computed({

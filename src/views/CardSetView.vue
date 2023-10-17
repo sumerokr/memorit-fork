@@ -17,18 +17,21 @@ const router = useRouter();
 const {
   state: cardSet,
   isLoading: isGetCardSetLoading,
-  isReady: isGetCardSetReady,
+  error: getCardSetError,
 } = useAsyncState(() => getCardSetUC({ id: props.cardSetId }), null);
 
-const { isLoading: isDeleteCardSetLoading, execute: deleteCardSet } =
-  useAsyncState(() => deleteCardSetUC({ id: props.cardSetId }), null, {
-    immediate: false,
-    onSuccess: () => {
-      router.replace({ name: "sets" });
-    },
-  });
+const {
+  isLoading: isDeleteCardSetLoading,
+  execute: deleteCardSet,
+  error: deleteCardSetError,
+} = useAsyncState(() => deleteCardSetUC({ id: props.cardSetId }), null, {
+  immediate: false,
+  onSuccess: () => {
+    router.replace({ name: "sets" });
+  },
+});
 
-const onDelete = async () => {
+const handleDeleteCardSet = async () => {
   const answer = confirm("Delete the Card set and all its cards?");
   if (!answer) {
     return;
@@ -56,14 +59,20 @@ const onDelete = async () => {
         <IconButton
           icon="delete"
           :disabled="isDeleteCardSetLoading"
-          @click="onDelete"
+          @click="handleDeleteCardSet"
         >
           Delete
         </IconButton>
       </div>
     </div>
 
-    <div v-if="isGetCardSetReady && cardSet">
+    <div v-if="cardSet">
+      <p
+        v-if="deleteCardSetError"
+        class="mb-4 border border-red-500 rounded-2xl p-4 bg-red-50"
+      >
+        {{ deleteCardSetError }}
+      </p>
       <h1 class="text-3xl mb-8">
         {{ cardSet.title }}
       </h1>
@@ -107,7 +116,7 @@ const onDelete = async () => {
             </div>
           </RouterLink>
         </li>
-        <li>
+        <!-- <li>
           <RouterLink
             :to="{ name: 'study', params: { cardSetId: props.cardSetId } }"
             class="flex items-start gap-1 px-1 py-2.5"
@@ -120,8 +129,15 @@ const onDelete = async () => {
               </p>
             </div>
           </RouterLink>
-        </li>
+        </li> -->
       </ul>
+    </div>
+
+    <div
+      v-if="getCardSetError"
+      class="mb-4 border border-red-500 rounded-2xl p-4 bg-red-50"
+    >
+      {{ getCardSetError }}
     </div>
 
     <div v-else-if="isGetCardSetLoading">Loading...</div>

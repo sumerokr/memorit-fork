@@ -12,8 +12,8 @@ export type CreateCardSetUC = (args: {
 //#endregion
 
 export const createCardSetUC: CreateCardSetUC = async ({ title }) => {
-  const userId = await usersService.getUserId();
   try {
+    const userId = await usersService.getUserId();
     const cardSet = createCardSet({
       id: crypto.randomUUID(),
       title,

@@ -1,161 +1,16 @@
 <script setup lang="ts">
-import { ref, computed, nextTick, watch } from "vue";
-import { useAsyncState, watchDebounced, onClickOutside } from "@vueuse/core";
-import {
-  getCardSetsUC,
-  type GetCardSetsApiParameters,
-} from "@/application/get-card-sets";
+import { useAsyncState } from "@vueuse/core";
+import { getCardSetsUC } from "@/application/get-card-sets";
 import CardSetList from "@/components/CardSetList.vue";
-import CommonButton from "@/components/CommonButton.vue";
-import IconButton from "@/components/IconButton.vue";
-import { useRoute, useRouter } from "vue-router";
-import pickBy from "lodash/pickBy";
-import pick from "lodash/pick";
-import omit from "lodash/omit";
-import difference from "lodash/difference";
-import mapValues from "lodash/mapValues";
 import RouterLinkCommonButton from "@/components/RouterLinkCommonButton.vue";
 
-const route = useRoute();
-const router = useRouter();
-
-const currentNavigationParams = computed<NonNullable<GetCardSetsApiParameters>>(
-  () => {
-    const { before, after, query } = route.query;
-    const mapped = mapValues({ before, after, query }, (item) => {
-      const itemResolved = Array.isArray(item) ? item[0] : item;
-      return itemResolved ? itemResolved.trim() : "";
-    });
-    const picked = pickBy(mapped, (item) => {
-      return item.length > 0;
-    });
-    return picked.before && picked.after ? omit(picked, "before") : picked;
-  }
-);
-
-const {
-  execute,
-  state: cardSets,
-  error,
-} = useAsyncState(getCardSetsUC, null, {
-  immediate: false,
-  resetOnExecute: false,
-});
-
-const searchButton = ref<HTMLElement | null>(null);
-const queryEl = ref<HTMLInputElement | null>(null);
-const query = ref<string>(currentNavigationParams.value.query ?? "");
-const isSearchVisible = ref<boolean>(!!query.value);
-watchDebounced(
-  query,
-  (newQuery, oldQuery) => {
-    if (newQuery) {
-      router.replace({ query: { query: newQuery } });
-    } else if (oldQuery) {
-      router.replace({ query: omit(route.query, "query") });
-    }
-  },
-  { debounce: 500 }
-);
-
-onClickOutside(
-  queryEl,
-  () => {
-    if (!query.value) {
-      isSearchVisible.value = false;
-    }
-  },
-  { ignore: [searchButton] }
-);
-
-const onSearch = async () => {
-  console.log("got", isSearchVisible.value);
-
-  if (isSearchVisible.value) {
-    query.value = "";
-    isSearchVisible.value = false;
-  } else {
-    isSearchVisible.value = true;
-    await nextTick();
-    queryEl.value?.focus();
-  }
-};
-
-const nextNavigationParams = computed<
-  Partial<{ before?: string; after?: string; query?: string }>
->(() => {
-  return pickBy(
-    {
-      query: query.value,
-      before: cardSets.value?.before,
-      after: cardSets.value?.after,
-    },
-    (param) => param && param.trim().length > 0
-  );
-});
-
-watch(
-  currentNavigationParams,
-  async (next, prev) => {
-    // do nothing if the only removed parameter was before
-    if (!next.before && prev?.before) {
-      const nextKeys = Object.keys(next) as (keyof typeof next)[];
-      const prevKeys = Object.keys(prev) as (keyof typeof prev)[];
-      const addedKeys = difference(nextKeys, prevKeys);
-      const removedKeys = difference(prevKeys, nextKeys);
-      if (
-        removedKeys.length === 1 &&
-        removedKeys[0] === "before" &&
-        addedKeys.length === 0
-      ) {
-        return;
-      }
-    }
-
-    await execute(0, next);
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  },
-  { immediate: true }
-);
-
-watch(
-  nextNavigationParams,
-  (next) => {
-    // remove unneeded before parameter if there are no more pages before
-    if (!next.before && currentNavigationParams.value.before) {
-      router.replace({ query: omit(route.query, "before") });
-    }
-  },
-  { immediate: true }
-);
+const { state: cardSets, error } = useAsyncState(getCardSetsUC, null);
 </script>
 
 <template>
   <div class="flex flex-col flex-grow bg-neutral-100 p-4 pb-24">
     <div class="flex items-center mb-4">
       <h1 class="text-2xl">Card sets</h1>
-
-      <div class="flex ml-auto -mr-3">
-        <div class="relative">
-          <IconButton
-            :icon="isSearchVisible ? 'close' : 'search'"
-            class="relative z-20"
-            ref="searchButton"
-            @click="onSearch"
-          ></IconButton>
-          <input
-            v-if="isSearchVisible"
-            v-model="query"
-            @compositionstart="($event) => (($event.target as any).composing = false)"
-            ref="queryEl"
-            class="absolute z-10 top-0 right-0 leading-7 border-2 rounded-2xl p-2 pr-16 w-56"
-            type="text"
-          />
-        </div>
-      </div>
     </div>
 
     <p
@@ -164,43 +19,10 @@ watch(
     >
       Error
     </p>
-    <template v-if="cardSets?.data.length">
-      <CardSetList v-if="cardSets.data.length" :card-sets="cardSets.data" />
 
-      <div
-        v-if="cardSets.before || cardSets.after"
-        class="flex justify-end gap-4 mt-4"
-      >
-        <RouterLinkCommonButton
-          v-if="cardSets.before"
-          :to="{
-            name: 'sets',
-            query: pick(nextNavigationParams, ['query', 'before']),
-          }"
-          before="chevron_left"
-          class="bg-indigo-200"
-          >prev</RouterLinkCommonButton
-        >
-        <CommonButton v-else before="chevron_left" disabled>prev</CommonButton>
+    <CardSetList v-if="cardSets?.length" :card-sets="cardSets" />
 
-        <RouterLinkCommonButton
-          v-if="cardSets.after"
-          :to="{
-            name: 'sets',
-            query: pick(nextNavigationParams, ['query', 'after']),
-          }"
-          after="chevron_right"
-          class="inline-flex gap-2 pr-4 pl-6 py-2 items-center rounded-2xl justify-center bg-indigo-200"
-          >next</RouterLinkCommonButton
-        >
-        <CommonButton v-else after="chevron_right" disabled>next</CommonButton>
-      </div>
-    </template>
-
-    <div
-      class="my-auto text-center"
-      v-else-if="cardSets && !cardSets.data.length"
-    >
+    <div class="my-auto text-center" v-else-if="cardSets && !cardSets.length">
       You have no card sets yet.
       <RouterLinkCommonButton
         icon="add"

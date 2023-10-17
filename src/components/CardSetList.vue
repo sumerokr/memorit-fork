@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { CardSetV2 } from "@/domain/card-set";
+import type { CardSet } from "@/domain/card-set";
 
 type Props = {
-  cardSets: (CardSetV2 & {
+  cardSets: (CardSet & {
     cardsCount: number;
     cardsToStudyCount: number;
   })[];
@@ -12,7 +12,6 @@ defineProps<Props>();
 </script>
 
 <template>
-  <!-- TODO: remove v-if check! -->
   <ul class="grid gap-2">
     <li v-for="cardSet of cardSets" :key="cardSet.id">
       <RouterLink

@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { useRouter } from "vue-router";
 import type { Card } from "@/domain/card";
-import { useAsyncState } from "@vueuse/core";
 import { onClickOutside } from "@vueuse/core";
-import { deleteCardUC } from "@/application/delete-card";
 import IconButton from "@/components/IconButton.vue";
 import CommonButton from "@/components/CommonButton.vue";
 import RouterLinkCommonButton from "@/components/RouterLinkCommonButton.vue";
@@ -13,21 +10,11 @@ type Props = {
   card: Card;
 };
 
-const props = defineProps<Props>();
+defineProps<Props>();
 
-const router = useRouter();
-
-// we have to inform a card view that some card was deleted
-const { isLoading: isDeleteCardLoading, execute: deleteCard } = useAsyncState(
-  () => deleteCardUC({ id: props.card.id }),
-  null,
-  {
-    immediate: false,
-    onSuccess: () => {
-      router.push({ name: "set", params: { cardSetId: props.card.cardSetId } });
-    },
-  }
-);
+defineEmits<{
+  delete: [id: Card["id"]];
+}>();
 
 const isMenuOpen = ref(false);
 const menuRef = ref(null);
@@ -54,8 +41,7 @@ onClickOutside(menuRef, () => {
           <CommonButton
             before="delete"
             class="bg-red-200"
-            :disabled="isDeleteCardLoading"
-            @click="deleteCard"
+            @click="$emit('delete', card.id)"
           >
             Delete</CommonButton
           >

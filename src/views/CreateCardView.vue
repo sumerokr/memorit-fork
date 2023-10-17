@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import CardList from "@/components/CardList.vue";
-import type { CardV2 } from "@/domain/card";
+import type { Card } from "@/domain/card";
 import { createCardUC } from "@/application/create-card";
 import { useAsyncState } from "@vueuse/core";
 import NewCardForm from "@/components/CardForm.vue";
@@ -16,7 +16,7 @@ const props = defineProps<Props>();
 const front = ref("");
 const back = ref("");
 
-const createdCards = ref<CardV2[]>([]);
+const createdCards = ref<Card[]>([]);
 
 const { isLoading, execute } = useAsyncState(createCardUC, null, {
   immediate: false,
@@ -32,7 +32,7 @@ const { isLoading, execute } = useAsyncState(createCardUC, null, {
   },
 });
 
-const onSubmit = async () => {
+const handleCreateCard = async () => {
   if (!front.value || !back.value) {
     return;
   }
@@ -43,8 +43,6 @@ const onSubmit = async () => {
     cardSetId: props.cardSetId,
   });
 };
-
-const backLink = window.history.state?.back;
 </script>
 
 <template>
@@ -53,7 +51,7 @@ const backLink = window.history.state?.back;
       <RouterLinkIconButton
         icon="arrow_back"
         class="-ml-3 mr-1"
-        :to="backLink ?? { name: 'set', params: { cardSetId } }"
+        :to="{ name: 'set', params: { cardSetId } }"
         >Back</RouterLinkIconButton
       >
       <h1 class="text-2xl">Add new card</h1>
@@ -63,7 +61,7 @@ const backLink = window.history.state?.back;
       v-model:front.trim="front"
       v-model:back.trim="back"
       :is-loading="isLoading"
-      @submit="onSubmit"
+      @submit="handleCreateCard"
     />
 
     <CardList :cards="createdCards" />

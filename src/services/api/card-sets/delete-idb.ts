@@ -20,7 +20,6 @@ export const deleteCardSetApi: DeleteCardSetApi = async ({ id }) => {
   }
 
   promises.push(transaction.objectStore("card-sets").delete(id));
-
   promises.push(transaction.done);
 
   await Promise.all(promises);

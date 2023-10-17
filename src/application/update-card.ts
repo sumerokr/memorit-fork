@@ -6,10 +6,15 @@ import { usersService } from "@/services/users-service";
 //#region types
 export type UpdateCardApi = (args: {
   id: Card["id"];
-  data: Partial<Pick<Card, "front" | "back" | "updatedAt" | "updatedBy">>;
+  data: Pick<Card, "updatedAt" | "updatedBy"> &
+    Partial<Pick<Card, "front" | "back">>;
 }) => Promise<Card>;
 
-export type UpdateCardUC = UpdateCardApi;
+export type UpdateCardUC = (args: {
+  id: Card["id"];
+  // TODO: make at least one of the fields required
+  data: Partial<Pick<Card, "front" | "back">>;
+}) => Promise<Card>;
 //#endregion
 
 export const updateCardUC: UpdateCardUC = async ({ id, data }) => {

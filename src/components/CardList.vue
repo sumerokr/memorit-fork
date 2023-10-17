@@ -8,11 +8,18 @@ type Props = {
 
 defineProps<Props>();
 
-defineEmits(["delete"]);
+defineEmits<{
+  delete: [id: Card["id"]];
+}>();
 </script>
 
 <template>
   <ul class="flex flex-col gap-2">
-    <CardListItem v-for="card in cards" :card="card" :key="card.id" />
+    <CardListItem
+      v-for="card in cards"
+      :card="card"
+      :key="card.id"
+      @delete="(id) => $emit('delete', id)"
+    />
   </ul>
 </template>

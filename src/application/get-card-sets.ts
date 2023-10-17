@@ -3,66 +3,28 @@ import { getAllCardSetsApi } from "@/services/api/card-sets/get-all-idb";
 import { notificationService } from "@/services/index";
 
 //#region types
-export type GetCardSetsApi = (
-  args?: (
-    | {
-        before: CardSet["id"];
-        after?: never;
-      }
-    | {
-        before?: never;
-        after: CardSet["id"];
-      }
-    | {
-        before?: never;
-        after?: never;
-      }
-  ) & {
-    query?: CardSet["title"];
-  }
-) => Promise<{
-  data: Array<
+export type GetCardSetsApi = () => Promise<
+  Array<
     CardSet & {
       cardsCount: number;
       cardsToStudyCount: number;
     }
-  >;
-  before?: CardSet["id"];
-  after?: CardSet["id"];
-}>;
+  >
+>;
 
-export type GetCardSetsUC = (
-  args?: (
-    | {
-        before: CardSet["id"];
-        after?: never;
-      }
-    | {
-        before?: never;
-        after: CardSet["id"];
-      }
-    | {
-        before?: never;
-        after?: never;
-      }
-  ) & {
-    query?: CardSet["title"];
-  }
-) => Promise<{
-  data: Array<
+export type GetCardSetsUC = () => Promise<
+  Array<
     CardSet & {
       cardsCount: number;
       cardsToStudyCount: number;
     }
-  >;
-  before?: CardSet["id"];
-  after?: CardSet["id"];
-}>;
+  >
+>;
 //#endregion
 
-export const getCardSetsUC: GetCardSetsUC = async (args) => {
+export const getCardSetsUC: GetCardSetsUC = async () => {
   try {
-    const cardSets = await getAllCardSetsApi(args);
+    const cardSets = await getAllCardSetsApi();
     notificationService.notify("card-sets received");
     return cardSets;
   } catch (error) {

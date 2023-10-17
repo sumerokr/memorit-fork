@@ -1,26 +1,18 @@
-import type { CardV2 } from "@/domain/card";
+import type { Card } from "@/domain/card";
 import { getStudyCardsApi } from "@/services/api/cards/get-study-idb";
 import { notificationService } from "@/services/index";
 
 //#region types
-export type GetStudyCardsApiParameters = {
-  cardSetId: CardV2["cardSetId"];
-};
+export type GetStudyCardsApi = (args: {
+  cardSetId: Card["cardSetId"];
+}) => Promise<[]>;
 
-export type GetStudyCardsApiReturn = Promise<CardV2[]>;
-
-export type GetStudyCardsApi = (
-  args: GetStudyCardsApiParameters
-) => GetStudyCardsApiReturn;
-
-export type GetStudyCardsUC = (args: {
-  cardSetId: CardV2["cardSetId"];
-}) => Promise<CardV2[]>;
+export type GetStudyCardsUC = GetStudyCardsApi;
 //#endregion
 
-export const getStudyCardsUC: GetStudyCardsUC = async (args) => {
+export const getStudyCardsUC: GetStudyCardsUC = async ({ cardSetId }) => {
   try {
-    const cards = await getStudyCardsApi(args);
+    const cards = await getStudyCardsApi({ cardSetId });
     notificationService.notify("received");
     return cards;
   } catch (error) {

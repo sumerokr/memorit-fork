@@ -36,7 +36,7 @@ const { isLoading, execute } = useAsyncState(createCardSetUC, null, {
   },
 });
 
-const onSubmit = async () => {
+const handleCreateCardSet = async () => {
   if (isLoading.value) {
     return;
   }
@@ -45,9 +45,7 @@ const onSubmit = async () => {
     return;
   }
 
-  console.time("submit");
   await execute(0, { title: title.value });
-  console.timeEnd("submit");
 };
 </script>
 
@@ -66,7 +64,7 @@ const onSubmit = async () => {
     <CardSetForm
       v-model:title.trim="title"
       :is-loading="isLoading"
-      @submit="onSubmit"
+      @submit="handleCreateCardSet"
     />
 
     <p v-if="error">{{ error }}</p>

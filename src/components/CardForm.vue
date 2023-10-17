@@ -12,9 +12,9 @@ type Props = {
 const props = defineProps<Props>();
 
 const emit = defineEmits<{
-  (e: "update:front", front: Props["front"]): void;
-  (e: "update:back", back: Props["back"]): void;
-  (e: "submit"): void;
+  "update:front": [front: Props["front"]];
+  "update:back": [back: Props["back"]];
+  submit: [];
 }>();
 
 const front = computed({
