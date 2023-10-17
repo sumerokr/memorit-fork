@@ -11,7 +11,7 @@ getDBInstance().then((db) => {
   dbVersion.value = db.version;
 });
 
-const branch = import.meta.env.VITE_SOME_KEY;
+const branch = import.meta.env.VITE_CF_PAGES_BRANCH;
 </script>
 
 <template>
