@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import CardSetList from "@/components/CardSetList.vue";
-import type { CardSetV2 } from "@/domain/card-set";
+import type { CardSet } from "@/domain/card-set";
 import { createCardSetUC } from "@/application/create-card-set";
 import { useAsyncState } from "@vueuse/core";
 import CardSetForm from "@/components/CardSetForm.vue";
@@ -10,7 +10,7 @@ import IconButton from "@/components/IconButton.vue";
 
 const title = ref("");
 const createdCardSets = ref<
-  (CardSetV2 & {
+  (CardSet & {
     cardsCount: number;
     cardsToStudyCount: number;
   })[]
