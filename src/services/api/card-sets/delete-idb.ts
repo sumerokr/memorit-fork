@@ -9,17 +9,17 @@ export const deleteCardSetApi: DeleteCardSetApi = async ({ id }) => {
   const promises = [];
 
   // TODO: check user id
-  promises.push(transaction.objectStore("card-sets").delete(id));
-
   let cursor = await transaction
     .objectStore("cards")
-    .index("cardSetId")
-    .openCursor(IDBKeyRange.bound(id, id));
+    .index("cardSetId_createdAt")
+    .openCursor(IDBKeyRange.bound([id, ""], [id, new Date().toISOString()]));
 
   while (cursor) {
     promises.push(transaction.objectStore("cards").delete(cursor.value.id));
     cursor = await cursor.continue();
   }
+
+  promises.push(transaction.objectStore("card-sets").delete(id));
 
   promises.push(transaction.done);
 

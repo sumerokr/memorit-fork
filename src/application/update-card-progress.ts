@@ -1,17 +1,13 @@
-import { type CardV2, updateProgress } from "@/domain/card";
+import type { Card } from "@/domain/card";
 import { getCardApi } from "@/services/api/cards/get-idb";
 import { updateCardApi } from "@/services/api/cards/update-idb";
 import { notificationService } from "@/services/index";
 
 //#region types
-type UpdateCardProgressUCParameters = {
-  id: CardV2["id"];
+export type UpdateCardProgressUC = (args: {
+  id: Card["id"];
   success: boolean;
-};
-
-export type UpdateCardProgressUC = (
-  args: UpdateCardProgressUCParameters
-) => Promise<CardV2>;
+}) => Promise<Card>;
 //#endregion
 
 export const updateCardProgressUC: UpdateCardProgressUC = async ({

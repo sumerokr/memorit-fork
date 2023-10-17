@@ -1,6 +1,7 @@
 import type { CardSet } from "@/domain/card-set";
 import { updateCardSetApi } from "@/services/api/card-sets/update-idb";
 import { notificationService } from "@/services/index";
+import { usersService } from "@/services/users-service";
 
 //#region types
 export type UpdateCardSetApi = (args: {
@@ -13,8 +14,14 @@ export type UpdateCardSetUC = UpdateCardSetApi;
 
 export const updateCardSetUC: UpdateCardSetUC = async ({ id, data }) => {
   try {
-    const cardSet = await updateCardSetApi({ id, data });
-    notificationService.notify("updated");
+    const userId = await usersService.getUserId();
+    const enhancedData = {
+      ...data,
+      updatedAt: new Date().toISOString(),
+      updatedBy: userId,
+    };
+    const cardSet = await updateCardSetApi({ id, data: enhancedData });
+    notificationService.notify("card-set updated");
     return cardSet;
   } catch (error) {
     notificationService.error(error);

@@ -9,9 +9,10 @@ export const updateCardApi: UpdateCardApi = async ({ id, data }) => {
   const transaction = db.transaction("cards", "readwrite");
   const card = await transaction.store.get(id);
   if (card) {
-    Object.assign(card, data);
-    await transaction.store.put(card);
+    const updatedCard = Object.assign(card, data);
+    await transaction.store.put(updatedCard);
     console.timeEnd("api/cards/updateCardApi");
+    return updatedCard;
   } else {
     // TODO: handle error better
     throw new Error("api/cards/updateCardApi");

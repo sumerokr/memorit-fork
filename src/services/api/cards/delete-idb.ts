@@ -7,6 +7,6 @@ export const deleteCardApi: DeleteCardApi = async ({ id }) => {
   const db = await getDBInstance();
   const transaction = db.transaction(["cards"], "readwrite");
 
-  transaction.objectStore("cards").delete(id);
+  await transaction.objectStore("cards").delete(id);
   console.timeEnd("api/cards/deleteCardApi");
 };

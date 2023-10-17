@@ -16,7 +16,7 @@ export type GetCardSetUC = GetCardSetApi;
 export const getCardSetUC: GetCardSetUC = async ({ id }) => {
   try {
     const cardSet = await getCardSetApi({ id });
-    notificationService.notify("received");
+    notificationService.notify("card-set received");
     return cardSet;
   } catch (error) {
     notificationService.error(error);

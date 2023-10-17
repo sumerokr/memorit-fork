@@ -1,4 +1,3 @@
-// https://www.npmjs.com/package/idb
 import { openDB } from "idb";
 import type { DBSchema, IDBPDatabase } from "idb";
 import type { CardSet } from "@/domain/card-set";
@@ -16,6 +15,7 @@ interface MyDB1 extends DBSchema {
     indexes: {
       createdAt: Card["createdAt"];
       cardSetId: Card["cardSetId"];
+      cardSetId_createdAt: [Card["cardSetId"], Card["createdAt"]];
     };
   };
 }
@@ -42,13 +42,15 @@ export const getDBInstance = async () => {
         const cardsStore = dbv1.createObjectStore("cards", {
           keyPath: "id",
         });
-        cardsStore.createIndex("createdAt", "createdAt");
-        cardsStore.createIndex("cardSetId", "cardSetId");
+        cardsStore.createIndex("cardSetId_createdAt", [
+          "cardSetId",
+          "createdAt",
+        ]);
       }
     },
   });
   // @ts-ignore
-  // window.db = db;
+  window.db = db;
 
   return db;
 };

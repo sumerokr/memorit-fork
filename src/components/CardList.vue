@@ -7,6 +7,8 @@ type Props = {
 };
 
 defineProps<Props>();
+
+defineEmits(["delete"]);
 </script>
 
 <template>

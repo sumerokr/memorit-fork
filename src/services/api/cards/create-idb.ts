@@ -7,4 +7,5 @@ export const createCardApi: CreateCardApi = async ({ card }) => {
   const db = await getDBInstance();
   await db.add("cards", card);
   console.timeEnd("api/card-sets/createCardSetApi");
+  return card;
 };

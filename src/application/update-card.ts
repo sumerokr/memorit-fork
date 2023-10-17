@@ -1,31 +1,28 @@
-import type { CardV2 } from "@/domain/card";
+import type { Card } from "@/domain/card";
 import { updateCardApi } from "@/services/api/cards/update-idb";
 import { notificationService } from "@/services/index";
+import { usersService } from "@/services/users-service";
 
 //#region types
-export type UpdateCardApiParameters = {
-  id: CardV2["id"];
-  data: Partial<Pick<CardV2, "front" | "back" | "progress">>;
-};
+export type UpdateCardApi = (args: {
+  id: Card["id"];
+  data: Partial<Pick<Card, "front" | "back" | "updatedAt" | "updatedBy">>;
+}) => Promise<Card>;
 
-export type UpdateCardApiReturn = Promise<void>;
-
-export type UpdateCardApi = (
-  args: UpdateCardApiParameters
-) => UpdateCardApiReturn;
-
-type UpdateCardUCParameters = {
-  id: CardV2["id"];
-  data: Partial<Pick<CardV2, "front" | "back" | "progress">>;
-};
-
-export type UpdateCardUC = (args: UpdateCardUCParameters) => Promise<void>;
+export type UpdateCardUC = UpdateCardApi;
 //#endregion
 
 export const updateCardUC: UpdateCardUC = async ({ id, data }) => {
   try {
-    await updateCardApi({ id, data });
-    notificationService.notify("updated");
+    const userId = await usersService.getUserId();
+    const enhancedData = {
+      ...data,
+      updatedAt: new Date().toISOString(),
+      updatedBy: userId,
+    };
+    const updatedCard = await updateCardApi({ id, data: enhancedData });
+    notificationService.notify("card updated");
+    return updatedCard;
   } catch (error) {
     notificationService.error(error);
     throw error;

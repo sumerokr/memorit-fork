@@ -94,8 +94,13 @@ export const getAllCardSetsApi: GetCardSetsApi = async (args) => {
     //#region meat
     const cardsCountPromise = transaction
       .objectStore("cards")
-      .index("cardSetId")
-      .count(cursor.value.id);
+      .index("cardSetId_createdAt")
+      .count(
+        IDBKeyRange.bound(
+          [cursor.value.id, ""],
+          [cursor.value.id, new Date().toISOString()]
+        )
+      );
     const cardsToStudyCount = 0;
 
     const cardsCount = await cardsCountPromise;

@@ -1,27 +1,16 @@
-import { type CardV2, createCard } from "@/domain/card";
+import { type Card, createCard } from "@/domain/card";
 import { createCardApi } from "@/services/api/cards/create-idb";
 import { usersService } from "@/services/users-service";
 import { notificationService } from "@/services/index";
-import { nanoid } from "nanoid";
 
 //#region types
-export type CreateCardApiParameters = {
-  card: CardV2;
-};
+export type CreateCardApi = (args: { card: Card }) => Promise<Card>;
 
-export type CreateCardApiReturn = Promise<void>;
-
-export type CreateCardApi = (
-  args: CreateCardApiParameters
-) => CreateCardApiReturn;
-
-type CreateCardUCParameters = {
-  front: CardV2["front"];
-  back: CardV2["back"];
-  cardSetId: CardV2["cardSetId"];
-};
-
-export type CreateCardUC = (args: CreateCardUCParameters) => Promise<CardV2>;
+export type CreateCardUC = (args: {
+  front: Card["front"];
+  back: Card["back"];
+  cardSetId: Card["cardSetId"];
+}) => Promise<Card>;
 //#endregion
 
 export const createCardUC: CreateCardUC = async ({
@@ -32,7 +21,7 @@ export const createCardUC: CreateCardUC = async ({
   try {
     const userId = await usersService.getUserId();
     const card = createCard({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       front,
       back,
       cardSetId,
@@ -40,7 +29,7 @@ export const createCardUC: CreateCardUC = async ({
       createdBy: userId,
     });
     await createCardApi({ card });
-    notificationService.notify("card saved");
+    notificationService.notify("card created");
     return card;
   } catch (error) {
     notificationService.error(error);

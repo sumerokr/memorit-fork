@@ -11,7 +11,7 @@ export type DeleteCardSetUC = DeleteCardSetApi;
 export const deleteCardSetUC: DeleteCardSetUC = async ({ id }) => {
   try {
     await deleteCardSetApi({ id });
-    notificationService.notify("deleted");
+    notificationService.notify("card-set deleted");
   } catch (error) {
     notificationService.error(error);
     throw error;

@@ -8,7 +8,10 @@ export const getCardSetApi: GetCardSetApi = async ({ id }) => {
 
   const [cardSet, cardsCount] = await Promise.all([
     transaction.objectStore("card-sets").get(id),
-    transaction.objectStore("cards").index("cardSetId").count(id),
+    transaction
+      .objectStore("cards")
+      .index("cardSetId_createdAt")
+      .count(IDBKeyRange.bound([id, ""], [id, new Date().toISOString()])),
     transaction.done,
   ]);
 

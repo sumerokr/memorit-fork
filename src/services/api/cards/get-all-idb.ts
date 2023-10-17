@@ -1,12 +1,12 @@
-import type { GetCardsApi, GetCardsApiReturn } from "@/application/get-cards";
+import type { GetCardsApi } from "@/application/get-cards";
 import { getDBInstance } from "@/services/idb-storage";
-import type { CardV2 } from "@/domain/card";
+import type { Card } from "@/domain/card";
 
 // TODO: handle JSON errors
 export const getAllCardsApi: GetCardsApi = async (args) => {
   console.time("api/cards/getAllCardsApi");
   const { cardSetId, before, after, query } = args ?? {};
-  const response: Awaited<GetCardsApiReturn> = {
+  const response: Awaited<ReturnType<GetCardsApi>> = {
     data: [],
   };
 
@@ -22,7 +22,7 @@ export const getAllCardsApi: GetCardsApi = async (args) => {
     );
 
   if (cursor) {
-    const moveCursorToStartEntry = async (reference: CardV2["id"]) => {
+    const moveCursorToStartEntry = async (reference: Card["id"]) => {
       const startEntry = await transaction.objectStore("cards").get(reference);
       if (!startEntry) {
         // TODO: handle. Reverse cursor?
