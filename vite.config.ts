@@ -55,11 +55,6 @@ export default defineConfig({
     },
   },
   define: {
-    __CF_PAGES_BRANCH__: JSON.stringify(process.env.CF_PAGES_BRANCH),
-    "process.env.__CF_PAGES_BRANCH__": JSON.stringify(
-      process.env.CF_PAGES_BRANCH
-    ),
-    __CF_PAGES_BRANCH_LIT__: process.env.CF_PAGES_BRANCH,
-    "process.env.__CF_PAGES_BRANCH_LIT__": process.env.CF_PAGES_BRANCH,
+    __CF_PAGES_BRANCH__: process.env.CF_PAGES_BRANCH,
   },
 });
