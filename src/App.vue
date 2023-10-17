@@ -11,7 +11,7 @@ getDBInstance().then((db) => {
   dbVersion.value = db.version;
 });
 
-const foo1 = "__CF_PAGES_BRANCH__";
+// const foo1 = "__CF_PAGES_BRANCH__";
 const foo2 = "process.env.__CF_PAGES_BRANCH__";
 const foo3 = "__CF_PAGES_BRANCH_LIT__";
 const foo4 = "process.env.__CF_PAGES_BRANCH_LIT__";
@@ -20,7 +20,7 @@ const foo6 = process.env.__CF_PAGES_BRANCH_LIT__;
 
 //@ts-ignore
 window.moo = {
-  foo1,
+  // foo1,
   foo2,
   foo3,
   foo4,
