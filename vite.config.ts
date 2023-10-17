@@ -55,6 +55,6 @@ export default defineConfig({
     },
   },
   define: {
-    VITE_CF_PAGES_BRANCH: JSON.stringify(process.env.CF_PAGES_BRANCH),
+    __CF_PAGES_BRANCH__: JSON.stringify(process.env.CF_PAGES_BRANCH),
   },
 });

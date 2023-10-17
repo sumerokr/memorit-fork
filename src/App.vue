@@ -10,8 +10,6 @@ const route = useRoute();
 getDBInstance().then((db) => {
   dbVersion.value = db.version;
 });
-
-const branch = import.meta.env.VITE_CF_PAGES_BRANCH;
 </script>
 
 <template>
@@ -27,7 +25,7 @@ const branch = import.meta.env.VITE_CF_PAGES_BRANCH;
       v-if="route.name === 'sets'"
       class="fixed bottom-0 left-1/2 -translate-x-1/2 py-1 px-2 rounded-t-md text-xs bg-white opacity-50"
     >
-      ver: 08101040. DB ver: {{ dbVersion }}, branch: {{ branch }}
+      ver: 08101040. DB ver: {{ dbVersion }}, branch: __CF_PAGES_BRANCH__
     </div>
   </div>
 </template>
