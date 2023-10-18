@@ -11,9 +11,9 @@ getDBInstance().then((db) => {
   dbVersion.value = db.version;
 });
 
-const sha = __CF_PAGES_COMMIT_SHA__ ?? "n/a";
+const sha = __CF_PAGES_COMMIT_SHA__?.slice(0, 7) ?? "n/a";
 const branch = __CF_PAGES_BRANCH__ ?? "n/a";
-const date = __BUILD_DATE__;
+const date = __BUILD_DATE__?.slice(0, 10).replace(/-/g, "");
 </script>
 
 <template>

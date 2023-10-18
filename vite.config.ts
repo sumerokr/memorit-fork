@@ -56,12 +56,8 @@ export default defineConfig({
     },
   },
   define: {
-    __CF_PAGES_BRANCH__: JSON.stringify(
-      process.env.CF_PAGES_BRANCH?.slice(0, 7)
-    ),
+    __CF_PAGES_BRANCH__: JSON.stringify(process.env.CF_PAGES_BRANCH),
     __CF_PAGES_COMMIT_SHA__: JSON.stringify(process.env.CF_PAGES_COMMIT_SHA),
-    __BUILD_DATE__: JSON.stringify(
-      new Date().toISOString().slice(2, 10).replaceAll("-", "")
-    ),
+    __BUILD_DATE__: JSON.stringify(new Date().toISOString()),
   },
 });
