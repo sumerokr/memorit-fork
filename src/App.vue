@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { getDBInstance } from "@/services/idb-storage";
-// import RouterLinkIconButton from "./components/RouterLinkIconButton.vue";
+import RouterLinkIconButton from "./components/RouterLinkIconButton.vue";
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 
@@ -19,12 +19,12 @@ const date = __BUILD_DATE__?.slice(0, 10).replace(/-/g, "");
 <template>
   <div class="flex flex-col flex-grow">
     <RouterView />
-    <!-- <RouterLinkIconButton
+    <RouterLinkIconButton
       v-if="route.name === 'sets'"
       icon="database"
       class="fixed left-4 bottom-4 p-2.5 flex rounded-2xl bg-blue-100 shadow-md"
       :to="{ name: 'seed' }"
-    ></RouterLinkIconButton> -->
+    ></RouterLinkIconButton>
     <div
       v-if="route.name === 'sets'"
       class="fixed bottom-0 left-1/2 -translate-x-1/2 w-max grid grid-cols-2 gap-x-4 py-1 px-2 rounded-t-md text-xs bg-white opacity-50"
