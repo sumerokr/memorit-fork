@@ -11,8 +11,9 @@ getDBInstance().then((db) => {
   dbVersion.value = db.version;
 });
 
-const sha = import.meta.env.PROD ? "__CF_PAGES_COMMIT_SHA__" : "dev";
-const branch = import.meta.env.PROD ? "__CF_PAGES_BRANCH__" : "dev";
+const sha = __CF_PAGES_COMMIT_SHA__ ?? "n/a";
+const branch = __CF_PAGES_BRANCH__ ?? "n/a";
+const date = __BUILD_DATE__;
 </script>
 
 <template>
@@ -26,9 +27,12 @@ const branch = import.meta.env.PROD ? "__CF_PAGES_BRANCH__" : "dev";
     ></RouterLinkIconButton> -->
     <div
       v-if="route.name === 'sets'"
-      class="fixed bottom-0 left-1/2 -translate-x-1/2 py-1 px-2 rounded-t-md text-xs bg-white opacity-50"
+      class="fixed bottom-0 left-1/2 -translate-x-1/2 w-max grid grid-cols-2 gap-x-4 py-1 px-2 rounded-t-md text-xs bg-white opacity-50"
     >
-      sha: {{ sha }}. DB ver: {{ dbVersion }}, branch: {{ branch }}
+      <span>db: {{ dbVersion }}</span>
+      <span>branch: {{ branch }}</span>
+      <span>date: {{ date }}</span>
+      <span>sha: {{ sha }}</span>
     </div>
   </div>
 </template>
