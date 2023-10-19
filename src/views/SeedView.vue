@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { deleteDB } from "idb";
 import { importCardSetUC } from "@/application/import-card-set";
-import { createCardSetUC } from "@/application/create-card-set";
-import { createCardUC } from "@/application/create-card";
 import IconButton from "@/components/IconButton.vue";
 import f1 from "@/data/f1";
 import b1 from "@/data/b1";
@@ -17,37 +15,31 @@ const handleSeedDB = async (options: number[][]) => {
   const [[cardSetMin, cardSetMax], [cardsMin, cardsMax]] = options;
   const { faker } = await _faker();
 
-  const cardSetsCount = faker.datatype.number({
+  const cardSetsCount = faker.number.int({
     min: cardSetMin,
     max: cardSetMax,
   });
 
   const sets = Array.from({ length: cardSetsCount }, () => {
-    const cardCount = faker.datatype.number({
+    const cardCount = faker.number.int({
       min: cardsMin,
       max: cardsMax,
     });
 
     return {
-      title: faker.random.words(
-        faker.datatype.number({
-          min: 1,
-          max: 3,
-        })
-      ),
+      title: faker.lorem.words({
+        min: 1,
+        max: 3,
+      }),
       items: Array.from({ length: cardCount }, () => ({
-        front: faker.random.words(
-          faker.datatype.number({
-            min: 1,
-            max: 5,
-          })
-        ),
-        back: faker.random.words(
-          faker.datatype.number({
-            min: 1,
-            max: 5,
-          })
-        ),
+        front: faker.lorem.words({
+          min: 1,
+          max: 5,
+        }),
+        back: faker.lorem.words({
+          min: 1,
+          max: 5,
+        }),
       })),
     };
   });
@@ -73,8 +65,7 @@ const handleDeleteDB = async () => {
   <div class="flex-grow bg-neutral-100 p-4">
     <p class="mb-4">
       <RouterLink :to="{ name: 'sets' }" class="text-indigo-500"
-        ><span class="inline-block rotate-180">➜</span> Back to card
-        sets</RouterLink
+        ><span class="inline-block rotate-180">➜</span> Back to card sets</RouterLink
       >
     </p>
 
@@ -116,10 +107,7 @@ const handleDeleteDB = async () => {
         class="flex items-start justify-between gap-4 py-4"
       >
         <span class="py-2"
-          >{{ title }}
-          <span class="text-xs opacity-60"
-            >({{ items.length }} cards)</span
-          ></span
+          >{{ title }} <span class="text-xs opacity-60">({{ items.length }} cards)</span></span
         >
         <IconButton
           icon="add"
@@ -133,11 +121,7 @@ const handleDeleteDB = async () => {
     <ul class="divide-y">
       <li class="flex items-start justify-between gap-4 py-4">
         <span class="py-2">Delete ALL data</span>
-        <IconButton
-          icon="delete"
-          class="-my-1 bg-red-100 shadow-md"
-          @click="handleDeleteDB"
-        />
+        <IconButton icon="delete" class="-my-1 bg-red-100 shadow-md" @click="handleDeleteDB" />
       </li>
     </ul>
   </div>
