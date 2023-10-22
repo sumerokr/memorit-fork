@@ -2,6 +2,7 @@ import { openDB } from "idb";
 import type { DBSchema, IDBPDatabase } from "idb";
 import type { CardSet } from "@/domain/card-set";
 import type { Card } from "@/domain/card";
+import type { Stat } from "@/domain/stat";
 
 interface MyDB1 extends DBSchema {
   "card-sets": {
@@ -13,9 +14,14 @@ interface MyDB1 extends DBSchema {
     value: Card;
     key: Card["id"];
     indexes: {
-      createdAt: Card["createdAt"];
-      cardSetId: Card["cardSetId"];
       cardSetId_createdAt: [Card["cardSetId"], Card["createdAt"]];
+    };
+  };
+  stats: {
+    value: Stat;
+    key: Stat["id"];
+    indexes: {
+      cardId: Stat["cardId"];
     };
   };
 }
@@ -42,10 +48,12 @@ export const getDBInstance = async () => {
         const cardsStore = dbv1.createObjectStore("cards", {
           keyPath: "id",
         });
-        cardsStore.createIndex("cardSetId_createdAt", [
-          "cardSetId",
-          "createdAt",
-        ]);
+        cardsStore.createIndex("cardSetId_createdAt", ["cardSetId", "createdAt"]);
+
+        const statsStore = dbv1.createObjectStore("stats", {
+          keyPath: "id",
+        });
+        statsStore.createIndex("cardId", "cardId");
       }
     },
   });

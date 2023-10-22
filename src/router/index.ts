@@ -53,6 +53,12 @@ const router = createRouter({
       props: true,
     },
     {
+      path: "/cards/:id",
+      name: "card",
+      component: () => import("../views/CardView.vue"),
+      props: true,
+    },
+    {
       path: "/sets/:cardSetId/cards/:id/edit",
       name: "card-edit",
       component: () => import("../views/UpdateCardView.vue"),

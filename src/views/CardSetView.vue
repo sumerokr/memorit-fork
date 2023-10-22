@@ -43,34 +43,21 @@ const handleDeleteCardSet = async () => {
 <template>
   <div class="flex-grow flex flex-col p-4 bg-neutral-100">
     <div class="flex items-center mb-4">
-      <RouterLinkIconButton
-        icon="arrow_back"
-        class="-ml-3 mr-1"
-        :to="{ name: 'sets' }"
+      <RouterLinkIconButton icon="arrow_back" class="-ml-3 mr-1" :to="{ name: 'sets' }"
         >Back</RouterLinkIconButton
       >
       <div class="ml-auto -mr-3 relative" ref="searchContainerEl">
-        <RouterLinkIconButton
-          :to="{ name: 'card-set-edit', params: { cardSetId } }"
-          icon="edit"
-        >
+        <RouterLinkIconButton :to="{ name: 'card-set-edit', params: { cardSetId } }" icon="edit">
           Edit
         </RouterLinkIconButton>
-        <IconButton
-          icon="delete"
-          :disabled="isDeleteCardSetLoading"
-          @click="handleDeleteCardSet"
-        >
+        <IconButton icon="delete" :disabled="isDeleteCardSetLoading" @click="handleDeleteCardSet">
           Delete
         </IconButton>
       </div>
     </div>
 
     <div v-if="cardSet">
-      <p
-        v-if="deleteCardSetError"
-        class="mb-4 border border-red-500 rounded-2xl p-4 bg-red-50"
-      >
+      <p v-if="deleteCardSetError" class="mb-4 border border-red-500 rounded-2xl p-4 bg-red-50">
         {{ deleteCardSetError }}
       </p>
       <h1 class="text-3xl mb-8">
@@ -83,9 +70,7 @@ const handleDeleteCardSet = async () => {
           >To study:
           <span
             class="inline-block px-1 py-0.5 rounded-md"
-            :class="
-              cardSet.cardsToStudyCount > 0 ? 'bg-amber-300' : 'bg-amber-100'
-            "
+            :class="cardSet.cardsToStudyCount > 0 ? 'bg-amber-300' : 'bg-amber-100'"
             >{{ cardSet.cardsToStudyCount }}</span
           ></span
         >
@@ -133,10 +118,7 @@ const handleDeleteCardSet = async () => {
       </ul>
     </div>
 
-    <div
-      v-if="getCardSetError"
-      class="mb-4 border border-red-500 rounded-2xl p-4 bg-red-50"
-    >
+    <div v-if="getCardSetError" class="mb-4 border border-red-500 rounded-2xl p-4 bg-red-50">
       {{ getCardSetError }}
     </div>
 
