@@ -1,20 +1,46 @@
 // TODO: ensure that put only updates
 import { getDBInstance } from "@/services/idb-storage";
-import type { UpdateStatApi } from "@/application/update-stat";
+import { createStat, updateStat } from "@/domain/stat";
+import type { UpdateStatApi } from "@/application/update-card-progress";
 
 // TODO: handle JSON errors
-export const updateCardApi: UpdateStatApi = async ({ id, data }) => {
-  console.time("api/cards/updateCardApi");
+export const updateStatApi: UpdateStatApi = async ({ cardId, status }) => {
+  console.time("api/stats/updateStatApi");
+
+  await new Promise((resolve) => setTimeout(resolve, 300));
+
   const db = await getDBInstance();
-  const transaction = db.transaction("cards", "readwrite");
-  const card = await transaction.store.get(id);
-  if (card) {
-    const updatedCard = Object.assign(card, data);
-    await transaction.store.put(updatedCard);
-    console.timeEnd("api/cards/updateCardApi");
-    return updatedCard;
+  const tx = db.transaction("stats", "readwrite");
+
+  const existingStat = await tx.store.index("cardId").get(cardId);
+
+  if (!existingStat) {
+    const createdStat = createStat({
+      id: crypto.randomUUID(),
+      cardId,
+      userId: "local-user",
+      status,
+      createdAt: new Date().toISOString(),
+    });
+
+    await tx.store.add(createdStat);
+
+    console.timeEnd("api/stats/updateStatApi");
+
+    return createdStat;
   } else {
-    // TODO: handle error better
-    throw new Error("api/cards/updateCardApi");
+    const updatedStat = updateStat({
+      stat: existingStat,
+      data: {
+        status,
+        updatedAt: new Date().toISOString(),
+      },
+    });
+
+    await tx.store.put(updatedStat);
+
+    console.timeEnd("api/stats/updateStatApi");
+
+    return updatedStat;
   }
 };
