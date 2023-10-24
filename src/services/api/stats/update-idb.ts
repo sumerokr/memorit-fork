@@ -22,6 +22,7 @@ export const updateStatApi: UpdateStatApi = async ({ cardId, status }) => {
     });
 
     await tx.store.add(createdStat);
+    await tx.done;
 
     console.timeEnd("api/stats/updateStatApi");
 
@@ -36,6 +37,7 @@ export const updateStatApi: UpdateStatApi = async ({ cardId, status }) => {
     });
 
     await tx.store.put(updatedStat);
+    await tx.done;
 
     console.timeEnd("api/stats/updateStatApi");
 

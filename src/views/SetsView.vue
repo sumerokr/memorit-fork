@@ -4,7 +4,7 @@ import { getCardSetsUC } from "@/application/get-card-sets";
 import CardSetList from "@/components/CardSetList.vue";
 import RouterLinkCommonButton from "@/components/RouterLinkCommonButton.vue";
 
-const { state: cardSets, error } = useAsyncState(getCardSetsUC, null);
+const { state: cardSets, isLoading, error } = useAsyncState(getCardSetsUC, null);
 </script>
 
 <template>
@@ -13,22 +13,15 @@ const { state: cardSets, error } = useAsyncState(getCardSetsUC, null);
       <h1 class="text-2xl">Card sets</h1>
     </div>
 
-    <p
-      v-if="error"
-      class="mb-4 border border-red-500 rounded-2xl p-4 bg-red-50"
-    >
-      Error
-    </p>
+    <p v-if="error" class="mb-4 border border-red-500 rounded-2xl p-4 bg-red-50">Error</p>
+
+    <p v-if="isLoading">Loading...</p>
 
     <CardSetList v-if="cardSets?.length" :card-sets="cardSets" />
 
     <div class="my-auto text-center" v-else-if="cardSets && !cardSets.length">
       You have no card sets yet.
-      <RouterLinkCommonButton
-        icon="add"
-        :to="{ name: 'new-card-set' }"
-        class="bg-indigo-200"
-      >
+      <RouterLinkCommonButton icon="add" :to="{ name: 'new-card-set' }" class="bg-indigo-200">
         Create
       </RouterLinkCommonButton>
     </div>
@@ -36,9 +29,7 @@ const { state: cardSets, error } = useAsyncState(getCardSetsUC, null);
     <RouterLink
       class="fixed right-4 bottom-4 p-4 flex rounded-2xl bg-indigo-500 text-white shadow-md"
       :to="{ name: 'new-card-set' }"
-      ><span class="material-symbols-outlined text-2xl leading-none">
-        add
-      </span></RouterLink
+      ><span class="material-symbols-outlined text-2xl leading-none">add</span></RouterLink
     >
   </div>
 </template>

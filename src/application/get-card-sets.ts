@@ -4,22 +4,14 @@ import { notificationService } from "@/services/index";
 
 //#region types
 export type GetCardSetsApi = () => Promise<
-  Array<
-    CardSet & {
-      cardsCount: number;
-      cardsToStudyCount: number;
-    }
-  >
+  Array<{
+    cardSet: CardSet;
+    cardsCount: number;
+    cardsToStudyCount: number;
+  }>
 >;
 
-export type GetCardSetsUC = () => Promise<
-  Array<
-    CardSet & {
-      cardsCount: number;
-      cardsToStudyCount: number;
-    }
-  >
->;
+export type GetCardSetsUC = GetCardSetsApi;
 //#endregion
 
 export const getCardSetsUC: GetCardSetsUC = async () => {

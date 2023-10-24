@@ -23,7 +23,7 @@ export const getStudyCardsApi: GetStudyCardsApi = async ({ cardSetId }) => {
   while (cursor) {
     const stat = await statsByCardIdIndex.get(cursor.value.id);
 
-    if (stat) {
+    if (stat && stat.progress !== -1) {
       pairs.push([cursor.value.id, stat.showAfter]);
     } else {
       pairs.push([cursor.value.id, cursor.value.createdAt]);
@@ -44,14 +44,20 @@ export const getStudyCardsApi: GetStudyCardsApi = async ({ cardSetId }) => {
 
   const slice = pairs.filter(([, date]) => date < new Date().toISOString()).slice(0, 10);
 
-  for (const [cardId] of slice) {
-    const card = await transaction.objectStore("cards").get(cardId);
-    const stat = await statsByCardIdIndex.get(cardId);
+  const promises = slice.map(([cardId]) => {
+    const cardPromise = transaction.objectStore("cards").get(cardId);
+    const statPromise = statsByCardIdIndex.get(cardId);
+
+    return Promise.all([cardPromise, statPromise]);
+  });
+
+  (await Promise.all(promises)).forEach(([card, stat]) => {
     response.push({ card: card!, stat: stat ?? null });
-  }
+  });
 
   await transaction.done;
 
   console.timeEnd("api/cards/getStudyCardsApi");
+
   return response;
 };
