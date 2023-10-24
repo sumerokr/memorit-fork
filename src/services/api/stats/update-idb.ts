@@ -7,8 +7,6 @@ import type { UpdateStatApi } from "@/application/update-card-progress";
 export const updateStatApi: UpdateStatApi = async ({ cardId, status }) => {
   console.time("api/stats/updateStatApi");
 
-  await new Promise((resolve) => setTimeout(resolve, 300));
-
   const db = await getDBInstance();
   const tx = db.transaction("stats", "readwrite");
 

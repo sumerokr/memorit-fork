@@ -1,11 +1,14 @@
 import type { Card } from "./card";
 
+const progressMap = [0, 1, 3, 5, 8, 13, 21, 34, 55, 89, 144];
+
 export type Stat = {
   id: string;
   cardId: Card["id"];
   userId: string;
   createdAt: string;
   updatedAt: string;
+  showAfter: string;
   attemptCount: number;
   successCount: number;
   progress: number;
@@ -24,11 +27,12 @@ export const createStat = (
     createdAt,
     updatedAt: createdAt,
     attemptCount: (() => {
+      // TODO: handle all default cases!
       switch (status) {
         case "success":
         case "failure":
           return 1;
-        default:
+        case "skip":
           return 0;
       }
     })(),
@@ -36,7 +40,8 @@ export const createStat = (
       switch (status) {
         case "success":
           return 1;
-        default:
+        case "failure":
+        case "skip":
           return 0;
       }
     })(),
@@ -44,10 +49,23 @@ export const createStat = (
       switch (status) {
         case "success":
           return 1;
+        case "failure":
+          return 0;
         case "skip":
           return -1;
-        default:
-          return 0;
+      }
+    })(),
+    showAfter: (() => {
+      switch (status) {
+        case "success": {
+          const nowDate = new Date(createdAt).getDate();
+          const newDate = new Date();
+          newDate.setDate(nowDate + progressMap[1]);
+          return newDate.toISOString();
+        }
+        case "failure":
+        case "skip":
+          return createdAt;
       }
     })(),
   };
@@ -63,6 +81,8 @@ export const updateStat = ({
   const { updatedAt, status } = data;
 
   const newStat = structuredClone(stat);
+
+  newStat.updatedAt = updatedAt;
 
   newStat.progress = (() => {
     switch (status) {
@@ -86,6 +106,7 @@ export const updateStat = ({
         return newStat.attemptCount;
     }
   })();
+
   newStat.successCount = (() => {
     switch (status) {
       case "success":
@@ -94,7 +115,13 @@ export const updateStat = ({
         return newStat.successCount;
     }
   })();
-  newStat.updatedAt = updatedAt;
+
+  newStat.showAfter = (() => {
+    const nowDate = new Date().getDate();
+    const newDate = new Date();
+    newDate.setDate(nowDate + progressMap[newStat.progress]);
+    return newDate.toISOString();
+  })();
 
   return newStat;
 };

@@ -70,12 +70,12 @@ const router = createRouter({
       component: () => import("../views/CreateCardView.vue"),
       props: true,
     },
-    // {
-    //   path: "/sets/:cardSetId/study",
-    //   name: "study",
-    //   component: () => import("../views/PlayView.vue"),
-    //   props: true,
-    // },
+    {
+      path: "/sets/:cardSetId/study",
+      name: "study",
+      component: () => import("../views/BacksideView.vue"),
+      props: true,
+    },
     {
       path: "/seed",
       name: "seed",

@@ -19,7 +19,7 @@ const {
   state: cards,
 } = useAsyncState(() => getStudyCardsUC({ cardSetId: props.cardSetId }), null);
 
-const { isLoading: isUpdateCardLoading, execute: updateCardProgress } =
+const { isLoading: isUpdateCardProgressLoading, execute: updateCardProgressExecute } =
   useAsyncState(updateCardProgressUC, null, {
     immediate: false,
   });
@@ -32,7 +32,7 @@ const total = computed(() => {
 const current = ref(1);
 
 const currentCard = computed(() => {
-  return cards.value?.[current.value - 1];
+  return cards.value?.[current.value - 1]?.card;
 });
 
 const transitionName = ref("");
@@ -44,7 +44,7 @@ const markHard = async () => {
   current.value++;
   transitionName.value = "slide-left";
   results[0]++;
-  await updateCardProgress(0, { id, success: true });
+  await updateCardProgressExecute(0, { cardId: id, status: "failure" });
 };
 const markEasy = async () => {
   const { id } = currentCard.value!;
@@ -52,7 +52,7 @@ const markEasy = async () => {
   current.value++;
   transitionName.value = "slide-right";
   results[2]++;
-  await updateCardProgress(0, { id, success: false });
+  await updateCardProgressExecute(0, { cardId: id, status: "success" });
 };
 
 const onRestart = async () => {
@@ -77,26 +77,16 @@ const onRestart = async () => {
 
     <div v-if="isGetStudyCardLoading">Loading...</div>
 
-    <div v-else-if="total <= 0" class="mt-4">
-      No cards to study (for now). Check again later.
-    </div>
+    <div v-else-if="total <= 0" class="mt-4">No cards to study (for now). Check again later.</div>
 
     <template v-else-if="currentCard">
       <p class="mb-4 text-sm opacity-60">Card: {{ current }} / {{ total }}</p>
       <div class="_card relative mb-4">
         <Transition :name="transitionName">
-          <div
-            class="border rounded-xl p-4 bg-white absolute inset-0"
-            :key="currentCard.id"
-          >
-            <div
-              class="grid _grid h-full"
-              :class="isShown ? '_grid-show' : '_grid-hide'"
-            >
+          <div class="border rounded-xl p-4 bg-white absolute inset-0" :key="currentCard.id">
+            <div class="grid _grid h-full" :class="isShown ? '_grid-show' : '_grid-hide'">
               <p class="flex items-center justify-center">
-                <span class="text-center text-2xl">{{
-                  currentCard.front
-                }}</span>
+                <span class="text-center text-2xl">{{ currentCard.front }}</span>
               </p>
               <p class="_back flex items-center justify-center overflow-hidden">
                 <span class="text-center text-xl">{{ currentCard.back }}</span>
@@ -112,41 +102,31 @@ const onRestart = async () => {
           <CommonButton
             icon="sentiment_dissatisfied"
             class="flex-1 bg-red-200"
-            :disabled="isUpdateCardLoading"
+            :disabled="isUpdateCardProgressLoading"
             @click="markHard"
-            >Hard</CommonButton
+            >Forgot</CommonButton
           >
           <CommonButton
             icon="sentiment_satisfied"
             class="flex-1 bg-green-200"
-            :disabled="isUpdateCardLoading"
+            :disabled="isUpdateCardProgressLoading"
             @click="markEasy"
-            >Easy</CommonButton
+            >Remember</CommonButton
           >
         </div>
       </div>
 
       <div v-else class="border rounded-xl p-4 bg-white">
-        <p class="mb-2 text-sm opacity-60">
-          Do you remember the card? Let's find out
-        </p>
+        <p class="mb-2 text-sm opacity-60">Do you remember the card? Let's find out</p>
         <div class="flex">
-          <CommonButton
-            class="flex-grow bg-indigo-200"
-            @click="isShown = !isShown"
-          >
+          <CommonButton class="flex-grow bg-indigo-200" @click="isShown = !isShown">
             Reveal
           </CommonButton>
         </div>
       </div>
     </template>
 
-    <WellDone
-      v-else
-      :card-set-id="cardSetId"
-      :results="results"
-      @restart="onRestart"
-    />
+    <WellDone v-else :card-set-id="cardSetId" :results="results" @restart="onRestart" />
   </div>
 </template>
 

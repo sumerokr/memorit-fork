@@ -2,10 +2,10 @@
 import { computed } from "vue";
 import CommonButton from "@/components/CommonButton.vue";
 import RouterLinkCommonButton from "@/components/RouterLinkCommonButton.vue";
-import type { CardSetV2 } from "@/domain/card-set";
+import type { CardSet } from "@/domain/card-set";
 
 type Props = {
-  cardSetId: CardSetV2["id"];
+  cardSetId: CardSet["id"];
   results: [number, number, number];
 };
 
@@ -25,21 +25,10 @@ const total = computed(() => {
     <div class="flex-grow flex flex-col justify-center">
       <h2 class="text-5xl font-medium text-center mb-8">Well done!</h2>
       <p class="mb-2 text-center">You have studied {{ total }} cards.</p>
-      <div
-        class="flex h-4 border-2 border-neutral-500 rounded-xl overflow-hidden"
-      >
-        <div
-          class="bg-red-200 text-xs"
-          :style="`width: ${(results[0] / total) * 100}%`"
-        ></div>
-        <div
-          class="bg-yellow-200"
-          :style="`width: ${(results[1] / total) * 100}%`"
-        ></div>
-        <div
-          class="bg-green-200"
-          :style="`width: ${(results[2] / total) * 100}%`"
-        ></div>
+      <div class="flex h-4 border-2 border-neutral-500 rounded-xl overflow-hidden">
+        <div class="bg-red-200 text-xs" :style="`width: ${(results[0] / total) * 100}%`"></div>
+        <div class="bg-yellow-200" :style="`width: ${(results[1] / total) * 100}%`"></div>
+        <div class="bg-green-200" :style="`width: ${(results[2] / total) * 100}%`"></div>
       </div>
     </div>
 
@@ -50,10 +39,7 @@ const total = computed(() => {
         class="flex-grow bg-indigo-500 text-white"
         >Back to set
       </RouterLinkCommonButton>
-      <CommonButton
-        before="school"
-        class="flex-grow bg-indigo-200"
-        @click="emit('restart')"
+      <CommonButton before="school" class="flex-grow bg-indigo-200" @click="emit('restart')"
         >Study more
       </CommonButton>
     </p>

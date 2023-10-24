@@ -8,7 +8,9 @@ interface MyDB1 extends DBSchema {
   "card-sets": {
     value: CardSet;
     key: CardSet["id"];
-    indexes: { createdAt: CardSet["createdAt"] };
+    indexes: {
+      createdAt: CardSet["createdAt"];
+    };
   };
   cards: {
     value: Card;

@@ -101,7 +101,7 @@ const handleDeleteCardSet = async () => {
             </div>
           </RouterLink>
         </li>
-        <!-- <li>
+        <li>
           <RouterLink
             :to="{ name: 'study', params: { cardSetId: props.cardSetId } }"
             class="flex items-start gap-1 px-1 py-2.5"
@@ -109,12 +109,10 @@ const handleDeleteCardSet = async () => {
             <IconButton icon="school" class="" />
             <div class="py-0.5">
               <h2 class="font-medium">Study</h2>
-              <p class="text-sm opacity-60">
-                Use the interval repetition technique
-              </p>
+              <p class="text-sm opacity-60">Use the interval repetition technique</p>
             </div>
           </RouterLink>
-        </li> -->
+        </li>
       </ul>
     </div>
 
