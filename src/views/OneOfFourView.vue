@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { getStudyCardsUC } from "@/application/get-study-cards";
+import shuffle from "lodash/shuffle";
+import { getOneOfFourCardsUC } from "@/application/get-one-of-four-cards";
 import { updateCardProgressUC } from "@/application/update-card-progress";
 import { useAsyncState } from "@vueuse/core";
 import RouterLinkIconButton from "@/components/RouterLinkIconButton.vue";
 import CommonButton from "@/components/CommonButton.vue";
 import WellDone from "@/components/WellDone.vue";
+import type { Card } from "@/domain/card";
 
 type Props = {
   cardSetId: string;
@@ -14,10 +16,10 @@ type Props = {
 const props = defineProps<Props>();
 
 const {
-  isLoading: isGetStudyCardLoading,
-  execute: getStudyCards,
+  isLoading: isGetOneOfFourCardLoading,
+  execute: getOneOfFourCards,
   state: cards,
-} = useAsyncState(() => getStudyCardsUC({ cardSetId: props.cardSetId }), null);
+} = useAsyncState(() => getOneOfFourCardsUC({ cardSetId: props.cardSetId }), null);
 
 const { isLoading: isUpdateCardProgressLoading, execute: updateCardProgressExecute } =
   useAsyncState(updateCardProgressUC, null, {
@@ -32,31 +34,50 @@ const total = computed(() => {
 const current = ref(1);
 
 const currentCard = computed(() => {
-  return cards.value?.[current.value - 1]?.card;
+  return cards.value?.[current.value - 1];
 });
 
-const transitionName = ref("");
+const answers = computed(() => shuffle([currentCard.value!.card, ...currentCard.value!.rest]));
+
 const results: [number, number] = [0, 0];
 
-const markHard = async () => {
-  const { id } = currentCard.value!;
-  isShown.value = false;
-  current.value++;
-  transitionName.value = "slide-left";
+const markFailure = async () => {
+  const { id } = currentCard.value!.card;
   results[0]++;
   await updateCardProgressExecute(0, { cardId: id, status: "failure" });
 };
-const markEasy = async () => {
-  const { id } = currentCard.value!;
-  isShown.value = false;
-  current.value++;
-  transitionName.value = "slide-right";
+
+const markSuccess = async () => {
+  const { id } = currentCard.value!.card;
   results[1]++;
   await updateCardProgressExecute(0, { cardId: id, status: "success" });
 };
 
+const answer = ref<Card["id"] | null>(null);
+
+const setAnswer = async (_answer: Card["id"]) => {
+  if (isUpdateCardProgressLoading.value || answer.value !== null) {
+    return;
+  }
+
+  isShown.value = true;
+  answer.value = _answer;
+
+  if (_answer === currentCard.value!.card.id) {
+    await markSuccess();
+  } else {
+    await markFailure();
+  }
+};
+
+const next = () => {
+  isShown.value = false;
+  current.value++;
+  answer.value = null;
+};
+
 const onRestart = async () => {
-  await getStudyCards();
+  await getOneOfFourCards();
   current.value = 1;
   results[0] = results[1] = 0;
 };
@@ -75,52 +96,47 @@ const onRestart = async () => {
       <div class="ml-auto -mr-3 relative"></div>
     </div>
 
-    <div v-if="isGetStudyCardLoading">Loading...</div>
+    <div v-if="isGetOneOfFourCardLoading">Loading...</div>
 
     <div v-else-if="total <= 0" class="mt-4">No cards to study (for now). Check again later.</div>
 
-    <template v-else-if="currentCard">
+    <template v-else-if="currentCard?.card">
       <p class="mb-4 text-sm opacity-60">Card: {{ current }} / {{ total }}</p>
       <div class="_card relative mb-4">
-        <Transition :name="transitionName">
-          <div class="border rounded-xl p-4 bg-white absolute inset-0" :key="currentCard.id">
-            <div class="grid _grid h-full" :class="isShown ? '_grid-show' : '_grid-hide'">
+        <Transition name="slide-left">
+          <div class="border rounded-xl p-4 bg-white absolute inset-0" :key="currentCard!.card.id">
+            <div class="grid _grid h-full">
               <p class="flex items-center justify-center">
-                <span class="text-center text-2xl">{{ currentCard.front }}</span>
-              </p>
-              <p class="_back flex items-center justify-center overflow-hidden">
-                <span class="text-center text-xl">{{ currentCard.back }}</span>
+                <span class="text-center text-2xl">{{ currentCard!.card.front }}</span>
               </p>
             </div>
           </div>
         </Transition>
       </div>
 
-      <div v-if="isShown" class="border rounded-xl p-4 bg-white">
-        <p class="mb-2 text-sm opacity-60">How well did you know the answer?</p>
-        <div class="flex flex-wrap gap-4">
+      <div class="mb-4 border rounded-xl p-4 bg-white">
+        <p class="mb-2 text-sm opacity-60">Pick the right answer</p>
+        <div class="flex flex-col gap-4">
           <CommonButton
+            v-for="card in answers"
+            :key="card.id"
             icon="sentiment_dissatisfied"
-            class="flex-1 bg-red-200"
+            class="flex-1 bg-neutral-200"
+            :class="{
+              '!bg-red-200': answer && answer === card.id && card.id !== currentCard!.card.id,
+              '!bg-green-200': answer && answer === card.id && card.id === currentCard!.card.id,
+            }"
             :disabled="isUpdateCardProgressLoading"
-            @click="markHard"
-            >Forgot</CommonButton
-          >
-          <CommonButton
-            icon="sentiment_satisfied"
-            class="flex-1 bg-green-200"
-            :disabled="isUpdateCardProgressLoading"
-            @click="markEasy"
-            >Remember</CommonButton
+            @click="setAnswer(card.id)"
+            >{{ card.back }}</CommonButton
           >
         </div>
       </div>
 
-      <div v-else class="border rounded-xl p-4 bg-white">
-        <p class="mb-2 text-sm opacity-60">Do you remember the card? Let's find out</p>
+      <div class="border rounded-xl p-4 bg-white">
         <div class="flex">
-          <CommonButton class="flex-grow bg-indigo-200" @click="isShown = !isShown">
-            Reveal
+          <CommonButton class="flex-grow bg-indigo-200" @click="next" :disabled="!isShown">
+            Next
           </CommonButton>
         </div>
       </div>
@@ -132,49 +148,24 @@ const onRestart = async () => {
 
 <style scoped>
 ._card {
-  height: clamp(10rem, 50vh, 24rem);
-}
-
-._grid {
-  will-change: grid-template-rows;
-  transition: grid-template-rows 0.2s;
-}
-
-._grid-hide {
-  grid-template-rows: 100% 0;
-}
-
-._grid-show {
-  grid-template-rows: 50% 50%;
-}
-
-._back {
-  box-shadow: inset 0 1px 0 #e5e7eb;
+  height: clamp(10rem, 20vh, 24rem);
 }
 
 .slide-left-enter-active,
-.slide-left-leave-active,
-.slide-right-enter-active,
-.slide-right-leave-active {
+.slide-left-leave-active {
   transition: transform 0.2s ease-in;
 }
 
-.slide-left-enter-from,
-.slide-right-enter-from {
+.slide-left-enter-from {
   z-index: 0;
   transform: scale(80%);
 }
 
-.slide-right-leave-active,
 .slide-left-leave-active {
   z-index: 1;
 }
 
 .slide-left-leave-to {
   transform: translateX(calc(-100% - 1rem));
-}
-
-.slide-right-leave-to {
-  transform: translateX(calc(100% - 1rem));
 }
 </style>

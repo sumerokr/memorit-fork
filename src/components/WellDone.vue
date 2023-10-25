@@ -6,7 +6,7 @@ import type { CardSet } from "@/domain/card-set";
 
 type Props = {
   cardSetId: CardSet["id"];
-  results: [number, number, number];
+  results: [number, number];
 };
 
 const props = defineProps<Props>();
@@ -27,8 +27,7 @@ const total = computed(() => {
       <p class="mb-2 text-center">You have studied {{ total }} cards.</p>
       <div class="flex h-4 border-2 border-neutral-500 rounded-xl overflow-hidden">
         <div class="bg-red-200 text-xs" :style="`width: ${(results[0] / total) * 100}%`"></div>
-        <div class="bg-yellow-200" :style="`width: ${(results[1] / total) * 100}%`"></div>
-        <div class="bg-green-200" :style="`width: ${(results[2] / total) * 100}%`"></div>
+        <div class="bg-green-200" :style="`width: ${(results[1] / total) * 100}%`"></div>
       </div>
     </div>
 

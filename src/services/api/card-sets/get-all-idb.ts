@@ -24,11 +24,11 @@ export const getAllCardSetsApi: GetCardSetsApi = async () => {
       .index("cardSetId_createdAt")
       .count(IDBKeyRange.bound([cardSetId, ""], [cardSetId, new Date().toISOString()]));
 
-    const allKeys = await cardsStore
+    const cardIds = await cardsStore
       .index("cardSetId_createdAt")
       .getAllKeys(IDBKeyRange.bound([cardSetId, ""], [cardSetId, new Date().toISOString()]));
 
-    const promises = allKeys.map((cardId) => statsStore.index("cardId").get(cardId));
+    const promises = cardIds.map((cardId) => statsStore.index("cardId").get(cardId));
 
     const stats = await Promise.all(promises);
 

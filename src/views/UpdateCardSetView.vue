@@ -25,18 +25,21 @@ const { isLoading: isGetCardSetLoading } = useAsyncState(
       if (!data) {
         return;
       }
-      title.value = data.title;
+      title.value = data.cardSet.title;
     },
   }
 );
 
-const { isLoading: isUpdateCardSetLoading, execute: updateCardSet } =
-  useAsyncState(updateCardSetUC, null, {
+const { isLoading: isUpdateCardSetLoading, execute: updateCardSet } = useAsyncState(
+  updateCardSetUC,
+  null,
+  {
     immediate: false,
     onSuccess: () => {
       router.push({ name: "set", params: { cardSetId: props.cardSetId } });
     },
-  });
+  }
+);
 
 const onSubmit = async () => {
   await updateCardSet(0, {

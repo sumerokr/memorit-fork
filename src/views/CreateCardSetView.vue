@@ -10,10 +10,11 @@ import RouterLinkIconButton from "@/components/RouterLinkIconButton.vue";
 const title = ref("");
 const error = ref("");
 const createdCardSets = ref<
-  (CardSet & {
+  Array<{
+    cardSet: CardSet;
     cardsCount: number;
     cardsToStudyCount: number;
-  })[]
+  }>
 >([]);
 
 const { isLoading, execute } = useAsyncState(createCardSetUC, null, {
@@ -24,7 +25,7 @@ const { isLoading, execute } = useAsyncState(createCardSetUC, null, {
     }
 
     createdCardSets.value.unshift({
-      ...cardSet,
+      cardSet: cardSet,
       cardsCount: 0,
       cardsToStudyCount: 0,
     });
@@ -52,20 +53,13 @@ const handleCreateCardSet = async () => {
 <template>
   <div class="flex flex-col flex-grow p-4 bg-neutral-100">
     <div class="flex items-center mb-4">
-      <RouterLinkIconButton
-        icon="arrow_back"
-        class="-ml-3 mr-1"
-        :to="{ name: 'sets' }"
+      <RouterLinkIconButton icon="arrow_back" class="-ml-3 mr-1" :to="{ name: 'sets' }"
         >Back</RouterLinkIconButton
       >
       <h1 class="text-2xl">Add new card set</h1>
     </div>
 
-    <CardSetForm
-      v-model:title.trim="title"
-      :is-loading="isLoading"
-      @submit="handleCreateCardSet"
-    />
+    <CardSetForm v-model:title.trim="title" :is-loading="isLoading" @submit="handleCreateCardSet" />
 
     <p v-if="error">{{ error }}</p>
     <CardSetList :cardSets="createdCardSets" />

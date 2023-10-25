@@ -15,7 +15,7 @@ const props = defineProps<Props>();
 const router = useRouter();
 
 const {
-  state: cardSet,
+  state: cardSetState,
   isLoading: isGetCardSetLoading,
   error: getCardSetError,
 } = useAsyncState(() => getCardSetUC({ id: props.cardSetId }), null);
@@ -56,22 +56,22 @@ const handleDeleteCardSet = async () => {
       </div>
     </div>
 
-    <div v-if="cardSet">
+    <div v-if="cardSetState">
       <p v-if="deleteCardSetError" class="mb-4 border border-red-500 rounded-2xl p-4 bg-red-50">
         {{ deleteCardSetError }}
       </p>
       <h1 class="text-3xl mb-8">
-        {{ cardSet.title }}
+        {{ cardSetState.cardSet.title }}
       </h1>
 
       <p class="mb-8 flex items-baseline justify-between opacity-60">
-        <span>Cards: {{ cardSet.cardsCount }}</span>
+        <span>Cards: {{ cardSetState.cardsCount }}</span>
         <span
           >To study:
           <span
             class="inline-block px-1 py-0.5 rounded-md"
-            :class="cardSet.cardsToStudyCount > 0 ? 'bg-amber-300' : 'bg-amber-100'"
-            >{{ cardSet.cardsToStudyCount }}</span
+            :class="cardSetState.cardsToStudyCount > 0 ? 'bg-amber-300' : 'bg-amber-100'"
+            >{{ cardSetState.cardsToStudyCount }}</span
           ></span
         >
       </p>
@@ -110,6 +110,18 @@ const handleDeleteCardSet = async () => {
             <div class="py-0.5">
               <h2 class="font-medium">Study</h2>
               <p class="text-sm opacity-60">Use the interval repetition technique</p>
+            </div>
+          </RouterLink>
+        </li>
+        <li>
+          <RouterLink
+            :to="{ name: 'oneOfFour', params: { cardSetId: props.cardSetId } }"
+            class="flex items-start gap-1 px-1 py-2.5"
+          >
+            <IconButton icon="list" class="" />
+            <div class="py-0.5">
+              <h2 class="font-medium">One of four</h2>
+              <p class="text-sm opacity-60">Some description</p>
             </div>
           </RouterLink>
         </li>

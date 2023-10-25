@@ -3,12 +3,11 @@ import { getCardSetApi } from "@/services/api/card-sets/get-idb";
 import { notificationService } from "@/services/index";
 
 //#region types
-export type GetCardSetApi = (args: { id: CardSet["id"] }) => Promise<
-  CardSet & {
-    cardsCount: number;
-    cardsToStudyCount: number;
-  }
->;
+export type GetCardSetApi = (args: { id: CardSet["id"] }) => Promise<{
+  cardSet: CardSet;
+  cardsCount: number;
+  cardsToStudyCount: number;
+}>;
 
 export type GetCardSetUC = GetCardSetApi;
 //#endregion

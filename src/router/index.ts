@@ -77,6 +77,12 @@ const router = createRouter({
       props: true,
     },
     {
+      path: "/sets/:cardSetId/one-of-four",
+      name: "oneOfFour",
+      component: () => import("../views/OneOfFourView.vue"),
+      props: true,
+    },
+    {
       path: "/seed",
       name: "seed",
       component: () => import("../views/SeedView.vue"),
