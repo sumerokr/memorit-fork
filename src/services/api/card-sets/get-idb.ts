@@ -1,5 +1,6 @@
 import type { GetCardSetApi } from "@/application/get-card-set";
 import { getDBInstance } from "@/services/idb-storage";
+import type { ProgressMap } from "@/domain/stat";
 
 export const getCardSetApi: GetCardSetApi = async ({ id }) => {
   console.time("api/card-sets/getCardSetApi");
@@ -18,24 +19,32 @@ export const getCardSetApi: GetCardSetApi = async ({ id }) => {
     .index("cardSetId_createdAt")
     .getAllKeys(IDBKeyRange.bound([id, ""], [id, new Date().toISOString()]));
 
-  const promises = cardIds.map((cardId) => statsStore.index("cardId").get(cardId));
+  const statPromises = cardIds.map((cardId) => statsStore.index("cardId").get(cardId));
 
-  const [cardSet, stats] = await Promise.all([getCardSetPromise, Promise.all(promises)]);
+  const [cardSet, stats] = await Promise.all([getCardSetPromise, Promise.all(statPromises)]);
 
-  const cardsToStudyCount = stats.filter((stat) => {
-    // include ones that weren't studied yet
-    if (!stat) {
-      return true;
-    }
+  const [cardsToStudyCount, progressMap] = stats.reduce<[number, Partial<ProgressMap>]>(
+    (acc, stat) => {
+      if (!stat) {
+        acc[0] = (acc[0] ?? 0) + 1;
+        acc[1][0] = (acc[1][0] ?? 0) + 1;
+        return acc;
+      }
 
-    // skip ones that were skipped
-    if (stat.progress !== -1) {
-      return false;
-    }
+      if (stat.progress === -1) {
+        acc[1][stat.progress] = (acc[1][stat.progress] ?? 0) + 1;
+        return acc;
+      }
 
-    // include ones that have showAfter in the past
-    return stat.showAfter < now;
-  }).length;
+      if (stat.showAfter < now) {
+        acc[0] = (acc[0] ?? 0) + 1;
+      }
+
+      acc[1][stat.progress] = (acc[1][stat.progress] ?? 0) + 1;
+      return acc;
+    },
+    [0, {}]
+  );
 
   if (cardSet) {
     console.timeEnd("api/card-sets/getCardSetApi");
@@ -43,6 +52,7 @@ export const getCardSetApi: GetCardSetApi = async ({ id }) => {
       cardSet,
       cardsCount: cardIds.length,
       cardsToStudyCount,
+      progressMap,
     };
   }
 

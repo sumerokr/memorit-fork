@@ -1,4 +1,5 @@
 import type { CardSet } from "@/domain/card-set";
+import type { ProgressMap } from "@/domain/stat";
 import { getCardSetApi } from "@/services/api/card-sets/get-idb";
 import { notificationService } from "@/services/index";
 
@@ -7,6 +8,7 @@ export type GetCardSetApi = (args: { id: CardSet["id"] }) => Promise<{
   cardSet: CardSet;
   cardsCount: number;
   cardsToStudyCount: number;
+  progressMap: ProgressMap;
 }>;
 
 export type GetCardSetUC = GetCardSetApi;

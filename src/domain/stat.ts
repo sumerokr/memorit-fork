@@ -2,6 +2,12 @@ import type { Card } from "./card";
 
 const progressMap = [0, 1, 3, 5, 8, 13, 21, 34, 55, 89, 144];
 
+export type Progress = -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+
+export type ProgressMap = Partial<{
+  [key in Progress]: number;
+}>;
+
 export type Stat = {
   id: string;
   cardId: Card["id"];
@@ -11,7 +17,7 @@ export type Stat = {
   showAfter: string;
   attemptCount: number;
   successCount: number;
-  progress: number;
+  progress: Progress;
 };
 
 export const createStat = (
@@ -87,9 +93,9 @@ export const updateStat = ({
   newStat.progress = (() => {
     switch (status) {
       case "success":
-        return Math.min(newStat.progress + 1, 10);
+        return Math.max(Math.min(newStat.progress + 1, 10), -1) as Progress;
       case "failure":
-        return Math.max(Math.floor(Math.sqrt(newStat.progress)), 0);
+        return Math.min(Math.max(Math.floor(Math.sqrt(newStat.progress)), 0), 10) as Progress;
       case "skip":
         return -1;
       default:

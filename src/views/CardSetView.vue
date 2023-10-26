@@ -5,6 +5,7 @@ import { getCardSetUC } from "@/application/get-card-set";
 import { deleteCardSetUC } from "@/application/delete-card-set";
 import IconButton from "@/components/IconButton.vue";
 import RouterLinkIconButton from "@/components/RouterLinkIconButton.vue";
+import LinearStats from "@/components/LinearStats.vue";
 
 type Props = {
   cardSetId: string;
@@ -75,6 +76,8 @@ const handleDeleteCardSet = async () => {
           ></span
         >
       </p>
+
+      <LinearStats class="mb-8" :progressMap="cardSetState.progressMap" />
 
       <ul class="bg-white rounded-2xl py-2 divide-y">
         <li>
