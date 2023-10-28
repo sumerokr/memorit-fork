@@ -2,20 +2,19 @@ import { createCardSet, type CardSet } from "@/domain/card-set";
 import { createCardSetApi } from "@/services/api/card-sets/create-idb";
 import { usersService } from "@/services/users-service";
 import { notificationService } from "@/services";
+import { generateID } from "@/utils";
 
 //#region types
 export type CreateCardSetApi = (args: { cardSet: CardSet }) => Promise<CardSet>;
 
-export type CreateCardSetUC = (args: {
-  title: CardSet["title"];
-}) => Promise<CardSet>;
+export type CreateCardSetUC = (args: { title: CardSet["title"] }) => Promise<CardSet>;
 //#endregion
 
 export const createCardSetUC: CreateCardSetUC = async ({ title }) => {
   try {
     const userId = await usersService.getUserId();
     const cardSet = createCardSet({
-      id: crypto.randomUUID(),
+      id: generateID(),
       title,
       createdAt: new Date().toISOString(),
       createdBy: userId,

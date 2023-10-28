@@ -3,12 +3,10 @@ import { importCardSetApi } from "@/services/api/import-card-set-idb";
 import { usersService } from "@/services/users-service";
 import { notificationService } from "@/services";
 import { type Card, createCard } from "@/domain/card";
+import { generateID } from "@/utils";
 
 //#region types
-export type ImportCardSetApi = (args: {
-  cardSet: CardSet;
-  cards: Array<Card>;
-}) => Promise<void>;
+export type ImportCardSetApi = (args: { cardSet: CardSet; cards: Array<Card> }) => Promise<void>;
 
 export type ImportCardSetUC = (args: {
   title: CardSet["title"];
@@ -22,7 +20,7 @@ export const importCardSetUC: ImportCardSetUC = async ({ title, items }) => {
     const itemsCount = items.length;
 
     const cardSet = createCardSet({
-      id: crypto.randomUUID(),
+      id: generateID(),
       title,
       createdAt: new Date(Date.now() - itemsCount).toISOString(),
       createdBy: userId,
@@ -30,7 +28,7 @@ export const importCardSetUC: ImportCardSetUC = async ({ title, items }) => {
 
     const cards = items.map(({ front, back }, index) => {
       return createCard({
-        id: crypto.randomUUID(),
+        id: generateID(),
         front,
         back,
         cardSetId: cardSet.id,

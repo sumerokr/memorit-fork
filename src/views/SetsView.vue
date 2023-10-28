@@ -20,10 +20,12 @@ const { state: cardSets, isLoading, error } = useAsyncState(getCardSetsUC, null)
     <CardSetList v-if="cardSets?.length" :card-sets="cardSets" />
 
     <div class="my-auto text-center" v-else-if="cardSets && !cardSets.length">
-      You have no card sets yet.
-      <RouterLinkCommonButton icon="add" :to="{ name: 'new-card-set' }" class="bg-indigo-200">
-        Create
-      </RouterLinkCommonButton>
+      <p class="mb-4">You have no card sets yet.</p>
+      <p>
+        <RouterLinkCommonButton icon="add" :to="{ name: 'new-card-set' }" class="bg-indigo-200">
+          Create
+        </RouterLinkCommonButton>
+      </p>
     </div>
 
     <RouterLink

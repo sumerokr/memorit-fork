@@ -2,6 +2,7 @@
 import { getDBInstance } from "@/services/idb-storage";
 import { createStat, updateStat } from "@/domain/stat";
 import type { UpdateStatApi } from "@/application/update-card-progress";
+import { generateID } from "@/utils";
 
 // TODO: handle JSON errors
 export const updateStatApi: UpdateStatApi = async ({ cardId, status }) => {
@@ -14,7 +15,7 @@ export const updateStatApi: UpdateStatApi = async ({ cardId, status }) => {
 
   if (!existingStat) {
     const createdStat = createStat({
-      id: crypto.randomUUID(),
+      id: generateID(),
       cardId,
       userId: "local-user",
       status,
