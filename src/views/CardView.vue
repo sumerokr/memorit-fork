@@ -14,16 +14,19 @@ const {
   state: card,
   isLoading: isGetCardLoading,
   error: getCardError,
-} = useAsyncState(() => getCardUC({ id: props.id }), null);
-const isGetCardLoadingDebounced = refDebounced(isGetCardLoading, 3000);
+  execute: getCardExecute,
+} = useAsyncState(() => getCardUC({ id: props.id }), null, { immediate: false });
+const isGetCardLoadingDebounced = refDebounced(isGetCardLoading, 300);
+getCardExecute();
 
 const {
   state: stat,
   isLoading: isGetStatLoading,
   error: getStatError,
   execute: getStatExecute,
-} = useAsyncState(() => getCardProgressUC({ cardId: props.id }), null);
+} = useAsyncState(() => getCardProgressUC({ cardId: props.id }), null, { immediate: false });
 const isGetStatLoadingDebounced = refDebounced(isGetStatLoading, 300);
+getStatExecute();
 
 const {
   isLoading: isUpdateStatLoading,

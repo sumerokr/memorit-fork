@@ -39,8 +39,6 @@ export const getAllCardSetsApi: GetCardSetsApi = async () => {
       }
 
       // skip ones that were skipped
-      console.log(cardSetId === "62c2f39d-61a2-4645-af4d-7ae137118c2b" ? stat.progress : "");
-
       if (stat.progress === -1) {
         return false;
       }

@@ -50,10 +50,7 @@ const handleDeleteCard = async (id: Card["id"]) => {
       <h1 class="text-2xl">Cards</h1>
     </div>
 
-    <p
-      v-if="getCardsError"
-      class="mb-4 border border-red-500 rounded-2xl p-4 bg-red-50"
-    >
+    <p v-if="getCardsError" class="mb-4 border border-red-500 rounded-2xl p-4 bg-red-50">
       {{ getCardsError }}
     </p>
 
@@ -73,9 +70,7 @@ const handleDeleteCard = async (id: Card["id"]) => {
     <RouterLink
       class="fixed right-4 bottom-4 p-4 flex rounded-2xl bg-indigo-500 text-white shadow-md"
       :to="{ name: 'new-card', params: { cardSetId } }"
-      ><span class="material-symbols-outlined text-2xl leading-none">
-        add
-      </span></RouterLink
+      ><span class="material-symbols-rounded text-2xl leading-none"> add </span></RouterLink
     >
   </div>
 </template>

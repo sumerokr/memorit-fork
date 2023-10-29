@@ -28,13 +28,13 @@ const resolvedClasses = (() => {
     class="inline-flex py-3 items-center rounded-3xl justify-center disabled:opacity-40"
     :class="resolvedClasses"
   >
-    <span v-if="before" class="material-symbols-outlined leading-none">
+    <span v-if="before" class="material-symbols-rounded leading-none">
       {{ before }}
     </span>
     <span class="font-medium">
       <slot />
     </span>
-    <span v-if="after" class="material-symbols-outlined leading-none">
+    <span v-if="after" class="material-symbols-rounded leading-none">
       {{ after }}
     </span>
   </RouterLink>

@@ -1,6 +1,6 @@
 import type { Card } from "./card";
 
-const progressMap = [0, 1, 3, 5, 8, 13, 21, 34, 55, 89, 144];
+const progressMap = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144];
 
 export type Progress = -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 
@@ -62,14 +62,18 @@ export const createStat = (
       }
     })(),
     showAfter: (() => {
+      const nowDate = new Date(createdAt).getDate();
+      const newDate = new Date(createdAt);
+
       switch (status) {
         case "success": {
-          const nowDate = new Date(createdAt).getDate();
-          const newDate = new Date();
           newDate.setDate(nowDate + progressMap[1]);
           return newDate.toISOString();
         }
-        case "failure":
+        case "failure": {
+          newDate.setDate(nowDate + progressMap[0]);
+          return newDate.toISOString();
+        }
         case "skip":
           return createdAt;
       }
@@ -123,8 +127,8 @@ export const updateStat = ({
   })();
 
   newStat.showAfter = (() => {
-    const nowDate = new Date().getDate();
-    const newDate = new Date();
+    const nowDate = new Date(updatedAt).getDate();
+    const newDate = new Date(updatedAt);
     newDate.setDate(nowDate + progressMap[newStat.progress]);
     return newDate.toISOString();
   })();

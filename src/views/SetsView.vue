@@ -3,8 +3,19 @@ import { useAsyncState } from "@vueuse/core";
 import { getCardSetsUC } from "@/application/get-card-sets";
 import CardSetList from "@/components/CardSetList.vue";
 import RouterLinkCommonButton from "@/components/RouterLinkCommonButton.vue";
+import { refDebounced } from "@vueuse/core";
+// import CardSetListPlaceholder from "@/components/CardSetListPlaceholder.vue";
 
-const { state: cardSets, isLoading, error } = useAsyncState(getCardSetsUC, null);
+const {
+  state: cardSets,
+  isLoading,
+  error,
+  execute,
+} = useAsyncState(getCardSetsUC, null, {
+  immediate: false,
+});
+const isLoadingDebounced = refDebounced(isLoading, 300);
+execute();
 </script>
 
 <template>
@@ -15,7 +26,9 @@ const { state: cardSets, isLoading, error } = useAsyncState(getCardSetsUC, null)
 
     <p v-if="error" class="mb-4 border border-red-500 rounded-2xl p-4 bg-red-50">Error</p>
 
-    <p v-if="isLoading">Loading...</p>
+    <p v-if="isLoadingDebounced">Loading...</p>
+
+    <!-- <CardSetListPlaceholder v-if="isLoading" /> -->
 
     <CardSetList v-if="cardSets?.length" :card-sets="cardSets" />
 
@@ -31,7 +44,7 @@ const { state: cardSets, isLoading, error } = useAsyncState(getCardSetsUC, null)
     <RouterLink
       class="fixed right-4 bottom-4 p-4 flex rounded-2xl bg-indigo-500 text-white shadow-md"
       :to="{ name: 'new-card-set' }"
-      ><span class="material-symbols-outlined text-2xl leading-none">add</span></RouterLink
+      ><span class="material-symbols-rounded text-2xl leading-none">add</span></RouterLink
     >
   </div>
 </template>

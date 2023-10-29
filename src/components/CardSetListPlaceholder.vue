@@ -3,17 +3,23 @@ import { onUnmounted, onMounted, ref } from "vue";
 
 const length = ref(0);
 
-let intervalId: ReturnType<typeof setInterval>;
+// how long to wait for the first appearance
+let initialTimeout = 300;
+let currentTimeout = initialTimeout;
+let timeoutId: ReturnType<typeof setTimeout>;
+
+const callback = () => {
+  length.value += 1;
+  currentTimeout += 100;
+  timeoutId = setTimeout(callback, currentTimeout);
+};
 
 onMounted(() => {
-  length.value++;
-  intervalId = setInterval(() => {
-    length.value++;
-  }, 300);
+  timeoutId = setTimeout(callback, currentTimeout);
 });
 
 onUnmounted(() => {
-  clearInterval(intervalId);
+  clearInterval(timeoutId);
 });
 </script>
 
