@@ -15,11 +15,10 @@ const props = defineProps<Props>();
 
 const router = useRouter();
 
-const {
-  state: cardSetState,
-  isLoading: isGetCardSetLoading,
-  error: getCardSetError,
-} = useAsyncState(() => getCardSetUC({ id: props.cardSetId }), null);
+const { state: cardSetState, error: getCardSetError } = useAsyncState(
+  () => getCardSetUC({ id: props.cardSetId }),
+  null
+);
 
 const {
   isLoading: isDeleteCardSetLoading,
@@ -33,6 +32,9 @@ const {
 });
 
 const handleDeleteCardSet = async () => {
+  if (isDeleteCardSetLoading.value) {
+    return;
+  }
   const answer = confirm("Delete the Card set and all its cards?");
   if (!answer) {
     return;
@@ -51,10 +53,12 @@ const handleDeleteCardSet = async () => {
         <RouterLinkIconButton :to="{ name: 'card-set-edit', params: { cardSetId } }" icon="edit">
           Edit
         </RouterLinkIconButton>
-        <IconButton icon="delete" :disabled="isDeleteCardSetLoading" @click="handleDeleteCardSet">
-          Delete
-        </IconButton>
+        <IconButton icon="delete" @click="handleDeleteCardSet">Delete </IconButton>
       </div>
+    </div>
+
+    <div v-if="getCardSetError" class="mb-4 border border-red-500 rounded-2xl p-4 bg-red-50">
+      {{ getCardSetError }}
     </div>
 
     <div v-if="cardSetState">
@@ -104,6 +108,9 @@ const handleDeleteCardSet = async () => {
             </div>
           </RouterLink>
         </li>
+      </ul>
+
+      <ul class="mt-4 bg-white rounded-2xl py-2 divide-y">
         <li>
           <RouterLink
             :to="{ name: 'study', params: { cardSetId: props.cardSetId } }"
@@ -111,7 +118,7 @@ const handleDeleteCardSet = async () => {
           >
             <IconButton icon="school" class="" />
             <div class="py-0.5">
-              <h2 class="font-medium">Study</h2>
+              <h2 class="font-medium">Remember or not</h2>
               <p class="text-sm opacity-60">Use the interval repetition technique</p>
             </div>
           </RouterLink>
@@ -123,18 +130,12 @@ const handleDeleteCardSet = async () => {
           >
             <IconButton icon="list" class="" />
             <div class="py-0.5">
-              <h2 class="font-medium">One of four</h2>
+              <h2 class="font-medium">Quiz 1/4</h2>
               <p class="text-sm opacity-60">Some description</p>
             </div>
           </RouterLink>
         </li>
       </ul>
     </div>
-
-    <div v-if="getCardSetError" class="mb-4 border border-red-500 rounded-2xl p-4 bg-red-50">
-      {{ getCardSetError }}
-    </div>
-
-    <div v-else-if="isGetCardSetLoading">Loading...</div>
   </div>
 </template>

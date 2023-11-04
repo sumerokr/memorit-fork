@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import shuffle from "lodash/shuffle";
 import { getOneOfFourCardsUC } from "@/application/get-one-of-four-cards";
 import { updateCardProgressUC } from "@/application/update-card-progress";
@@ -54,21 +54,20 @@ const markSuccess = async () => {
 };
 
 const answer = ref<Card["id"] | null>(null);
-
-const setAnswer = async (_answer: Card["id"]) => {
-  if (isUpdateCardProgressLoading.value || answer.value !== null) {
+watch(answer, async (newAnswer, prevAnswer) => {
+  if (newAnswer === null || prevAnswer !== null) {
     return;
   }
 
   isShown.value = true;
-  answer.value = _answer;
+  answer.value = newAnswer;
 
-  if (_answer === currentCard.value!.card.id) {
+  if (newAnswer === currentCard.value!.card.id) {
     await markSuccess();
   } else {
     await markFailure();
   }
-};
+});
 
 const next = () => {
   isShown.value = false;
@@ -116,20 +115,28 @@ const onRestart = async () => {
 
       <div class="mb-4 border rounded-xl p-4 bg-white">
         <p class="mb-2 text-sm opacity-60">Pick the right answer</p>
-        <div class="flex flex-col gap-4">
-          <CommonButton
-            v-for="card in answers"
-            :key="card.id"
-            icon="sentiment_dissatisfied"
-            class="flex-1 bg-neutral-200"
+        <div class="flex flex-col gap-2">
+          <label
+            class="border rounded p-4 flex gap-4 items-start text-sm"
             :class="{
               '!bg-red-200': answer && answer === card.id && card.id !== currentCard!.card.id,
               '!bg-green-200': answer && answer === card.id && card.id === currentCard!.card.id,
             }"
-            :disabled="isUpdateCardProgressLoading"
-            @click="setAnswer(card.id)"
-            >{{ card.back }}</CommonButton
+            :for="card.id"
+            v-for="card in answers"
+            :key="card.id"
           >
+            <input
+              class="w-4 h-4 my-0.5"
+              type="radio"
+              name="answer"
+              :id="card.id"
+              :value="card.id"
+              :disabled="answer !== null"
+              v-model="answer"
+            />
+            <span>{{ card.back }}</span>
+          </label>
         </div>
       </div>
 

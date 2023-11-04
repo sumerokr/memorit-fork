@@ -3,19 +3,8 @@ import { useAsyncState } from "@vueuse/core";
 import { getCardSetsUC } from "@/application/get-card-sets";
 import CardSetList from "@/components/CardSetList.vue";
 import RouterLinkCommonButton from "@/components/RouterLinkCommonButton.vue";
-import { refDebounced } from "@vueuse/core";
-// import CardSetListPlaceholder from "@/components/CardSetListPlaceholder.vue";
 
-const {
-  state: cardSets,
-  isLoading,
-  error,
-  execute,
-} = useAsyncState(getCardSetsUC, null, {
-  immediate: false,
-});
-const isLoadingDebounced = refDebounced(isLoading, 300);
-execute();
+const { state: cardSets, error } = useAsyncState(getCardSetsUC, null);
 </script>
 
 <template>
@@ -25,10 +14,6 @@ execute();
     </div>
 
     <p v-if="error" class="mb-4 border border-red-500 rounded-2xl p-4 bg-red-50">Error</p>
-
-    <p v-if="isLoadingDebounced">Loading...</p>
-
-    <!-- <CardSetListPlaceholder v-if="isLoading" /> -->
 
     <CardSetList v-if="cardSets?.length" :card-sets="cardSets" />
 
