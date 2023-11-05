@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { getDBInstance } from "@/services/idb-storage";
 import RouterLinkIconButton from "./components/RouterLinkIconButton.vue";
+import PwaToast from "./components/PwaToast.vue";
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 
@@ -34,5 +35,7 @@ const date = __BUILD_DATE__?.slice(0, 10).replace(/-/g, "");
       <span>date: {{ date }}</span>
       <span>sha: {{ sha }}</span>
     </div>
+
+    <PwaToast />
   </div>
 </template>

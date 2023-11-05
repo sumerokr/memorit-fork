@@ -55,7 +55,7 @@ const markSuccess = async () => {
 
 const answer = ref<Card["id"] | null>(null);
 watch(answer, async (newAnswer, prevAnswer) => {
-  if (newAnswer === null || prevAnswer !== null) {
+  if (newAnswer === null || prevAnswer !== null || isUpdateCardProgressLoading.value) {
     return;
   }
 
@@ -127,7 +127,7 @@ const onRestart = async () => {
             :key="card.id"
           >
             <input
-              class="w-4 h-4 my-0.5"
+              class="hidden"
               type="radio"
               name="answer"
               :id="card.id"
