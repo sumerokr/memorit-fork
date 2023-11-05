@@ -4,7 +4,7 @@ import type { CardSet } from "@/domain/card-set";
 import type { Card } from "@/domain/card";
 import type { Stat } from "@/domain/stat";
 
-interface MyDB1 extends DBSchema {
+export interface MyDB1 extends DBSchema {
   "card-sets": {
     value: CardSet;
     key: CardSet["id"];

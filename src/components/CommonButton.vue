@@ -21,16 +21,16 @@ const resolvedClasses = (() => {
 
 <template>
   <button
-    class="inline-flex py-3 items-center rounded-3xl justify-center disabled:opacity-40"
+    class="inline-flex py-2 items-center rounded-full justify-center disabled:opacity-40"
     :class="resolvedClasses"
   >
-    <span v-if="before" class="material-symbols-rounded leading-none">
+    <span v-if="before" class="material-symbols-rounded text-xl leading-none">
       {{ before }}
     </span>
     <span class="font-medium">
       <slot />
     </span>
-    <span v-if="after" class="material-symbols-rounded leading-none">
+    <span v-if="after" class="material-symbols-rounded text-xl leading-none">
       {{ after }}
     </span>
   </button>
